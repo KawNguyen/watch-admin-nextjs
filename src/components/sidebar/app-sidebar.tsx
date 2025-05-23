@@ -3,10 +3,16 @@
 import * as React from "react";
 import {
   GalleryVerticalEnd,
-  NotebookTabs,
-  CookingPot,
-  ChefHat,
-  Calendar1,
+  Users,
+  ChartBarStacked,
+  Watch,
+  ScrollText,
+  MessageSquareText,
+  BanknoteArrowDown,
+  Megaphone,
+  Warehouse,
+  PackagePlus,
+  View,
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
@@ -33,98 +39,72 @@ const data = {
       logo: GalleryVerticalEnd,
       plan: "Enterprise",
     },
-    // {
-    //     name: "Acme Corp.",
-    //     logo: AudioWaveform,
-    //     plan: "Startup",
-    // },
-    // {
-    //     name: "Evil Corp.",
-    //     logo: Command,
-    //     plan: "Free",
-    // },
   ],
   navMain: [
     {
       title: "User",
       url: "#",
-      icon: ChefHat,
+      icon: Users,
       isActive: true,
       items: [
         {
           title: "List",
-          url: "/admin/user/list",
+          url: "/admin/user/",
         },
       ],
     },
     {
       title: "Category",
       url: "#",
-      icon: ChefHat,
+      icon: ChartBarStacked,
       isActive: true,
       items: [
         {
           title: "List",
-          url: "/admin/category/list",
-        },
-        {
-          title: "Add Category",
-          url: "/admin/category/add",
+          url: "/admin/category/",
         },
       ],
-    }, 
+    },
     {
-      title: "Products",
+      title: "Watches",
       url: "#",
-      icon: ChefHat,
+      icon: Watch,
       isActive: true,
       items: [
         {
           title: "List",
-          url: "/admin/products/list",
-        },
-        {
-          title: "Add Products",
-          url: "/admin/products/add",
+          url: "/admin/watch",
         },
       ],
     },
     {
       title: "Stock",
       url: "#",
-      icon: ChefHat,
+      icon: Warehouse,
       isActive: true,
       items: [
         {
           title: "List",
-          url: "/admin/stock/list",
-        },
-        {
-          title: "Add Products",
-          url: "/admin/stock/add",
-        },
-        {
-          title: "History",
-          url: "/admin/stock/history",
+          url: "/admin/stock/",
         },
       ],
     },
     {
       title: "Orders",
       url: "#",
-      icon: ChefHat,
+      icon: ScrollText,
       isActive: true,
       items: [
         {
           title: "List",
-          url: "/admin/orders/list",
+          url: "/admin/orders",
         },
       ],
     },
     {
       title: "Create Orders",
       url: "#",
-      icon: ChefHat,
+      icon: PackagePlus,
       isActive: true,
       items: [
         {
@@ -136,48 +116,48 @@ const data = {
     {
       title: "Tracking",
       url: "#",
-      icon: ChefHat,
+      icon: View,
       isActive: true,
       items: [
         {
           title: "List",
-          url: "/admin/tracking/list",
+          url: "/admin/tracking",
         },
       ],
     },
     {
       title: "Manage Reviews",
       url: "#",
-      icon: ChefHat,
+      icon: MessageSquareText,
       isActive: true,
       items: [
         {
           title: "List",
-          url: "/admin/review/list",
+          url: "/admin/review-manage/",
         },
       ],
     },
     {
       title: "Manage Banners & Ads",
       url: "#",
-      icon: ChefHat,
+      icon: Megaphone,
       isActive: true,
       items: [
         {
           title: "List",
-          url: "/admin/ads/list",
+          url: "/admin/ads",
         },
       ],
     },
     {
-      title: "Manage Coupons  ",
+      title: "Manage Coupons",
       url: "#",
-      icon: ChefHat,
+      icon: BanknoteArrowDown,
       isActive: true,
       items: [
         {
           title: "List",
-          url: "/admin/coupon/list",
+          url: "/admin/coupon",
         },
       ],
     },
