@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import {
   Sheet,
   SheetContent,
@@ -21,27 +21,24 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-import { Textarea } from "./ui/textarea";
-import { Switch } from "./ui/switch";
-// import {
-//   FileInput,
-//   FileUploader,
-//   FileUploaderContent,
-//   FileUploaderItem,
-// } from "./ui/file-upload";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { useMutation } from "@tanstack/react-query";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { categoryAPI } from "@/services/category";
+import { Category } from "@/app/admin/category/columns";
+import { toast } from "sonner";
 
-// Add this enum near the top of the file after imports
 export enum Gender {
   MALE = "Male",
   FEMALE = "Female",
-  UNISEX = "Unisex"
+  UNISEX = "Unisex",
 }
 
-// Update the formSchema
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   gender: z.nativeEnum(Gender, {
@@ -49,37 +46,79 @@ const formSchema = z.object({
   }),
 });
 
-const SheetCategory = () => {
-  const mutateCreate = useMutation({
-    mutationFn: async (data: any) =>  categoryAPI.createCategory(data),
-    onSuccess: () => {
-      console.log("success") 
-    },
-    onError: () => {
-      console.log("error") 
-    }
-    
-  })
+interface SheetCategoryProps {
+  mode?: "create" | "update";
+  initialData?: Category;
+  trigger?: React.ReactNode;
+}
+
+const SheetCategory = ({
+  mode = "create",
+  initialData,
+  trigger,
+}: SheetCategoryProps) => {
+  const queryClient = useQueryClient();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      gender: undefined,
+      name: initialData?.name || "",
+      gender: initialData?.gender || undefined,
     },
   });
 
+  const createMutation = useMutation({
+    mutationFn: categoryAPI.createCategory,
+    onSuccess: () => {
+      toast.success("Category created successfully");
+      queryClient.invalidateQueries({ queryKey: ["category"] });
+      form.reset();
+    },
+    onError: () => {
+      toast.error("Failed to create category");
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: { name: string; gender: string } }) =>
+      categoryAPI.updateCategory(id, data),
+    onSuccess: () => {
+      toast.success("Category updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["category"] });
+    },
+    onError: () => {
+      toast.error("Failed to update category");
+    },
+  });
+
+  useEffect(() => {
+    if (initialData && mode === "update") {
+      form.reset({
+        name: initialData.name,
+        gender: initialData.gender,
+      });
+    }
+  }, [initialData, form, mode]);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    //maybe làm toast ở đây
-    mutateCreate.mutate(values)
+    if (mode === "update" && initialData?.id) {
+      updateMutation.mutate({
+        id: initialData.id,
+        data: values,
+      });
+    } else {
+      createMutation.mutate(values);
+    }
   }
+
   return (
     <Sheet>
-      <SheetTrigger asChild className="ml-4">
-        <Button>Create</Button>
+      <SheetTrigger asChild>
+        {trigger || <Button className="ml-4">Create</Button>}
       </SheetTrigger>
       <SheetContent>
         <SheetHeader className="mb-8">
-          <SheetTitle>Category</SheetTitle>
+          <SheetTitle>{mode === "create" ? "Create Category" : "Update Category"}</SheetTitle>
         </SheetHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
@@ -92,7 +131,7 @@ const SheetCategory = () => {
                     Name <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="" {...field} />
+                    <Input placeholder="Enter category name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -107,7 +146,10 @@ const SheetCategory = () => {
                     Gender <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select gender" />
                       </SelectTrigger>
@@ -124,77 +166,10 @@ const SheetCategory = () => {
                 </FormItem>
               )}
             />
-
-            {/* <FormField
-              control={form.control}
-              name="imageUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Select File</FormLabel>
-                  <FormControl>
-                    <FileUploader
-                      value={files}
-                      onValueChange={setFiles}
-                      dropzoneOptions={dropZoneConfig}
-                      className="relative bg-background rounded-lg p-2"
-                    >
-                      <FileInput
-                        id="fileInput"
-                        className="outline-dashed outline-1 outline-slate-500"
-                      >
-                        <div className="flex items-center justify-center flex-col p-8 w-full ">
-                          <CloudUpload className="text-gray-500 w-10 h-10" />
-                          <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
-                            <span className="font-semibold">
-                              Click to upload
-                            </span>
-                            &nbsp; or drag and drop
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            SVG, PNG, JPG or GIF
-                          </p>
-                        </div>
-                      </FileInput>
-                      <FileUploaderContent className="flex-row gap-2 overflow-x-auto w-[300px]">
-                        {files &&
-                          files.length > 0 &&
-                          files.map((file, i) => {
-                            const imageUrl = URL.createObjectURL(file);
-                            return (
-                              <FileUploaderItem key={i} index={i}>
-                                <div className="relative w-20 h-20">
-                                  <img
-                                    src={imageUrl}
-                                    alt={file.name}
-                                    className="w-20 h-20 object-cover rounded-md"
-                                  />
-                                  <button
-                                    type="button"
-                                    className="absolute top-0 right-0 text-white bg-red-500 p-1 rounded-full"
-                                    onClick={() => {
-                                      const newFiles = files.filter(
-                                        (_, index) => index !== i,
-                                      );
-                                      setFiles(newFiles);
-                                    }}
-                                  >
-                                    <X className="w-4 h-4" />
-                                  </button>
-                                </div>
-                              </FileUploaderItem>
-                            );
-                          })}
-                      </FileUploaderContent>
-                    </FileUploader>
-                  </FormControl>
-                  <FormDescription>Select a file to upload.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
-
             <SheetFooter>
-              <Button type="submit">Submit</Button>
+              <Button type="submit">
+                {mode === "create" ? "Create" : "Update"}
+              </Button>
             </SheetFooter>
           </form>
         </Form>
