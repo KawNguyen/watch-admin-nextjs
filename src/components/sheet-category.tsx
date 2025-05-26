@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -32,6 +32,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { categoryAPI } from "@/services/category";
 import { Category } from "@/app/admin/category/columns";
 import { toast } from "sonner";
+import { queryClient } from "./provider/provider";
+import { Edit } from "lucide-react";
 
 export enum Gender {
   MEN = "MEN",
@@ -47,74 +49,75 @@ const formSchema = z.object({
 });
 
 interface SheetCategoryProps {
+  categoryId?: number;
+  initialData?: Category;
   mode?: "create" | "update";
-  initialData: Category;
-  trigger?: React.ReactNode;
 }
+// trigger?: React.ReactNode;
 
-const SheetCategory = ({ mode = "create", initialData, trigger }: SheetCategoryProps) => {
-  const queryClient = useQueryClient();
-
+const SheetCategory = ({
+  mode,
+  categoryId,
+  initialData,
+}: SheetCategoryProps) => {
+  const [open, setOpen] = useState(false);
+  const mutation = useMutation({
+    mutationFn: async (data: any) => {
+      if (mode === "create") {
+        return categoryAPI.createCategory(data);
+      }
+      return categoryAPI.updateCategory(categoryId!, data);
+    },
+    onSuccess: () => {
+      toast.success(
+        mode === "create"
+          ? "Category created successfully"
+          : "Category updated successfully"
+      );
+      form.reset();
+      queryClient.invalidateQueries({ queryKey: ["category"] });
+    },
+    onSettled: () => {
+      setOpen(false);
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Something went wrong");
+    },
+  });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      gender: Gender.MEN, // Set default gender
-    },
+    defaultValues:
+      mode === "create"
+        ? {
+            name: "",
+            gender: Gender.MEN,
+          }
+        : {
+            name: initialData?.name || "",
+            gender: initialData?.gender || Gender.MEN,
+          },
   });
-
-  const createMutation = useMutation({
-    mutationFn: categoryAPI.createCategory,
-    onSuccess: () => {
-      toast.success("Category created successfully");
-      queryClient.invalidateQueries({ queryKey: ["category"] });
-      form.reset();
-    },
-    onError: () => {
-      toast.error("Failed to create category");
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: { name: string; gender: Gender } }) =>
-      categoryAPI.updateCategory(id, data),
-    onSuccess: () => {
-      toast.success("Category updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["category"] });
-    },
-    onError: () => {
-      toast.error("Failed to update category");
-    },
-  });
-
-  useEffect(() => {
-    if (initialData && mode === "update") {
-      form.reset({
-        name: initialData.name,
-        gender: initialData.gender as Gender
-      });
-    }
-  }, [initialData, form, mode]);
-
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (mode === "update" && initialData.id) {
-      updateMutation.mutate({
-        id: initialData.id,
-        data: values,
-      });
-    } else {
-      createMutation.mutate(values);
-    }
+    mutation.mutate(values);
   }
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        {trigger || <Button className="ml-4">Create</Button>}
+        {mode === "create" ? (
+          <Button>Create</Button>
+        ) : (
+          <Button variant="ghost" size="icon">
+            <Edit />
+          </Button>
+        )}
       </SheetTrigger>
       <SheetContent>
         <SheetHeader className="mb-8">
-          <SheetTitle>{mode === "create" ? "Create Category" : "Update Category"}</SheetTitle>
+          <SheetTitle>
+            Category
+          </SheetTitle>
         </SheetHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
@@ -142,10 +145,7 @@ const SheetCategory = ({ mode = "create", initialData, trigger }: SheetCategoryP
                     Gender <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select gender" />
                       </SelectTrigger>
@@ -173,5 +173,4 @@ const SheetCategory = ({ mode = "create", initialData, trigger }: SheetCategoryP
     </Sheet>
   );
 };
-
 export default SheetCategory;

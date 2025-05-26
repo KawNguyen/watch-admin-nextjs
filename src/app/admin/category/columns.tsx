@@ -1,9 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { SquarePen, Trash2 } from "lucide-react";
-import { useCategoryDelete } from "@/hooks/useCategory";
+import { Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import SheetCategory from "@/components/sheet-category";
+import { useMutation } from "@tanstack/react-query";
+import { categoryAPI } from "@/services/category";
+import { queryClient } from "@/components/provider/provider";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,7 +18,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import SheetCategory from "@/components/sheet-category";
 
 export type Category = {
   id: number;
@@ -58,58 +60,68 @@ export const columns: ColumnDef<Category>[] = [
   {
     accessorKey: "gender",
     header: "Gender",
-    cell: ({ row }) => <div className="text-left">{row.getValue("gender")}</div>,
+    cell: ({ row }) => (
+      <div className="text-left">{row.getValue("gender")}</div>
+    ),
   },
   {
-    id: "actions",
+    // id: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const { mutate } = useCategoryDelete();
-      
-      const handleDelete = () => {
-        mutate(Number(row.original.id), {
-          onSuccess: () => {
-            toast.success("Category deleted successfully");
-          },
-          onError: () => {
-            toast.error("Failed to delete category");
-          },
-        });
-      };
+      const mutationDelete = useMutation({
+        mutationFn: (id: number) => categoryAPI.deleteCategory(id),
+        onSuccess: () => {
+          toast.success("Category deleted successfully");
+          queryClient.invalidateQueries({ queryKey: ["category"] });
+        },
+        onError: () => {
+          toast.error("Failed to delete category");
+        },
+      });
 
       return (
         <div className="flex items-center gap-2">
+          <SheetCategory
+            mode="update"
+            categoryId={row.original.id}
+            initialData={row.original}
+          />
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="ghost" size="icon">
-                <Trash2 className="h-4 w-4 text-red-500" />
+                <Trash2 className="text-red-600" />
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the category.
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-red-500">
+                      {row.original.name}
+                    </span>
+                    <p className="text-sm text-muted-foreground">
+                      will permanently removed.
+                    </p>
+                  </div>
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+                <AlertDialogAction
+                  onClick={() => mutationDelete.mutate(row.original.id)}
+                  disabled={mutationDelete.isPending}
+                >
+                  {mutationDelete.isPending ? (
+                    <Loader2 className="animate-spin mr-2" />
+                  ) : null}
+                  Delete
+                </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-          
-          <SheetCategory 
-            mode="update"
-            initialData={row.original}
-            trigger={
-              <Button variant="ghost" size="icon">
-                <SquarePen className="h-4 w-4" />
-              </Button>
-            }
-          />
         </div>
       );
     },
-},
+  },
 ];
