@@ -31,6 +31,8 @@ import { Switch } from "./ui/switch";
 //   FileUploaderItem,
 // } from "./ui/file-upload";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { useMutation } from "@tanstack/react-query";
+import { categoryAPI } from "@/services/category";
 
 // Add this enum near the top of the file after imports
 export enum Gender {
@@ -48,12 +50,16 @@ const formSchema = z.object({
 });
 
 const SheetCategory = () => {
-  const [files, setFiles] = useState<File[] | null>(null);
-  const dropZoneConfig = {
-    maxFiles: 5,
-    maxSize: 1024 * 1024 * 4,
-    multiple: true,
-  };
+  const mutateCreate = useMutation({
+    mutationFn: async (data: any) =>  categoryAPI.createCategory(data),
+    onSuccess: () => {
+      console.log("success") 
+    },
+    onError: () => {
+      console.log("error") 
+    }
+    
+  })
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -64,7 +70,7 @@ const SheetCategory = () => {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     //maybe làm toast ở đây
-    console.log(values);
+    mutateCreate.mutate(values)
   }
   return (
     <Sheet>

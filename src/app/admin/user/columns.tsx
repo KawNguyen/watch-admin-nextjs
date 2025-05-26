@@ -4,10 +4,12 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
+
 export type User = {
+  id: string;
   email: string;
   password: string;
-  role: Role;
+  role: string;
   createdAt: string;
 };
 export enum Role {

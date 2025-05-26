@@ -1,20 +1,23 @@
 "use client";
-import React from "react";
-import { columns, Gender, Category } from "./columns";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
+import { columns } from "./columns";
 import DataTable from "./data-table";
-const data: Category[] = [
-  {
-    id: "1",
-    name: "John Doe",
-    gender: Gender.Men,
-  },
-];
-const UserPage = () => {
-  return (
-    <div>
-      <DataTable columns={columns} data={data} />
-    </div>
-  );
-};
+import { useCategoryData } from "@/hooks/useCategory";
 
-export default UserPage;
+const queryClient = new QueryClient();
+const dehydrateState = dehydrate(queryClient);
+
+export default function CategoryPage() {
+  const { data } = useCategoryData();
+  return (
+    <main className="container mx-auto py-10">
+      <HydrationBoundary state={dehydrateState}>
+        <DataTable columns={columns} data={data || []} />
+      </HydrationBoundary>
+    </main>
+  );
+}

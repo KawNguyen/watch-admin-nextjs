@@ -1,21 +1,13 @@
 "use client";
-import React from "react";
-import { columns, Role, User } from "./columns";
+import { useUserData } from "@/hooks/useUser";
+import { columns } from "./columns";
 import DataTable from "./data-table";
-const data: User[] = [
-  {
-    email: "abc",
-    password: "123",
-    role: Role.User,
-    createdAt: "1/1/2021",
-  },
-];
-const UserPage = () => {
+
+export default function UserPage() {
+  const { data } = useUserData();
   return (
-    <div>
-      <DataTable columns={columns} data={data} />
+    <div className="container mx-auto py-10">
+      <DataTable columns={columns} data={data || []} />
     </div>
   );
-};
-
-export default UserPage;
+}
