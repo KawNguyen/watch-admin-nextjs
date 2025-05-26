@@ -34,9 +34,9 @@ import { Category } from "@/app/admin/category/columns";
 import { toast } from "sonner";
 
 export enum Gender {
-  MALE = "Male",
-  FEMALE = "Female",
-  UNISEX = "Unisex",
+  MEN = "MEN",
+  WOMEN = "WOMEN",
+  UNISEX = "UNISEX",
 }
 
 const formSchema = z.object({
@@ -48,22 +48,18 @@ const formSchema = z.object({
 
 interface SheetCategoryProps {
   mode?: "create" | "update";
-  initialData?: Category;
+  initialData: Category;
   trigger?: React.ReactNode;
 }
 
-const SheetCategory = ({
-  mode = "create",
-  initialData,
-  trigger,
-}: SheetCategoryProps) => {
+const SheetCategory = ({ mode = "create", initialData, trigger }: SheetCategoryProps) => {
   const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: initialData?.name || "",
-      gender: initialData?.gender || undefined,
+      name: "",
+      gender: Gender.MEN, // Set default gender
     },
   });
 
@@ -80,7 +76,7 @@ const SheetCategory = ({
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: { name: string; gender: string } }) =>
+    mutationFn: async ({ id, data }: { id: number; data: { name: string; gender: Gender } }) =>
       categoryAPI.updateCategory(id, data),
     onSuccess: () => {
       toast.success("Category updated successfully");
@@ -95,13 +91,13 @@ const SheetCategory = ({
     if (initialData && mode === "update") {
       form.reset({
         name: initialData.name,
-        gender: initialData.gender,
+        gender: initialData.gender as Gender
       });
     }
   }, [initialData, form, mode]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (mode === "update" && initialData?.id) {
+    if (mode === "update" && initialData.id) {
       updateMutation.mutate({
         id: initialData.id,
         data: values,

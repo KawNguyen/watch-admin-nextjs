@@ -18,14 +18,14 @@ import {
 import SheetCategory from "@/components/sheet-category";
 
 export type Category = {
-  id: string;
+  id: number;
   name: string;
   gender: Gender;
 };
 export enum Gender {
-  Men = "Men",
-  Women = "Women",
-  Unisex = "Unisex",
+  MEN = "MEN",
+  WOMEN = "WOMEN",
+  UNISEX = "UNISEX",
 }
 export const columns: ColumnDef<Category>[] = [
   {
