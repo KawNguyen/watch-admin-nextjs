@@ -5,4 +5,8 @@ export const userAPI = {
         const response = await instanceAxios.get("user")
         return response.data
     },
+    getUserById: async (id: string) => {
+        const response = await instanceAxios.get(`user/${id}`)
+        return response.data
+    },
 }

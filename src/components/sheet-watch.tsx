@@ -22,7 +22,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Textarea } from "./ui/textarea";
-import { Gender } from "@/app/admin/watch/columns";
+import { Watch } from "@/app/admin/watch/columns";
+
 import {
   Select,
   SelectContent,
@@ -32,34 +33,81 @@ import {
 } from "./ui/select";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { CloudUpload, X } from "lucide-react";
+import { CloudUpload, Edit, X } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { watchAPI } from "@/services/watch";
+import { queryClient } from "./provider/provider";
+import { toast } from "sonner";
+import { Gender } from "@/types";
+import Image from "next/image";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   image: z.string().min(1, "Image URL is required"),
   brand: z.string().min(1, "Brand is required"),
-  price: z.coerce.number().min(0, "Price must be positive"),
+  price: z.string().min(0, "Price must be positive"),
   gender: z.nativeEnum(Gender, {
-    required_error: "Please select a gender",
+    errorMap: () => ({ message: "Please select a valid gender" }),
   }),
-  description: z.string().min(1, "Description is required"),
+  description: z.string().optional(),
 });
 
-const SheetWatch = () => {
-  const [preview, setPreview] = useState<string | null>(null);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      image: "",
-      brand: "",
-      price: 0,
-      gender: Gender.Unisex,
-      description: "",
+interface SheetWatchProps {
+  watchId?: string;
+  initialData?: Watch;
+  mode?: "create" | "update";
+}
+const SheetWatch = ({ watchId, initialData, mode }: SheetWatchProps) => {
+  const [open, setOpen] = useState(false);
+  const mutation = useMutation({
+    mutationFn: async (data: any) => {
+      if (mode === "create") {
+        return watchAPI.createWatch(data);
+      }
+      return watchAPI.updateWatch(watchId!, data);
+    },
+    onSuccess: () => {
+      toast.success(
+        mode === "create"
+          ? "Watch created successfully"
+          : "Watch updated successfully"
+      );
+      form.reset();
+      queryClient.invalidateQueries({ queryKey: ["watch"] });
+    },
+    onSettled: () => {
+      setOpen(false);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Something went wrong");
     },
   });
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues:
+      mode === "create"
+        ? {
+            name: "",
+            image: "",
+            brand: "",
+            price: "",
+            description: "",
+            gender: Gender.Unisex,
+          }
+        : {
+            name: initialData?.name || "",
+            image: initialData?.image || "",
+            brand: initialData?.brand || "",
+            price: initialData?.price || "",
+            gender: initialData?.gender || Gender.Unisex,
+            description: initialData?.description || "",
+          },
+  });
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    mutation.mutate(values);
+  }
 
+  const [preview, setPreview] = useState<string | null>(null);
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
@@ -71,7 +119,6 @@ const SheetWatch = () => {
     },
     [form]
   );
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
@@ -79,15 +126,16 @@ const SheetWatch = () => {
     },
     maxFiles: 1,
   });
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
-
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild className="ml-4">
-        <Button>Create Watch</Button>
+        {mode === "create" ? (
+          <Button>Create</Button>
+        ) : (
+          <Button variant="ghost" size="icon">
+            <Edit />
+          </Button>
+        )}
       </SheetTrigger>
       <SheetContent>
         <SheetHeader className="mb-8">
@@ -215,12 +263,14 @@ const SheetWatch = () => {
                   </FormControl>
                   {preview && (
                     <div className="relative mt-2 w-32 h-32">
-                      <img
+                      <Image
                         src={preview}
                         alt="Preview"
+                        width={32}
+                        height={32}
                         className="rounded-md object-cover w-full h-full"
                       />
-                      <button
+                      <Button
                         type="button"
                         onClick={() => {
                           setPreview(null);
@@ -229,7 +279,7 @@ const SheetWatch = () => {
                         className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 text-white"
                       >
                         <X className="h-4 w-4" />
-                      </button>
+                      </Button>
                     </div>
                   )}
                   <FormMessage />

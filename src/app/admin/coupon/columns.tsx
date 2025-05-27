@@ -1,9 +1,25 @@
+import { queryClient } from "@/components/provider/provider";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { couponAPI } from "@/services/coupon";
+import { Status } from "@/types";
+import { useMutation } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { Eye } from "lucide-react";
-import Image from "next/image";
 
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import SheetCoupon from "@/components/sheet-coupon";
+import { Loader2, Trash2 } from "lucide-react";
 export type Coupon = {
   id: string;
   code: string;
@@ -12,10 +28,7 @@ export type Coupon = {
   endDate: string;
   status: Status;
 };
-export enum Status {
-  Active = "Active",
-  Inactive = "Inactive",
-}
+
 export const columns: ColumnDef<Coupon>[] = [
   {
     id: "select",
@@ -80,12 +93,60 @@ export const columns: ColumnDef<Coupon>[] = [
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => (
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" onClick={() => {}}>
-          <Eye className="h-4 w-4" />
-        </Button>
-      </div>
-    ),
+    cell: ({ row }) => {
+      const mutationDelete = useMutation({
+        mutationFn: (id: string) => couponAPI.deleteCoupon(id),
+        onSuccess: () => {
+          toast.success("Coupon deleted successfully");
+          queryClient.invalidateQueries({ queryKey: ["coupon"] });
+        },
+        onError: () => {
+          toast.error("Failed to delete coupon");
+        },
+      });
+      return (
+        <div className="flex items-center gap-2">
+          <SheetCoupon
+            mode="update"
+            couponId={row.original.id}
+            initialData={row.original}
+          />
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Trash2 className="text-red-600" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-red-500">
+                      {row.original.code}
+                    </span>
+                    <p className="text-sm text-muted-foreground">
+                      will permanently removed.
+                    </p>
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => mutationDelete.mutate(row.original.id)}
+                  disabled={mutationDelete.isPending}
+                >
+                  {mutationDelete.isPending ? (
+                    <Loader2 className="animate-spin mr-2" />
+                  ) : null}
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      );
+    },
   },
 ];

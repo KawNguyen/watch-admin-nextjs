@@ -23,10 +23,15 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Textarea } from "./ui/textarea";
 import { useDropzone } from "react-dropzone";
-import { CloudUpload, X } from "lucide-react";
+import { CloudUpload, Edit, X } from "lucide-react";
+import { Ads } from "@/app/admin/ads/columns";
+import { useMutation } from "@tanstack/react-query";
+import { adsAPI } from "@/services/ads";
+import { toast } from "sonner";
+import { queryClient } from "./provider/provider";
 
 const formSchema = z.object({
-  title: z.string().min(1, "Title is required"),
+  name: z.string().min(1, "Name is required"),
   description: z.string().min(1, "Description is required"),
   image: z.string().min(1, "Image is required"),
   link: z.string().url("Must be a valid URL"),
@@ -34,21 +39,63 @@ const formSchema = z.object({
   endDate: z.string().min(1, "End date is required"),
 });
 
-const SheetAds = () => {
-  const [preview, setPreview] = useState<string | null>(null);
+interface SheetAdsProps {
+  adsId?: string;
+  initialData?: Ads;
+  mode?: "create" | "update";
+}
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      image: "",
-      link: "",
-      startDate: "",
-      endDate: "",
+const SheetAds = ({ mode, adsId, initialData }: SheetAdsProps) => {
+  const [open, setOpen] = useState(false);
+  const mutation = useMutation({
+    mutationFn: async (data: any) => {
+      if (mode === "create") {
+        return adsAPI.createAds(data);
+      }
+      return adsAPI.updateAds(adsId!, data);
+    },
+    onSuccess: () => {
+      toast.success(
+        mode === "create"
+          ? "Advertisement created successfully"
+          : "Advertisement updated successfully"
+      );
+      form.reset();
+      queryClient.invalidateQueries({ queryKey: ["ads"] });
+    },
+    onSettled: () => {
+      setOpen(false);
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Something went wrong");
     },
   });
-
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues:
+      mode === "create"
+        ? {
+            name: "",
+            description: "",
+            image: "",
+            link: "",
+            startDate: "",
+            endDate: "",
+          }
+        : {
+            name: initialData?.name || "",
+            description: initialData?.description || "",
+            image: initialData?.image || "",
+            link: initialData?.link || "",
+            startDate: initialData?.startDate || "",
+            endDate: initialData?.endDate || "",
+          },
+  });
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    mutation.mutate(values);
+  }
+  const [preview, setPreview] = useState<string | null>(null);
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
@@ -60,7 +107,6 @@ const SheetAds = () => {
     },
     [form]
   );
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
@@ -68,15 +114,16 @@ const SheetAds = () => {
     },
     maxFiles: 1,
   });
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
-
   return (
-    <Sheet>
-      <SheetTrigger asChild className="ml-4">
-        <Button>Create Advertisement</Button>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        {mode === "create" ? (
+          <Button>Create</Button>
+        ) : (
+          <Button variant="ghost" size="icon">
+            <Edit />
+          </Button>
+        )}
       </SheetTrigger>
       <SheetContent>
         <SheetHeader className="mb-8">
@@ -86,14 +133,14 @@ const SheetAds = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
             <FormField
               control={form.control}
-              name="title"
+              name="name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Title <span className="text-red-500">*</span>
+                    Name <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Advertisement title" {...field} />
+                    <Input placeholder="Advertisement name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -231,5 +278,4 @@ const SheetAds = () => {
     </Sheet>
   );
 };
-
 export default SheetAds;

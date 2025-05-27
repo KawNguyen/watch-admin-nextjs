@@ -1,16 +1,42 @@
+import { queryClient } from "@/components/provider/provider";
+import { AlertDialogHeader } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { userAPI } from "@/services/user";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { useMutation } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { Eye, EyeOff } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { Eye } from "lucide-react";
 import { useState } from "react";
 
-
 export type User = {
-  id: string;
+  userId: string;
   email: string;
-  password: string;
   role: string;
+  password: string;
   createdAt: string;
+  profile: Profile;
+};
+export type Profile = {
+  profileId: string;
+  avatar: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  address: string;
+  gender: string;
+  user: User;
 };
 export enum Role {
   Admin = "Admin",
@@ -59,50 +85,151 @@ export const columns: ColumnDef<User>[] = [
     ),
   },
   {
-    accessorKey: "password",
-    header: "Password",
-    cell: ({ row }) => <PasswordCell value={row.getValue("password")} />,
-  },
-  {
-    id: "actions",
+    // id: "actions",
     header: "Actions",
-    cell: ({ row }) => (
-      <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => {
-            // Implement view orders logic here
-            console.log("View orders for user:", row.original.email);
-          }}
-        >
-          <Eye className="h-4 w-4" />
-        </Button>
-      </div>
-    ),
+    cell: ({ row }) => {
+      const [userData, setUserData] = useState<User | null>(null);
+      
+      const mutation = useMutation({
+        mutationFn: (id: string) => userAPI.getUserById(id),
+        onSuccess: () => {
+          toast.success("User deleted successfully");
+          queryClient.invalidateQueries({ queryKey: ["users"] });
+        },
+        onError: (error) => {
+          toast.error(error.message);
+        },
+      });
+
+      return (
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => mutation.mutate(row.original.userId)}
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>User Details</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">Email</Label>
+                <Input
+                  id="email"
+                  value={userData?.email || row.original.email}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="password" className="text-right">
+                  Password
+                </Label>
+                <Input
+                  id="password"
+                  value={row.original.password}
+                  className="col-span-3"
+                  type="text"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">
+                  User Id
+                </Label>
+                <Input
+                  id="email"
+                  value={row.original.userId}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">
+                  Profile Id
+                </Label>
+                <Input
+                  id="email"
+                  value={row.original.profile?.profileId}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">
+                  Role
+                </Label>
+                <Input
+                  id="email"
+                  value={row.original.role}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">
+                  Avatar
+                </Label>
+                <Input
+                  id="email"
+                  value={row.original.profile?.avatar}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">
+                  First Name
+                </Label>
+                <Input
+                  id="email"
+                  value={row.original.profile?.firstName}
+                  className="col-span-3"
+                />
+              </div>{" "}
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">
+                  Last Name
+                </Label>
+                <Input
+                  id="email"
+                  value={row.original.profile?.lastName}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">
+                  Phone
+                </Label>
+                <Input
+                  id="email"
+                  value={row.original.profile?.phone}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">
+                  Gender
+                </Label>
+                <Input
+                  id="email"
+                  value={row.original.profile?.gender}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">
+                  Address
+                </Label>
+                <Input
+                  id="email"
+                  value={row.original.profile?.address}
+                  className="col-span-3"
+                />
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      );
+    },
   },
 ];
-
-const PasswordCell = ({ value }: { value: string }) => {
-  const [showPassword, setShowPassword] = useState(false);
-
-  return (
-    <div className="flex items-center gap-2">
-      <span className="w-24 font-mono">
-        {showPassword ? value : "••••••••"}
-      </span>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-8 w-8 flex-shrink-0"
-        onClick={() => setShowPassword(!showPassword)}
-      >
-        {showPassword ? (
-          <EyeOff className="h-4 w-4" />
-        ) : (
-          <Eye className="h-4 w-4" />
-        )}
-      </Button>
-    </div>
-  );
-};

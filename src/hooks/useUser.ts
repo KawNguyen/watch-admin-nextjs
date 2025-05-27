@@ -8,3 +8,10 @@ export const useUserData = () => {
     staleTime: 1000 * 60 * 5,
   });
 };
+export const useUserById = (id: string) => {
+  return useQuery({
+    queryKey: ["user", id],
+    queryFn: async () => userAPI.getUserById(id),
+    staleTime: 1000 * 60 * 5,
+  });
+};

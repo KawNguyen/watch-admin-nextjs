@@ -18,17 +18,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Gender } from "@/types";
 
 export type Category = {
   id: number;
   name: string;
   gender: Gender;
 };
-export enum Gender {
-  MEN = "MEN",
-  WOMEN = "WOMEN",
-  UNISEX = "UNISEX",
-}
+
 export const columns: ColumnDef<Category>[] = [
   {
     id: "select",

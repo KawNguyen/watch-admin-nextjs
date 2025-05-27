@@ -1,22 +1,35 @@
-import { Button } from "@/components/ui/button";
+import { queryClient } from "@/components/provider/provider";
 import { Checkbox } from "@/components/ui/checkbox";
+import { watchAPI } from "@/services/watch";
+import { useMutation } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { Eye } from "lucide-react";
 import Image from "next/image";
-
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import SheetWatch from "@/components/sheet-watch";
+import { Button } from "@/components/ui/button";
+import { Loader2, Trash2 } from "lucide-react";
+import { Gender } from "@/types";
 export type Watch = {
   id: string;
   name: string;
   image: string;
   brand: string;
-  price: number;
+  price: string;
+  description: string;
   gender: Gender;
 };
-export enum Gender {
-  Men = "Men",
-  Women = "Women",
-  Unisex = "Unisex",
-}
+
 export const columns: ColumnDef<Watch>[] = [
   {
     id: "select",
@@ -48,16 +61,27 @@ export const columns: ColumnDef<Watch>[] = [
   {
     accessorKey: "image",
     header: "Image",
-    cell: ({ row }) => (
-      <div className="relative h-16 w-16">
-        <Image
-          src={row.getValue("image")}
-          alt={row.getValue("name")}
-          fill
-          className="rounded-md object-cover"
-        />
-      </div>
-    ),
+    cell: ({ row }) => {
+      const imageUrl = row.getValue("image");
+      return (
+        <div className="relative h-16 w-16">
+          {imageUrl ? (
+            <Image
+              src={imageUrl as string}
+              alt={row.getValue("name")}
+              fill
+              sizes="(max-width: 64px) 100vw, 64px"
+              className="rounded-md object-cover"
+              unoptimized
+            />
+          ) : (
+            <div className="h-full w-full bg-muted rounded-md flex items-center justify-center">
+              <span className="text-xs text-muted-foreground">No image</span>
+            </div>
+          )}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "brand",
@@ -83,12 +107,60 @@ export const columns: ColumnDef<Watch>[] = [
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => (
+    cell: ({ row }) => {
+     const mutationDelete=useMutation({
+      mutationFn:(id:string)=> watchAPI.deleteWatch(id),
+      onSuccess:()=>{
+        toast.success("Watch deleted successfully")
+        queryClient.invalidateQueries({queryKey:["watch"]}) 
+      },
+      onError:(err)=>{
+        toast.error("Error deleting watch") 
+      },
+     });
+     return (
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" onClick={() => {}}>
-          <Eye className="h-4 w-4" />
-        </Button>
+        <SheetWatch
+          mode="update"
+          watchId={row.original.id}
+          initialData={row.original}
+        />
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <Trash2 className="text-red-600" />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-red-500">
+                    {row.original.name}
+                  </span>
+                  <p className="text-sm text-muted-foreground">
+                    will permanently removed.
+                  </p>
+                </div>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => mutationDelete.mutate(row.original.id)}
+                disabled={mutationDelete.isPending}
+              >
+                {mutationDelete.isPending ? (
+                  <Loader2 className="animate-spin mr-2" />
+                ) : null}
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
-    ),
+    );
+    },
   },
 ];

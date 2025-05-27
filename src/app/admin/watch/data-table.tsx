@@ -32,11 +32,13 @@ import SheetWatch from "@/components/sheet-watch";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  isLoading?: boolean;
 }
 
 const DataTable = <TData, TValue>({
   columns,
-  data,
+  data = [], // Add default empty array
+  isLoading = false,
 }: DataTableProps<TData, TValue>) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -62,6 +64,11 @@ const DataTable = <TData, TValue>({
       columnFilters,
       columnVisibility,
       rowSelection,
+    },
+    initialState: {
+      pagination: {
+        pageSize: 10,
+      },
     },
   });
   return (
@@ -101,7 +108,7 @@ const DataTable = <TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <SheetWatch/>
+        <SheetWatch mode="create" />
       </div>
       <div className="rounded-md border">
         <Table>
@@ -125,7 +132,17 @@ const DataTable = <TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+          {isLoading ? (
+              Array.from({ length: 5 }).map((_, index) => (
+                <TableRow key={index}>
+                  {columns.map((_, cellIndex) => (
+                    <TableCell key={cellIndex}>
+                      <div className="h-6 w-full animate-pulse rounded-md bg-muted"></div>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -157,15 +174,18 @@ const DataTable = <TData, TValue>({
       {/* Bottom */}
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {isLoading
+            ? "Loading..."
+            : `${table.getFilteredSelectedRowModel().rows.length} of ${
+                table.getFilteredRowModel().rows.length
+              } row(s) selected.`}
         </div>
         <div className="space-x-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            disabled={!table.getCanPreviousPage() || isLoading}
           >
             Previous
           </Button>
@@ -173,7 +193,7 @@ const DataTable = <TData, TValue>({
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            disabled={!table.getCanNextPage() || isLoading}
           >
             Next
           </Button>

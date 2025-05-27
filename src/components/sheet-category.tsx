@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -28,18 +28,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { categoryAPI } from "@/services/category";
 import { Category } from "@/app/admin/category/columns";
 import { toast } from "sonner";
 import { queryClient } from "./provider/provider";
 import { Edit } from "lucide-react";
-
-export enum Gender {
-  MEN = "MEN",
-  WOMEN = "WOMEN",
-  UNISEX = "UNISEX",
-}
+import { Gender } from "@/types";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -53,8 +48,6 @@ interface SheetCategoryProps {
   initialData?: Category;
   mode?: "create" | "update";
 }
-// trigger?: React.ReactNode;
-
 const SheetCategory = ({
   mode,
   categoryId,
@@ -91,11 +84,11 @@ const SheetCategory = ({
       mode === "create"
         ? {
             name: "",
-            gender: Gender.MEN,
+            gender: Gender.Male,
           }
         : {
             name: initialData?.name || "",
-            gender: initialData?.gender || Gender.MEN,
+            gender: (initialData?.gender as Gender) || Gender.Male,
           },
   });
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -115,9 +108,7 @@ const SheetCategory = ({
       </SheetTrigger>
       <SheetContent>
         <SheetHeader className="mb-8">
-          <SheetTitle>
-            Category
-          </SheetTitle>
+          <SheetTitle>Category</SheetTitle>
         </SheetHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">

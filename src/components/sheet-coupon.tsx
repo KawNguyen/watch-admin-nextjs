@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -21,7 +21,6 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Textarea } from "./ui/textarea";
 import {
   Select,
   SelectContent,
@@ -29,36 +28,85 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { Status } from "@/app/admin/coupon/columns";
+import { Coupon } from "@/app/admin/coupon/columns";
+import { useMutation } from "@tanstack/react-query";
+import { couponAPI } from "@/services/coupon";
+import { toast } from "sonner";
+import { queryClient } from "./provider/provider";
+import { Status } from "@/types";
+import { Edit } from "lucide-react";
 
 const formSchema = z.object({
   code: z.string().min(1, "Coupon code is required"),
   discount: z.coerce.number().min(0, "Discount amount must be positive"),
   startDate: z.string().min(1, "Start date is required"),
   endDate: z.string().min(1, "End date is required"),
-  status: z.enum(["active", "inactive"]),
+  status: z.enum(["Active", "Inactive"]),
 });
 
-const SheetCoupon = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      code: "",
-      discount: 0,
-      startDate: "",
-      endDate: "",
-      status: "active",
+interface SheetCouponProps {
+  couponId?: string;
+  initialData?: Coupon;
+  mode?: "create" | "update";
+}
+const SheetCoupon = ({ mode, couponId, initialData }: SheetCouponProps) => {
+  const [open, setOpen] = useState(false);
+  const mutation = useMutation({
+    mutationFn: async (data: any) => {
+      if (mode === "create") {
+        return couponAPI.createCoupon(data);
+      }
+      return couponAPI.updateCoupon(couponId!, data);
+    },
+    onSuccess: () => {
+      toast.success(
+        mode === "create"
+          ? "Coupon created successfully"
+          : "Coupon updated successfully"
+      );
+      form.reset();
+      queryClient.invalidateQueries({ queryKey: ["coupon"] });
+    },
+    onSettled: () => {
+      setOpen(false);
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Something went wrong");
     },
   });
-
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues:
+      mode === "create"
+        ? {
+            code: "",
+            discount: 0,
+            startDate: "",
+            endDate: "",
+            status: Status.Inactive,
+          }
+        : {
+            code: initialData?.code || "",
+            discount: initialData?.discount || 0,
+            startDate: initialData?.startDate || "",
+            endDate: initialData?.endDate || "",
+            status: (initialData?.status as Status) || Status.Inactive,
+          },
+  });
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    mutation.mutate(values);
   }
-
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild className="ml-4">
-        <Button>Create Coupon</Button>
+        {mode === "create" ? (
+          <Button>Create</Button>
+        ) : (
+          <Button variant="ghost" size="icon">
+            <Edit />
+          </Button>
+        )}
       </SheetTrigger>
       <SheetContent>
         <SheetHeader className="mb-8">
@@ -99,7 +147,7 @@ const SheetCoupon = () => {
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="discount"
+                name="startDate" // Changed from "discount" to "startDate"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
@@ -158,9 +206,10 @@ const SheetCoupon = () => {
                 </FormItem>
               )}
             />
-
             <SheetFooter>
-              <Button type="submit">Create Coupon</Button>
+              <Button type="submit">
+                {mode === "create" ? "Create Coupon" : "Update Coupon"}
+              </Button>
             </SheetFooter>
           </form>
         </Form>

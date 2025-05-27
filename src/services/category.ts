@@ -1,5 +1,4 @@
 import { instanceAxios } from "@/lib/instantceAxios"
-import { create } from "domain"
 
 export const categoryAPI = {
     getCategory: async () => {
