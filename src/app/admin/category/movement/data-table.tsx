@@ -28,7 +28,8 @@ import {
 import { ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import React from "react";
-import SheetStock from "@/components/sheet-stock";
+import SheetCategory from "@/components/sheet-gender";
+import SheetMovement from "@/components/sheet-movement";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -37,7 +38,7 @@ interface DataTableProps<TData, TValue> {
 
 const DataTable = <TData, TValue>({
   columns,
-  data = [],
+  data,
   isLoading = false,
 }: DataTableProps<TData, TValue>) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -70,10 +71,10 @@ const DataTable = <TData, TValue>({
     <div className="container mx-auto w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Seach id..."
-          value={(table.getColumn("id")?.getFilterValue() as string) ?? ""}
+          placeholder="Search category..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("id")?.setFilterValue(event.target.value)
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -103,7 +104,7 @@ const DataTable = <TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <SheetStock />
+        <SheetMovement mode="create" />
       </div>
       <div className="rounded-md border">
         <Table>

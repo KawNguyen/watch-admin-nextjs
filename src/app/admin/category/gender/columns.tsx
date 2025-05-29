@@ -3,9 +3,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import SheetCategory from "@/components/sheet-category";
+import SheetCategory from "@/components/sheet-gender";
 import { useMutation } from "@tanstack/react-query";
-import { categoryAPI } from "@/services/category";
 import { queryClient } from "@/components/provider/provider";
 import {
   AlertDialog,
@@ -19,14 +18,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Gender } from "@/types";
+import { genderAPI } from "@/services/gender";
 
-export type Category = {
-  id: number;
+export type GenderA = {
+  id: string;
   name: string;
   gender: Gender;
 };
 
-export const columns: ColumnDef<Category>[] = [
+export const columns: ColumnDef<GenderA>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -66,7 +66,7 @@ export const columns: ColumnDef<Category>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const mutationDelete = useMutation({
-        mutationFn: (id: number) => categoryAPI.deleteCategory(id),
+        mutationFn: (id: string) => genderAPI.deleteGender(id),
         onSuccess: () => {
           toast.success("Category deleted successfully");
           queryClient.invalidateQueries({ queryKey: ["category"] });
@@ -80,7 +80,7 @@ export const columns: ColumnDef<Category>[] = [
         <div className="flex items-center gap-2">
           <SheetCategory
             mode="update"
-            categoryId={row.original.id}
+            genderId={row.original.id}
             initialData={row.original}
           />
           <AlertDialog>

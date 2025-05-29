@@ -28,7 +28,7 @@ import {
 import { ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import React from "react";
-import SheetCategory from "@/components/sheet-category";
+import SheetBrand from "@/components/sheet-brand";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -70,7 +70,7 @@ const DataTable = <TData, TValue>({
     <div className="container mx-auto w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Search category..."
+          placeholder="Search brand..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
@@ -103,7 +103,7 @@ const DataTable = <TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <SheetCategory mode="create" />
+        <SheetBrand mode="create" />
       </div>
       <div className="rounded-md border">
         <Table>

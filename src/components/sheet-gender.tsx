@@ -29,12 +29,12 @@ import {
   SelectValue,
 } from "./ui/select";
 import { useMutation } from "@tanstack/react-query";
-import { categoryAPI } from "@/services/category";
-import { Category } from "@/app/admin/category/columns";
+import {  GenderA } from "@/app/admin/category/gender/columns";
 import { toast } from "sonner";
 import { queryClient } from "./provider/provider";
 import { Edit } from "lucide-react";
 import { Gender } from "@/types";
+import { genderAPI } from "@/services/gender";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -42,33 +42,32 @@ const formSchema = z.object({
     required_error: "Please select a gender",
   }),
 });
-
-interface SheetCategoryProps {
-  categoryId?: number;
-  initialData?: Category;
+interface SheetGenderProps {
+  genderId?: string;
+  initialData?: GenderA;
   mode?: "create" | "update";
 }
 const SheetCategory = ({
   mode,
-  categoryId,
+  genderId,
   initialData,
-}: SheetCategoryProps) => {
+}: SheetGenderProps) => {
   const [open, setOpen] = useState(false);
   const mutation = useMutation({
     mutationFn: async (data: any) => {
       if (mode === "create") {
-        return categoryAPI.createCategory(data);
+        return genderAPI.createGender(data);
       }
-      return categoryAPI.updateCategory(categoryId!, data);
+      return genderAPI.updateGender(genderId!, data);
     },
     onSuccess: () => {
       toast.success(
         mode === "create"
-          ? "Category created successfully"
-          : "Category updated successfully"
+          ? "Gender created successfully"
+          : "Gender updated successfully"
       );
       form.reset();
-      queryClient.invalidateQueries({ queryKey: ["category"] });
+      queryClient.invalidateQueries({ queryKey: ["gender"] });
     },
     onSettled: () => {
       setOpen(false);

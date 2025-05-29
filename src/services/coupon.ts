@@ -1,5 +1,4 @@
 import { instanceAxios } from "@/lib/instantceAxios";
-import { SubresourceIntegrityAlgorithm } from "next/dist/build/webpack/plugins/subresource-integrity-plugin";
 
 export const couponAPI = {
   getCoupon: async () => {

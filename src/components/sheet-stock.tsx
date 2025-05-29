@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -21,14 +21,20 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { v4 as uuidv4 } from 'uuid';
+import { StockDetail } from "@/app/admin/stock/columns";
+import { StockAPI } from "@/services/stock";
 
 const formSchema = z.object({
   productId: z.string().min(1, "Product selection is required"),
   quantity: z.coerce.number().min(1, "Quantity must be at least 1"),
-  location: z.string().min(1, "Storage location is required"),
-  unitPrice: z.coerce.number().min(0, "Unit price must be positive"),
-  supplier: z.string().min(1, "Supplier information is required"),
 });
 
 const SheetStock = () => {
@@ -37,7 +43,6 @@ const SheetStock = () => {
     defaultValues: {
       productId: "",
       quantity: 1,
-     
     },
   });
 
@@ -61,8 +66,13 @@ const SheetStock = () => {
               name="productId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Product <span className="text-red-500">*</span></FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormLabel>
+                    Product <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a product" />
@@ -84,20 +94,21 @@ const SheetStock = () => {
               name="quantity"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Quantity <span className="text-red-500">*</span></FormLabel>
+                  <FormLabel>
+                    Quantity <span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
-                    <Input type="number" min={1} placeholder="Enter quantity" {...field} />
+                    <Input
+                      type="number"
+                      min={1}
+                      placeholder="Enter quantity"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
-           
-
-          
-
-           
 
             <SheetFooter>
               <Button type="submit">Add to Stock</Button>
@@ -110,3 +121,29 @@ const SheetStock = () => {
 };
 
 export default SheetStock;
+
+// const [stockItems, setStockItems] = useState<StockDetail[]>([]);
+// const [totalPrice, setTotalPrice] = useState(0);
+// const [stockId, setStockId] = useState("");
+// const [createdAt, setCreatedAt] = useState("");
+
+// const handleAddToStock = () => {
+//   const newStockId = uuidv4();
+//   setStockId(newStockId);
+//   setCreatedAt(new Date().toISOString());
+//   const total = stockItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
+//   setTotalPrice(total);
+// };
+
+// const handleSave = async () => {
+//   await StockAPI.createStock({
+//     stockId,
+//     totalPrice,
+//     createdAt,
+//     stockDetail: stockItems.map(item => ({
+//       productId: item.productId,
+//       quantity: item.quantity,
+//       price: item.price
+//     }))
+//   });
+// };

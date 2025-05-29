@@ -11,7 +11,7 @@ export const useWatchData = () => {
 export const useWatchDelete = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (id: number) => {
+    mutationFn: async (id: string) => {
       return await watchAPI.deleteWatch(id);
     },
     onSuccess: () => {

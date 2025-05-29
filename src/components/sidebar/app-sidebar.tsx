@@ -60,8 +60,24 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "List",
-          url: "/admin/category/",
+          title: "Gender",
+          url: "/admin/category/gender",
+        },
+        {
+          title: "Brand",
+          url: "/admin/category/brand",
+        },
+        {
+          title: "Movement",
+          url: "/admin/category/movement",
+        },
+        {
+          title: "Band Material",
+          url: "/admin/category/bandMaterial",
+        },
+        {
+          title: "Case Material",
+          url: "/admin/category/caseMaterial",
         },
       ],
     },
