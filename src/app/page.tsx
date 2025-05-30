@@ -1,5 +1,4 @@
-export const page = () => {
-  return (
-    <div>Xin Chào MÀY</div>
-  )
+import { redirect } from "next/navigation";
+export default function Home() {
+  redirect("/admin");
 }
