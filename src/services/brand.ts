@@ -1,27 +1,52 @@
 import { instanceAxios } from "@/lib/instantceAxios";
 
 export const brandAPI = {
-  getBrand: async () => {
-    const response = await instanceAxios.get("brand");
-    return response.data;
+  getAllBrands: async () => {
+    const res = await instanceAxios.get('/brand');
+    return res.data;
   },
-  createBrand: async (data: {
-    name: string;
-    image: string;
-    country: string;
-  }) => {
-    const response = await instanceAxios.post("brand", data);
-    return response.data;
+
+  getBrandById: async (brandId: string) => {
+    const res = await instanceAxios.get(`/brand/${brandId}`);
+    return res.data;
   },
-  deleteBrand: async (id: string) => {
-    const response = await instanceAxios.delete(`brand/${id}`);
-    return response.data;
+
+  createBrand: async (brand: { name: string; country: string }, logo: File) => {
+    const formData = new FormData();
+    formData.append('name', brand.name);
+    formData.append('country', brand.country);
+    formData.append('file', logo);
+
+    const res = await instanceAxios.post('/brand/create', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return res.data;
   },
+
   updateBrand: async (
-    id: string,
-    data: { name: string; image: string; country: string }
+    brandId: string | undefined,
+    brand: { name: string; country: string },
+    logo?: File,
   ) => {
-    const response = await instanceAxios.put(`brand/${id}`, data);
-    return response.data;
+    const formData = new FormData();
+    formData.append('name', brand.name);
+    formData.append('country', brand.country);
+    if (logo) {
+      formData.append('logo', logo);
+    }
+
+    const res = await instanceAxios.patch(`/brand/update/${brandId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return res.data;
+  },
+
+  deleteBrand: async (brandId: string) => {
+    const res = await instanceAxios.delete(`/brand/delete/${brandId}`);
+    return res.data;
   },
 };

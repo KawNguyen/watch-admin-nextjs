@@ -28,8 +28,8 @@ import {
 import { ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import React from "react";
-import SheetCategory from "@/components/sheet-gender";
-import SheetMovement from "@/components/sheet-movement";
+import SheetCategory from "@/components/sheet/sheet-gender";
+import SheetMovement from "@/components/sheet/sheet-movement";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];

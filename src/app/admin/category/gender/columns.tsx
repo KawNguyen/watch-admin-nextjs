@@ -3,7 +3,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import SheetCategory from "@/components/sheet-gender";
+import SheetCategory from "@/components/sheet/sheet-gender";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/components/provider/provider";
 import {

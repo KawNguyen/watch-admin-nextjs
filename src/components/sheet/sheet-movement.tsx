@@ -7,9 +7,9 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "./ui/sheet";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+} from "../ui/sheet";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import {
   Form,
   FormControl,
@@ -17,47 +17,46 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
+} from "../ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { queryClient } from "./provider/provider";
+import { queryClient } from "../provider/provider";
 import { Edit } from "lucide-react";
 import { Movement } from "@/app/admin/category/movement/columns";
 import { MovementAPI } from "@/services/movement";
-import { BandMaterialAPI } from "@/services/band-material";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
 });
-interface SheetBandMaterialProps {
-  bandmaterialId?: string;
+interface SheetMovementProps {
+  movementId?: string;
   initialData?: Movement;
   mode?: "create" | "update";
 }
-const SheetBandMaterial = ({
+const SheetMovement = ({
   mode,
-  bandmaterialId,
+  movementId,
   initialData,
-}: SheetBandMaterialProps) => {
+}: SheetMovementProps) => {
   const [open, setOpen] = useState(false);
   const mutation = useMutation({
     mutationFn: async (data: any) => {
       if (mode === "create") {
-        return BandMaterialAPI.createBandMaterial(data);
+        return MovementAPI.createMovement(data);
       }
-      return BandMaterialAPI.updateBandMaterial(bandmaterialId!, data);
+      return MovementAPI.updateMovement(movementId!, data);
     },
     onSuccess: () => {
       toast.success(
         mode === "create"
-          ? "Band material created successfully"
-          : "Band material updated successfully"
+          ? "Movement created successfully"
+          : "Movement updated successfully"
       );
       form.reset();
-      queryClient.invalidateQueries({ queryKey: ["bandmaterial"] });
+      queryClient.invalidateQueries({ queryKey: ["movement"] });
     },
     onSettled: () => {
       setOpen(false);
@@ -125,4 +124,4 @@ const SheetBandMaterial = ({
     </Sheet>
   );
 };
-export default SheetBandMaterial;
+export default SheetMovement;

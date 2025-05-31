@@ -16,7 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import SheetWatch from "@/components/sheet-watch";
+import SheetWatch from "@/components/sheet/sheet-watch";
 import { Button } from "@/components/ui/button";
 import { Loader2, Trash2 } from "lucide-react";
 import { Gender } from "@/types";

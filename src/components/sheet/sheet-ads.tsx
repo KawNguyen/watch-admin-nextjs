@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -7,9 +7,9 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "./ui/sheet";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+} from "../ui/sheet";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import {
   Form,
   FormControl,
@@ -17,69 +17,58 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
+} from "../ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Textarea } from "./ui/textarea";
-import { Watch } from "@/app/admin/watch/columns";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import { useCallback, useState } from "react";
+import { Textarea } from "../ui/textarea";
 import { useDropzone } from "react-dropzone";
 import { CloudUpload, Edit, X } from "lucide-react";
+import { Ads } from "@/app/admin/ads/columns";
 import { useMutation } from "@tanstack/react-query";
-import { watchAPI } from "@/services/watch";
-import { queryClient } from "./provider/provider";
+import { adsAPI } from "@/services/ads";
 import { toast } from "sonner";
-import { Gender } from "@/types";
-import Image from "next/image";
+import { queryClient } from "../provider/provider";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  image: z.string().min(1, "Image URL is required"),
-  brand: z.string().min(1, "Brand is required"),
-  price: z.string().min(0, "Price must be positive"),
-  gender: z.nativeEnum(Gender, {
-    errorMap: () => ({ message: "Please select a valid gender" }),
-  }),
-  description: z.string().optional(),
+  description: z.string().min(1, "Description is required"),
+  image: z.string().min(1, "Image is required"),
+  link: z.string().url("Must be a valid URL"),
+  startDate: z.string().min(1, "Start date is required"),
+  endDate: z.string().min(1, "End date is required"),
 });
 
-interface SheetWatchProps {
-  watchId?: string;
-  initialData?: Watch;
+interface SheetAdsProps {
+  adsId?: string;
+  initialData?: Ads;
   mode?: "create" | "update";
 }
-const SheetWatch = ({ watchId, initialData, mode }: SheetWatchProps) => {
+
+const SheetAds = ({ mode, adsId, initialData }: SheetAdsProps) => {
   const [open, setOpen] = useState(false);
   const mutation = useMutation({
     mutationFn: async (data: any) => {
       if (mode === "create") {
-        return watchAPI.createWatch(data);
+        return adsAPI.createAds(data);
       }
-      return watchAPI.updateWatch(watchId!, data);
+      return adsAPI.updateAds(adsId!, data);
     },
     onSuccess: () => {
       toast.success(
         mode === "create"
-          ? "Watch created successfully"
-          : "Watch updated successfully"
+          ? "Advertisement created successfully"
+          : "Advertisement updated successfully"
       );
       form.reset();
-      queryClient.invalidateQueries({ queryKey: ["watch"] });
+      queryClient.invalidateQueries({ queryKey: ["ads"] });
     },
     onSettled: () => {
       setOpen(false);
     },
     onError: (error) => {
-      toast.error(error.message || "Something went wrong");
+      console.log(error);
+      toast.error("Something went wrong");
     },
   });
   const form = useForm<z.infer<typeof formSchema>>({
@@ -88,25 +77,24 @@ const SheetWatch = ({ watchId, initialData, mode }: SheetWatchProps) => {
       mode === "create"
         ? {
             name: "",
-            image: "",
-            brand: "",
-            price: "",
             description: "",
-            gender: Gender.Unisex,
+            image: "",
+            link: "",
+            startDate: "",
+            endDate: "",
           }
         : {
             name: initialData?.name || "",
-            image: initialData?.image || "",
-            brand: initialData?.brand || "",
-            price: initialData?.price || "",
-            gender: initialData?.gender || Gender.Unisex,
             description: initialData?.description || "",
+            image: initialData?.image || "",
+            link: initialData?.link || "",
+            startDate: initialData?.startDate || "",
+            endDate: initialData?.endDate || "",
           },
   });
   function onSubmit(values: z.infer<typeof formSchema>) {
     mutation.mutate(values);
   }
-
   const [preview, setPreview] = useState<string | null>(null);
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -128,7 +116,7 @@ const SheetWatch = ({ watchId, initialData, mode }: SheetWatchProps) => {
   });
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild className="ml-4">
+      <SheetTrigger asChild>
         {mode === "create" ? (
           <Button>Create</Button>
         ) : (
@@ -139,7 +127,7 @@ const SheetWatch = ({ watchId, initialData, mode }: SheetWatchProps) => {
       </SheetTrigger>
       <SheetContent>
         <SheetHeader className="mb-8">
-          <SheetTitle>Watch</SheetTitle>
+          <SheetTitle>Advertisement</SheetTitle>
         </SheetHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
@@ -152,70 +140,8 @@ const SheetWatch = ({ watchId, initialData, mode }: SheetWatchProps) => {
                     Name <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Watch name" {...field} />
+                    <Input placeholder="Advertisement name" {...field} />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="brand"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Brand <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="Brand name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Price <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input type="number" placeholder="0" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="gender"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Gender <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select gender" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {Object.values(Gender).map((gender) => (
-                        <SelectItem key={gender} value={gender}>
-                          {gender}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -230,19 +156,23 @@ const SheetWatch = ({ watchId, initialData, mode }: SheetWatchProps) => {
                     Description <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Watch description" {...field} />
+                    <Textarea
+                      placeholder="Advertisement description"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="image"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Image <span className="text-red-500">*</span>
+                    Banner Image <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <div
@@ -263,14 +193,12 @@ const SheetWatch = ({ watchId, initialData, mode }: SheetWatchProps) => {
                   </FormControl>
                   {preview && (
                     <div className="relative mt-2 w-32 h-32">
-                      <Image
+                      <img
                         src={preview}
                         alt="Preview"
-                        width={32}
-                        height={32}
                         className="rounded-md object-cover w-full h-full"
                       />
-                      <Button
+                      <button
                         type="button"
                         onClick={() => {
                           setPreview(null);
@@ -279,7 +207,7 @@ const SheetWatch = ({ watchId, initialData, mode }: SheetWatchProps) => {
                         className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 text-white"
                       >
                         <X className="h-4 w-4" />
-                      </Button>
+                      </button>
                     </div>
                   )}
                   <FormMessage />
@@ -287,8 +215,62 @@ const SheetWatch = ({ watchId, initialData, mode }: SheetWatchProps) => {
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="link"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Link URL <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="url"
+                      placeholder="https://example.com"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="startDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Start Date <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="endDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      End Date <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <SheetFooter>
-              <Button type="submit">Add Watch</Button>
+              <Button type="submit">Create Advertisement</Button>
             </SheetFooter>
           </form>
         </Form>
@@ -296,5 +278,4 @@ const SheetWatch = ({ watchId, initialData, mode }: SheetWatchProps) => {
     </Sheet>
   );
 };
-
-export default SheetWatch;
+export default SheetAds;

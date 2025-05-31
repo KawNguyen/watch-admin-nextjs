@@ -1,7 +1,6 @@
 import { queryClient } from "@/components/provider/provider";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { userAPI } from "@/services/user";
 import {
   Dialog,
   DialogContent,

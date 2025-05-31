@@ -16,18 +16,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import SheetBrand from "@/components/sheet-brand";
+import SheetBrand from "@/components/sheet/sheet-brand";
 import Image from "next/image";
 import { brandAPI } from "@/services/brand";
+import { BrandTypes } from "@/types/brand";
 
-export type Brand = {
-  id: string;
-  name: string;
-  image: string;
-  country: string;
-};
-
-export const columns: ColumnDef<Brand>[] = [
+export const columns: ColumnDef<BrandTypes>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -56,10 +50,10 @@ export const columns: ColumnDef<Brand>[] = [
     cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
   },
   {
-    accessorKey: "image",
-    header: "Image",
+    accessorKey: "logo",
+    header: "Logo",
     cell: ({ row }) => {
-      const imageUrl = row.getValue("image");
+      const imageUrl = row.getValue("logo");
       return (
         <div className="relative h-16 w-16">
           {imageUrl ? (
@@ -83,15 +77,15 @@ export const columns: ColumnDef<Brand>[] = [
   {
     accessorKey: "country",
     header: "Country",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("country")}</div>,
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("country")}</div>
+    ),
   },
-
   {
-    // id: "actions",
     header: "Actions",
     cell: ({ row }) => {
       const mutationDelete = useMutation({
-        mutationFn: (id: string) => brandAPI.deleteBrand(id),
+        mutationFn: (brandId: string) => brandAPI.deleteBrand(brandId),
         onSuccess: () => {
           toast.success("Brand deleted successfully");
           queryClient.invalidateQueries({ queryKey: ["brand"] });
@@ -104,9 +98,10 @@ export const columns: ColumnDef<Brand>[] = [
       return (
         <div className="flex items-center gap-2">
           <SheetBrand
-            mode="update"
-            brandId={row.original.id}
+            mode="edit"
+            brandId={row.original.brandId}
             initialData={row.original}
+            logoData={row.original.logo}
           />
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -131,7 +126,7 @@ export const columns: ColumnDef<Brand>[] = [
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
-                  onClick={() => mutationDelete.mutate(row.original.id)}
+                  onClick={() => mutationDelete.mutate(row.original.brandId)}
                   disabled={mutationDelete.isPending}
                 >
                   {mutationDelete.isPending ? (

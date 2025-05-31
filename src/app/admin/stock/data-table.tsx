@@ -28,7 +28,7 @@ import {
 import { ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import React from "react";
-import SheetStock from "@/components/sheet-stock";
+import SheetStock from "@/components/sheet/sheet-stock";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];

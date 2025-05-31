@@ -17,7 +17,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { genderAPI } from "@/services/gender";
-import SheetMovement from "@/components/sheet-movement";
+import SheetMovement from "@/components/sheet/sheet-movement";
 import { MovementAPI } from "@/services/movement";
 
 export type Movement = {

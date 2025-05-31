@@ -7,9 +7,9 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "./ui/sheet";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+} from "../ui/sheet";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import {
   Form,
   FormControl,
@@ -17,57 +17,47 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
+} from "../ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
 import { useMutation } from "@tanstack/react-query";
-import {  GenderA } from "@/app/admin/category/gender/columns";
 import { toast } from "sonner";
-import { queryClient } from "./provider/provider";
+import { queryClient } from "../provider/provider";
 import { Edit } from "lucide-react";
-import { Gender } from "@/types";
-import { genderAPI } from "@/services/gender";
+import { Movement } from "@/app/admin/category/movement/columns";
+import { MovementAPI } from "@/services/movement";
+import { BandMaterialAPI } from "@/services/band-material";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  gender: z.nativeEnum(Gender, {
-    required_error: "Please select a gender",
-  }),
 });
-interface SheetGenderProps {
-  genderId?: string;
-  initialData?: GenderA;
+interface SheetBandMaterialProps {
+  bandmaterialId?: string;
+  initialData?: Movement;
   mode?: "create" | "update";
 }
-const SheetCategory = ({
+const SheetBandMaterial = ({
   mode,
-  genderId,
+  bandmaterialId,
   initialData,
-}: SheetGenderProps) => {
+}: SheetBandMaterialProps) => {
   const [open, setOpen] = useState(false);
   const mutation = useMutation({
     mutationFn: async (data: any) => {
       if (mode === "create") {
-        return genderAPI.createGender(data);
+        return BandMaterialAPI.createBandMaterial(data);
       }
-      return genderAPI.updateGender(genderId!, data);
+      return BandMaterialAPI.updateBandMaterial(bandmaterialId!, data);
     },
     onSuccess: () => {
       toast.success(
         mode === "create"
-          ? "Gender created successfully"
-          : "Gender updated successfully"
+          ? "Band material created successfully"
+          : "Band material updated successfully"
       );
       form.reset();
-      queryClient.invalidateQueries({ queryKey: ["gender"] });
+      queryClient.invalidateQueries({ queryKey: ["bandmaterial"] });
     },
     onSettled: () => {
       setOpen(false);
@@ -83,11 +73,9 @@ const SheetCategory = ({
       mode === "create"
         ? {
             name: "",
-            gender: Gender.Male,
           }
         : {
             name: initialData?.name || "",
-            gender: (initialData?.gender as Gender) || Gender.Male,
           },
   });
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -107,7 +95,7 @@ const SheetCategory = ({
       </SheetTrigger>
       <SheetContent>
         <SheetHeader className="mb-8">
-          <SheetTitle>Category</SheetTitle>
+          <SheetTitle>Movement</SheetTitle>
         </SheetHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
@@ -126,32 +114,6 @@ const SheetCategory = ({
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="gender"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Gender <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select gender" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Object.values(Gender).map((gender) => (
-                          <SelectItem key={gender} value={gender}>
-                            {gender}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <SheetFooter>
               <Button type="submit">
                 {mode === "create" ? "Create" : "Update"}
@@ -163,4 +125,4 @@ const SheetCategory = ({
     </Sheet>
   );
 };
-export default SheetCategory;
+export default SheetBandMaterial;

@@ -18,7 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import SheetCoupon from "@/components/sheet-coupon";
+import SheetCoupon from "@/components/sheet/sheet-coupon";
 import { Loader2, Trash2 } from "lucide-react";
 export type Coupon = {
   id: string;

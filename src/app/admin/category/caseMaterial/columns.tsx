@@ -17,7 +17,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { CaseMaterialAPI } from "@/services/case-material";
-import SheetCaseMaterial from "@/components/sheet-case-material";
+import SheetCaseMaterial from "@/components/sheet/sheet-case-material";
 
 
 export type CaseMaterial = {

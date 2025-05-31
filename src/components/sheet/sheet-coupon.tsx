@@ -7,9 +7,9 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "./ui/sheet";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+} from "../ui/sheet";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import {
   Form,
   FormControl,
@@ -17,7 +17,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
+} from "../ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -27,12 +27,12 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
+} from "../ui/select";
 import { Coupon } from "@/app/admin/coupon/columns";
 import { useMutation } from "@tanstack/react-query";
 import { couponAPI } from "@/services/coupon";
 import { toast } from "sonner";
-import { queryClient } from "./provider/provider";
+import { queryClient } from "../provider/provider";
 import { Status } from "@/types";
 import { Edit } from "lucide-react";
 
