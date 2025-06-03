@@ -30,6 +30,7 @@ import {
 import { BrandTypes } from "@/types/brand";
 import { Edit } from "lucide-react";
 import ImageDropzone from "../image-dropzone";
+import { queryClient } from "../provider/provider";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -84,23 +85,9 @@ const SheetBrand = ({
       form.reset();
       setLogo(null);
       setPreview(null);
+      queryClient.invalidateQueries({ queryKey: ["brand"] });
     },
     onError: () => toast.error("Something went wrong"),
-  });
-
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setPreview(imageUrl);
-      setLogo(file);
-    }
-  }, []);
-
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    accept: { "image/*": [".jpeg", ".jpg", ".png", ".gif"] },
-    maxFiles: 1,
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
@@ -148,7 +135,7 @@ const SheetBrand = ({
                 )}
               />
               <ImageDropzone
-                preview={preview}
+                preview={preview || undefined}
                 onDrop={(file) => {
                   const imageUrl = URL.createObjectURL(file);
                   setPreview(imageUrl);
@@ -159,13 +146,23 @@ const SheetBrand = ({
                   setLogo(null);
                 }}
               />
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={mutation.isPending}
-              >
-                {mutation.isPending ? "Creating..." : "Create Brand"}
-              </Button>
+              {mode === "create" ? (
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={mutation.isPending}
+                >
+                  {mutation.isPending ? "Creating..." : "Create Brand"}
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={mutation.isPending}
+                >
+                  {mutation.isPending ? "Updating..." : "Update Brand"}
+                </Button>
+              )}
             </form>
           </Form>
         </Card>

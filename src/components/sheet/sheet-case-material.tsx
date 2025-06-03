@@ -25,29 +25,29 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { queryClient } from "../provider/provider";
 import { Edit } from "lucide-react";
-import { Movement } from "@/app/admin/category/movement/columns";
-import { CaseMaterialAPI } from "@/services/case-material";
+import { materialAPI } from "@/services/material";
+import { CaseMaterial } from "@/app/admin/category/case-material/columns";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
 });
 interface SheetCaseMaterialProps {
-  casematerialId?: string;
-  initialData?: Movement;
+  materialId?: string;
+  initialData?: CaseMaterial;
   mode?: "create" | "update";
 }
 const SheetCaseMaterial = ({
   mode,
-  casematerialId,
+  materialId,
   initialData,
 }: SheetCaseMaterialProps) => {
   const [open, setOpen] = useState(false);
   const mutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: { name: string }) => {
       if (mode === "create") {
-        return CaseMaterialAPI.createCaseMaterial(data);
+        return materialAPI.createMaterial(data);
       }
-      return CaseMaterialAPI.updateCaseMaterial(casematerialId!, data);
+      return materialAPI.updateMaterial(materialId!, data);
     },
     onSuccess: () => {
       toast.success(
@@ -56,7 +56,7 @@ const SheetCaseMaterial = ({
           : "Case material updated successfully"
       );
       form.reset();
-      queryClient.invalidateQueries({ queryKey: ["casematerial"] });
+      queryClient.invalidateQueries({ queryKey: ["material"] });
     },
     onSettled: () => {
       setOpen(false);

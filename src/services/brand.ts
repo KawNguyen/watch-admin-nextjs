@@ -34,7 +34,7 @@ export const brandAPI = {
     formData.append('name', brand.name);
     formData.append('country', brand.country);
     if (logo) {
-      formData.append('logo', logo);
+      formData.append('file', logo);
     }
 
     const res = await instanceAxios.patch(`/brand/update/${brandId}`, formData, {

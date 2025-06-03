@@ -16,12 +16,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { genderAPI } from "@/services/gender";
 import SheetMovement from "@/components/sheet/sheet-movement";
-import { MovementAPI } from "@/services/movement";
+import { movementAPI } from "@/services/movement";
 
 export type Movement = {
-  id: string;
+  movementId: string;
   name: string;
 };
 
@@ -57,7 +56,8 @@ export const columns: ColumnDef<Movement>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const mutationDelete = useMutation({
-        mutationFn: (id: string) => MovementAPI.deleteMovement(id),
+        mutationFn: (movementId: string) =>
+          movementAPI.deleteMovement(movementId),
         onSuccess: () => {
           toast.success("Movement deleted successfully");
           queryClient.invalidateQueries({ queryKey: ["movement"] });
@@ -70,7 +70,7 @@ export const columns: ColumnDef<Movement>[] = [
         <div className="flex items-center gap-2">
           <SheetMovement
             mode="update"
-            movementId={row.original.id}
+            movementId={row.original.movementId}
             initialData={row.original}
           />
           <AlertDialog>
@@ -96,7 +96,7 @@ export const columns: ColumnDef<Movement>[] = [
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
-                  onClick={() => mutationDelete.mutate(row.original.id)}
+                  onClick={() => mutationDelete.mutate(row.original.movementId)}
                   disabled={mutationDelete.isPending}
                 >
                   {mutationDelete.isPending ? (

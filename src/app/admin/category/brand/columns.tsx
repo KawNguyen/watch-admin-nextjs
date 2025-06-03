@@ -63,6 +63,7 @@ export const columns: ColumnDef<BrandTypes>[] = [
               fill
               sizes="(max-width: 64px) 100vw, 64px"
               className="rounded-md object-cover"
+              priority
               unoptimized
             />
           ) : (

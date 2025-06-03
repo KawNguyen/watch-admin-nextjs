@@ -7,7 +7,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
         {children}
         <div className="mt-6 text-center">
           <p className="text-sm text-muted-foreground">
-            © 2024 Admin Dashboard. Tất cả quyền được bảo lưu.
+            © 2024 Admin Dashboard. All rights reserved.
           </p>
         </div>
       </div>

@@ -1,10 +1,10 @@
 "use client";
+import { useMovement } from "@/queries/use-movement";
 import { columns } from "./columns";
 import DataTable from "./data-table";
-import { useMovementData } from "@/hooks/use-Movement";
 
 export default function MovementPage() {
-  const { data,isLoading } = useMovementData();
+  const { data, isLoading } = useMovement();
   return (
     <div className="container mx-auto py-10">
       <DataTable columns={columns} isLoading={isLoading} data={data || []} />

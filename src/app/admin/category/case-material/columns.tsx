@@ -3,7 +3,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import SheetCategory from "@/components/sheet/sheet-gender";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/components/provider/provider";
 import {
@@ -17,16 +16,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Gender } from "@/types";
-import { genderAPI } from "@/services/gender";
+import { materialAPI } from "@/services/material";
+import SheetCaseMaterial from "@/components/sheet/sheet-case-material";
 
-export type GenderA = {
-  id: string;
+export type CaseMaterial = {
+  materialId: string;
   name: string;
-  gender: Gender;
 };
 
-export const columns: ColumnDef<GenderA>[] = [
+export const columns: ColumnDef<CaseMaterial>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -55,32 +53,23 @@ export const columns: ColumnDef<GenderA>[] = [
     cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
   },
   {
-    accessorKey: "gender",
-    header: "Gender",
-    cell: ({ row }) => (
-      <div className="text-left">{row.getValue("gender")}</div>
-    ),
-  },
-  {
-    // id: "actions",
     header: "Actions",
     cell: ({ row }) => {
       const mutationDelete = useMutation({
-        mutationFn: (id: string) => genderAPI.deleteGender(id),
+        mutationFn: (id: string) => materialAPI.deleteMaterial(id),
         onSuccess: () => {
-          toast.success("Category deleted successfully");
-          queryClient.invalidateQueries({ queryKey: ["category"] });
+          toast.success("Case material deleted successfully");
+          queryClient.invalidateQueries({ queryKey: ["material"] });
         },
         onError: () => {
-          toast.error("Failed to delete category");
+          toast.error("Failed to delete case material");
         },
       });
-
       return (
         <div className="flex items-center gap-2">
-          <SheetCategory
+          <SheetCaseMaterial
             mode="update"
-            genderId={row.original.id}
+            materialId={row.original.materialId}
             initialData={row.original}
           />
           <AlertDialog>
@@ -106,7 +95,7 @@ export const columns: ColumnDef<GenderA>[] = [
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
-                  onClick={() => mutationDelete.mutate(row.original.id)}
+                  onClick={() => mutationDelete.mutate(row.original.materialId)}
                   disabled={mutationDelete.isPending}
                 >
                   {mutationDelete.isPending ? (

@@ -1,5 +1,5 @@
 "use client";
-import { useBrand } from "@/hooks/use-brand";
+import { useBrand } from "@/queries/use-brand";
 import { columns } from "./columns";
 import DataTable from "./data-table";
 
