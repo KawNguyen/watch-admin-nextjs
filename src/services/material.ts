@@ -1,6 +1,6 @@
 import { instanceAxios } from "@/lib/instantceAxios";
 
-export const materialAPI = {
+export const materialApi = {
   getAllMaterials: async () => {
     const res = await instanceAxios.get("/material");
     return res.data;

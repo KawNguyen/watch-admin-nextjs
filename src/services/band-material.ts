@@ -1,6 +1,6 @@
 import { instanceAxios } from "@/lib/instantceAxios";
 
-export const bandMaterialAPI = {
+export const bandmaterialApi = {
   getAllBandMaterials: async () => {
     const res = await instanceAxios.get("/band-material");
     return res.data;

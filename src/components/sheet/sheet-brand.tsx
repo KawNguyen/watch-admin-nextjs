@@ -4,7 +4,7 @@ import React, { useState, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { brandAPI } from "@/services/brand";
+import { brandApi } from "@/services/brand";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 import { z } from "zod";
@@ -71,10 +71,10 @@ const SheetBrand = ({
     mutationFn: async (data: { name: string; country: string }) => {
       if (mode === "create") {
         if (!logo) throw new Error("Logo is required");
-        return brandAPI.createBrand(data, logo);
+        return brandApi.createBrand(data, logo);
       }
       if (!brandId) throw new Error("Brand ID is required");
-      return brandAPI.updateBrand(brandId, data, logo || undefined);
+      return brandApi.updateBrand(brandId, data, logo || undefined);
     },
     onSuccess: () => {
       toast.success(

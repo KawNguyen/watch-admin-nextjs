@@ -1,6 +1,6 @@
 import { instanceAxios } from "@/lib/instantceAxios";
 
-export const brandAPI = {
+export const brandApi = {
   getAllBrands: async () => {
     const res = await instanceAxios.get('/brand');
     return res.data;

@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import SheetBrand from "@/components/sheet/sheet-brand";
 import Image from "next/image";
-import { brandAPI } from "@/services/brand";
+import { brandApi } from "@/services/brand";
 import { BrandTypes } from "@/types/brand";
 
 export const columns: ColumnDef<BrandTypes>[] = [
@@ -86,7 +86,7 @@ export const columns: ColumnDef<BrandTypes>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const mutationDelete = useMutation({
-        mutationFn: (brandId: string) => brandAPI.deleteBrand(brandId),
+        mutationFn: (brandId: string) => brandApi.deleteBrand(brandId),
         onSuccess: () => {
           toast.success("Brand deleted successfully");
           queryClient.invalidateQueries({ queryKey: ["brand"] });

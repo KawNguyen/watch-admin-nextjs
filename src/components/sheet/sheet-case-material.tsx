@@ -25,7 +25,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { queryClient } from "../provider/provider";
 import { Edit } from "lucide-react";
-import { materialAPI } from "@/services/material";
+import { materialApi } from "@/services/material";
 import { CaseMaterial } from "@/app/admin/category/case-material/columns";
 
 const formSchema = z.object({
@@ -45,9 +45,9 @@ const SheetCaseMaterial = ({
   const mutation = useMutation({
     mutationFn: async (data: { name: string }) => {
       if (mode === "create") {
-        return materialAPI.createMaterial(data);
+        return materialApi.createMaterial(data);
       }
-      return materialAPI.updateMaterial(materialId!, data);
+      return materialApi.updateMaterial(materialId!, data);
     },
     onSuccess: () => {
       toast.success(

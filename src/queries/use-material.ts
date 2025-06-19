@@ -1,10 +1,10 @@
-import { materialAPI } from "@/services/material";
+import { materialApi } from "@/services/material";
 import { useQuery } from "@tanstack/react-query";
 
-export const useMaterial = () => {
+export const useMaterials = () => {
   return useQuery({
-    queryKey: ["material"],
-    queryFn: async () => await materialAPI.getAllMaterials(),
+    queryKey: ["materials"],
+    queryFn: materialApi.getAllMaterials,
     refetchOnWindowFocus: false,
     retry: 1,
   });

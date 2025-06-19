@@ -1,10 +1,11 @@
-import { brandAPI } from "@/services/brand";
+import { brandApi } from "@/services/brand";
 import { useQuery } from "@tanstack/react-query";
 
-export const useBrand = () => {
+export const useBrands = () => {
   return useQuery({
-    queryKey: ["brand"],
-    queryFn: () => brandAPI.getAllBrands(),
-    staleTime: 1000 * 60 * 60,
+    queryKey: ["brands"],
+    queryFn: brandApi.getAllBrands,
+    refetchOnWindowFocus: false,
+    retry: 1,
   });
 };

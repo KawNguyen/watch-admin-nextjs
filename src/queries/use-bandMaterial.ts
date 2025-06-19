@@ -1,10 +1,10 @@
-import { bandMaterialAPI } from "@/services/band-material";
+import { bandmaterialApi } from "@/services/band-material";
 import { useQuery } from "@tanstack/react-query";
 
-export const useBandMaterial = () => {
+export const useBandMaterials = () => {
   return useQuery({
-    queryKey: ["bandMaterial"],
-    queryFn: async () => await bandMaterialAPI.getAllBandMaterials(),
+    queryKey: ["bandMaterials"],
+    queryFn: bandmaterialApi.getAllBandMaterials,
     refetchOnWindowFocus: false,
     retry: 1,
   });

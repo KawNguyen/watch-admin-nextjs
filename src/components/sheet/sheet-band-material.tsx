@@ -26,8 +26,8 @@ import { toast } from "sonner";
 import { queryClient } from "../provider/provider";
 import { Edit } from "lucide-react";
 import { Movement } from "@/app/admin/category/movement/columns";
-import { MovementAPI } from "@/services/movement";
-import { BandMaterialAPI } from "@/services/band-material";
+import { movementApi } from "@/services/movement";
+import { bandmaterialApi } from "@/services/band-material";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -46,9 +46,9 @@ const SheetBandMaterial = ({
   const mutation = useMutation({
     mutationFn: async (data: any) => {
       if (mode === "create") {
-        return BandMaterialAPI.createBandMaterial(data);
+        return bandmaterialApi.createBandMaterial(data);
       }
-      return BandMaterialAPI.updateBandMaterial(bandmaterialId!, data);
+      return bandmaterialApi.updateBandMaterial(bandmaterialId!, data);
     },
     onSuccess: () => {
       toast.success(

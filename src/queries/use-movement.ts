@@ -1,12 +1,11 @@
-import { movementAPI } from "@/services/movement";
+import { movementApi } from "@/services/movement";
 import { useQuery } from "@tanstack/react-query";
 
-export const useMovement = () => {
+export const useMovements = () => {
   return useQuery({
-    queryKey: ["movement"],
-    queryFn: async () => await movementAPI.getAllMovements(),
+    queryKey: ["movements"],
+    queryFn: movementApi.getAllMovements,
     refetchOnWindowFocus: false,
     retry: 1,
   });
 };
-

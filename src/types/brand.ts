@@ -10,3 +10,13 @@ export interface BrandTypes {
   logo: string;
 }
 
+export interface Brand {
+  id: string;
+  name: string;
+  code: string;
+  slug: string;
+  logo: string;
+  country: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import { queryClient } from "../provider/provider";
 import { Edit } from "lucide-react";
 import { Movement } from "@/app/admin/category/movement/columns";
-import { movementAPI } from "@/services/movement";
+import { movementApi } from "@/services/movement";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -45,9 +45,9 @@ const SheetMovement = ({
   const mutation = useMutation({
     mutationFn: async (data: { name: string }) => {
       if (mode === "create") {
-        return movementAPI.createMovement(data);
+        return movementApi.createMovement(data);
       }
-      return movementAPI.updateMovement(movementId!, data);
+      return movementApi.updateMovement(movementId!, data);
     },
     onSuccess: () => {
       toast.success(

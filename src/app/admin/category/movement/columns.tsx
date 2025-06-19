@@ -17,7 +17,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import SheetMovement from "@/components/sheet/sheet-movement";
-import { movementAPI } from "@/services/movement";
+import { movementApi } from "@/services/movement";
 
 export type Movement = {
   movementId: string;
@@ -57,7 +57,7 @@ export const columns: ColumnDef<Movement>[] = [
     cell: ({ row }) => {
       const mutationDelete = useMutation({
         mutationFn: (movementId: string) =>
-          movementAPI.deleteMovement(movementId),
+          movementApi.deleteMovement(movementId),
         onSuccess: () => {
           toast.success("Movement deleted successfully");
           queryClient.invalidateQueries({ queryKey: ["movement"] });

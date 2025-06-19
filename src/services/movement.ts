@@ -1,6 +1,6 @@
 import { instanceAxios } from "@/lib/instantceAxios";
 
-export const movementAPI = {
+export const movementApi = {
   getAllMovements: async () => {
     const res = await instanceAxios.get("/movement");
     return res.data;

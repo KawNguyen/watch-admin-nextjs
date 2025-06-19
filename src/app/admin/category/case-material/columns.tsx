@@ -16,7 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { materialAPI } from "@/services/material";
+import { materialApi } from "@/services/material";
 import SheetCaseMaterial from "@/components/sheet/sheet-case-material";
 
 export type CaseMaterial = {
@@ -56,7 +56,7 @@ export const columns: ColumnDef<CaseMaterial>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const mutationDelete = useMutation({
-        mutationFn: (id: string) => materialAPI.deleteMaterial(id),
+        mutationFn: (id: string) => materialApi.deleteMaterial(id),
         onSuccess: () => {
           toast.success("Case material deleted successfully");
           queryClient.invalidateQueries({ queryKey: ["material"] });
