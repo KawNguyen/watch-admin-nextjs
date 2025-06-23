@@ -13,6 +13,8 @@ import {
   Warehouse,
   PackagePlus,
   View,
+  Newspaper,
+  PackageX,
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
@@ -174,6 +176,30 @@ const data = {
         {
           title: "List",
           url: "/admin/coupon",
+        },
+      ],
+    },
+    {
+      title: "Manage Blogs",
+      url: "#",
+      icon: Newspaper,
+      isActive: true,
+      items: [
+        {
+          title: "List",
+          url: "/admin/blog",
+        },
+      ],
+    },
+    {
+      title: "Manage Refund",
+      url: "#",
+      icon: PackageX ,
+      isActive: true,
+      items: [
+        {
+          title: "List",
+          url: "/admin/return",
         },
       ],
     },
