@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,7 +22,7 @@ import {
 import { watchSchema } from "@/schema/watch";
 import { Gender } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, Pencil, Plus } from "lucide-react";
+import { CloudUpload, Eye, Pencil, Plus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -44,6 +45,8 @@ import { Material } from "@/types/material";
 import { useMutation } from "@tanstack/react-query";
 import { watchApi } from "@/services/watch";
 import { Loader2 } from "lucide-react";
+import { FileUpload, FileUploadDropzone, FileUploadTrigger, FileUploadList, FileUploadItem, FileUploadItemPreview, FileUploadItemMetadata, FileUploadItemDelete } from "@/components/ui/file-upload";
+import { instanceAxios } from "@/lib/instantceAxios";
 
 interface WatchFormProps {
   mode: "create" | "edit" | "view";
@@ -52,20 +55,6 @@ interface WatchFormProps {
 }
 
 type WatchFormValues = z.infer<typeof watchSchema>;
-
-// const defaultValues = {
-//   name: "",
-//   description: "",
-//   gender: Gender.MEN,
-//   diameter: 0,
-//   waterResistance: 0,
-//   warranty: 0,
-//   price: 0,
-//   brandId: "",
-//   materialId: "",
-//   bandMaterialId: "",
-//   movementId: "",
-// };
 
 export default function WatchForm({ mode, watchData }: WatchFormProps) {
   const mutation = useMutation({
@@ -92,18 +81,43 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
       materialId: isEditMode && watchData ? watchData.materialId : "",
       bandMaterialId: isEditMode && watchData ? watchData.bandMaterialId : "",
       movementId: isEditMode && watchData ? watchData.movementId : "",
+      files: []
     },
   });
 
-  const onSubmit = (values: WatchFormValues) => {
-    mutation.mutate(values, {
-      onSuccess: () => {
-        form.reset();
-      },
-      onError: (error) => {
-        console.error("Error creating watch:", error);
-      },
+  const handleUpload = async (files: File[]) => {
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append("files", file);
     });
+
+    try {
+      const response = await instanceAxios.post(
+        "/cloudinary/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log(response)
+    } catch (error) {
+      console.error("Error uploading files:", error);
+    }
+  };
+
+  const onSubmit = async (values: WatchFormValues) => {
+    const { files, ...watchData } = values
+
+    // mutation.mutate(values, {
+    //   onSuccess: () => {
+    //     form.reset();
+    //   },
+    //   onError: (error) => {
+    //     console.error("Error creating watch:", error);
+    //   },
+    // });
   };
 
   return (
@@ -124,26 +138,85 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
           </Button>
         )}
       </SheetTrigger>
-      <SheetContent className="sm:max-w-lg">
+      <SheetContent className="sm:max-w-lg hide-scrollbar">
         <SheetHeader>
           <SheetTitle>
             {isEditMode
               ? "Edit Watch"
               : isViewMode
-              ? "View Watch"
-              : "Create Watch"}
+                ? "View Watch"
+                : "Create Watch"}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
               ? "Edit the details of the watch."
               : isViewMode
-              ? "View the details of the watch."
-              : "Fill in the details to create a new watch."}
+                ? "View the details of the watch."
+                : "Fill in the details to create a new watch."}
           </SheetDescription>
         </SheetHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="files"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Attachments</FormLabel>
+                  <FormControl>
+                    <FileUpload
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      onUpload={handleUpload}
+                      accept="image/*"
+                      maxFiles={2}
+                      maxSize={5 * 1024 * 1024}
+                      onFileReject={(_, message) => {
+                        form.setError("files", {
+                          message,
+                        });
+                      }}
+                      multiple
+                    >
+                      <FileUploadDropzone className="flex-row flex-wrap border-dotted text-center">
+                        <CloudUpload className="size-4" />
+                        Drag and drop or
+                        <FileUploadTrigger asChild>
+                          <Button variant="link" size="sm" className="p-0">
+                            choose files
+                          </Button>
+                        </FileUploadTrigger>
+                        to upload
+                      </FileUploadDropzone>
+                      <FileUploadList>
+                        {field.value.map((file, index) => (
+                          <FileUploadItem key={index} value={file}>
+                            <FileUploadItemPreview />
+                            <FileUploadItemMetadata />
+                            <FileUploadItemDelete asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-7"
+                              >
+                                <X />
+                                <span className="sr-only">Delete</span>
+                              </Button>
+                            </FileUploadItemDelete>
+                          </FileUploadItem>
+                        ))}
+                      </FileUploadList>
+                    </FileUpload>
+                  </FormControl>
+                  <FormDescription>
+                    Upload up to 2 images up to 5MB each.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="name"

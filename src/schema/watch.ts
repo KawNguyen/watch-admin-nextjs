@@ -24,4 +24,12 @@ export const watchSchema = z.object({
   materialId: z.string().min(1, "Material is required"),
   bandMaterialId: z.string().min(1, "Band material is required"),
   movementId: z.string().min(1, "Movement is required"),
+  files: z
+    .array(z.custom<File>())
+    .min(1, "Please select at least one file")
+    .max(8, "Please select up to 2 files")
+    .refine((files) => files.every((file) => file.size <= 5 * 1024 * 1024), {
+      message: "File size must be less than 5MB",
+      path: ["files"],
+    }),
 });
