@@ -62,7 +62,7 @@ export const data = {
       items: [
         {
           title: "List",
-          url: "/admin/watch",
+          url: "/admin/watches",
         },
       ],
     },

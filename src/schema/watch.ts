@@ -9,7 +9,7 @@ export const watchSchema = z.object({
   }),
   diameter: z.coerce
     .number()
-    .min(1, "Diameter must be greater than 0")
+    .min(0, "Diameter must be greater than 0")
     .optional(),
   waterResistance: z.coerce
     .number()
@@ -19,7 +19,7 @@ export const watchSchema = z.object({
     .number()
     .min(0, "Warranty must be 0 or greater")
     .optional(),
-  price: z.coerce.number().min(0, "Price must be 0 or greater"),
+  price: z.coerce.number().min(1, "Price must be 1 or greater"),
   brandId: z.string().min(1, "Brand is required"),
   materialId: z.string().min(1, "Material is required"),
   bandMaterialId: z.string().min(1, "Band material is required"),
@@ -27,7 +27,7 @@ export const watchSchema = z.object({
   files: z
     .array(z.custom<File>())
     .min(1, "Please select at least one file")
-    .max(8, "Please select up to 2 files")
+    .max(8, "Please select up to 8 files")
     .refine((files) => files.every((file) => file.size <= 5 * 1024 * 1024), {
       message: "File size must be less than 5MB",
       path: ["files"],

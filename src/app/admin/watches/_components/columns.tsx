@@ -31,21 +31,21 @@ export const columns: ColumnDef<Watch>[] = [
   },
   {
     header: "Poster",
-    // cell: ({ row }: { row: any }) => {
-    //   return (
-    //     <div className="h-12 w-8">
-    //       <AspectRatio ratio={2 / 3}>
-    //         <Image
-    //           src={row.original.poster[0].url}
-    //           alt={row.original.name}
-    //           width={40}
-    //           height={60}
-    //           className="object-cover"
-    //         />
-    //       </AspectRatio>
-    //     </div>
-    //   );
-    // },
+    cell: ({ row }: { row: any }) => {
+      return (
+        <div className="h-24 w-24">
+          <AspectRatio ratio={1}>
+            <Image
+              src={row.original.images[0]?.absolute_url}
+              alt={row.original.name}
+              width={40}
+              height={60}
+              className="object-cover"
+            />
+          </AspectRatio>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "name",

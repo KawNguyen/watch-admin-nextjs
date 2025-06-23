@@ -27,6 +27,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 import {
   Select,
   SelectContent,
@@ -45,8 +46,18 @@ import { Material } from "@/types/material";
 import { useMutation } from "@tanstack/react-query";
 import { watchApi } from "@/services/watch";
 import { Loader2 } from "lucide-react";
-import { FileUpload, FileUploadDropzone, FileUploadTrigger, FileUploadList, FileUploadItem, FileUploadItemPreview, FileUploadItemMetadata, FileUploadItemDelete } from "@/components/ui/file-upload";
+import {
+  FileUpload,
+  FileUploadDropzone,
+  FileUploadTrigger,
+  FileUploadList,
+  FileUploadItem,
+  FileUploadItemPreview,
+  FileUploadItemMetadata,
+  FileUploadItemDelete,
+} from "@/components/ui/file-upload";
 import { instanceAxios } from "@/lib/instantceAxios";
+import { queryClient } from "@/components/provider/provider";
 
 interface WatchFormProps {
   mode: "create" | "edit" | "view";
@@ -57,6 +68,8 @@ interface WatchFormProps {
 type WatchFormValues = z.infer<typeof watchSchema>;
 
 export default function WatchForm({ mode, watchData }: WatchFormProps) {
+  const [images, setImages] = useState([]);
+  const [isOpen,setIsOpen]=useState(false);
   const mutation = useMutation({
     mutationFn: watchApi.create,
   });
@@ -81,7 +94,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
       materialId: isEditMode && watchData ? watchData.materialId : "",
       bandMaterialId: isEditMode && watchData ? watchData.bandMaterialId : "",
       movementId: isEditMode && watchData ? watchData.movementId : "",
-      files: []
+      files: [],
     },
   });
 
@@ -93,7 +106,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
 
     try {
       const response = await instanceAxios.post(
-        "/cloudinary/upload",
+        `/cloudinary/upload?width=${500}&height=${500}`,
         formData,
         {
           headers: {
@@ -101,27 +114,41 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
           },
         }
       );
-      console.log(response)
+      setImages(response.data.data);
     } catch (error) {
       console.error("Error uploading files:", error);
     }
   };
 
   const onSubmit = async (values: WatchFormValues) => {
-    const { files, ...watchData } = values
+    const { files, ...watchData } = values;
+    void files
+    const newImages = images?.map((image: any) => ({
+      public_id: image.public_id,
+      absolute_url: image.secure_url,
+    }));
 
-    // mutation.mutate(values, {
-    //   onSuccess: () => {
-    //     form.reset();
-    //   },
-    //   onError: (error) => {
-    //     console.error("Error creating watch:", error);
-    //   },
-    // });
+    mutation.mutate(
+      {
+        ...watchData,
+        images: newImages,
+      },
+      {
+        onSuccess: () => {
+          form.reset();
+          setImages([]);
+          queryClient.invalidateQueries({ queryKey: ["watches"] });
+          setIsOpen(false)
+        },
+        onError: (error) => {
+          console.error("Error creating watch:", error);
+        },
+      }
+    );
   };
 
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         {isEditMode ? (
           <Button variant="ghost" size="icon">
@@ -144,15 +171,15 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
             {isEditMode
               ? "Edit Watch"
               : isViewMode
-                ? "View Watch"
-                : "Create Watch"}
+              ? "View Watch"
+              : "Create Watch"}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
               ? "Edit the details of the watch."
               : isViewMode
-                ? "View the details of the watch."
-                : "Fill in the details to create a new watch."}
+              ? "View the details of the watch."
+              : "Fill in the details to create a new watch."}
           </SheetDescription>
         </SheetHeader>
 
