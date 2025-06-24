@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
 import Providers from "@/components/provider/provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,6 +31,18 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>{children}</Providers>
+        <Toaster
+          toastOptions={{
+            unstyled: true,
+            classNames: {
+              error: "bg-red-400 w-full h-10  text-white p-4 rounded-lg",
+              success:
+                "flex w-full h-10 p-4 py-2 rounded-lg gap-x-2 bg-green-400 text-white",
+              warning: "text-yellow-400 w-full h-10  p-4 rounded-lg",
+              info: "bg-blue-400 w-full h-10  text-white p-4 rounded-lg",
+            },
+          }}
+        />
       </body>
     </html>
   );

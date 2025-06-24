@@ -29,13 +29,6 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { z } from "zod";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { UserRole } from "@/types/user";
 
 interface UserFormProps {
