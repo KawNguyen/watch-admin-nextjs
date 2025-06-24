@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-
 export function middleware(request: NextRequest) {
   const isLoginPage = request.nextUrl.pathname.startsWith("/sign-in");
   const isRootes = request.nextUrl.pathname.startsWith("/admin");
@@ -15,7 +14,6 @@ export function middleware(request: NextRequest) {
   if (isRootes && !isAuthenticated) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
-
 
   return NextResponse.next();
 }

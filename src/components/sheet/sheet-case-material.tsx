@@ -53,7 +53,7 @@ const SheetCaseMaterial = ({
       toast.success(
         mode === "create"
           ? "Case material created successfully"
-          : "Case material updated successfully"
+          : "Case material updated successfully",
       );
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["material"] });

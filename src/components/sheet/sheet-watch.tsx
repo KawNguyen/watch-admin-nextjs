@@ -70,7 +70,7 @@ const SheetWatch = ({ watchId, initialData, mode }: SheetWatchProps) => {
       toast.success(
         mode === "create"
           ? "Watch created successfully"
-          : "Watch updated successfully"
+          : "Watch updated successfully",
       );
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["watch"] });
@@ -117,7 +117,7 @@ const SheetWatch = ({ watchId, initialData, mode }: SheetWatchProps) => {
         form.setValue("image", imageUrl);
       }
     },
-    [form]
+    [form],
   );
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

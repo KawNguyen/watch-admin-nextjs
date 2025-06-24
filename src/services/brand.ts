@@ -2,7 +2,7 @@ import { instanceAxios } from "@/lib/instantceAxios";
 
 export const brandApi = {
   getAllBrands: async () => {
-    const res = await instanceAxios.get('/brand');
+    const res = await instanceAxios.get("/brand");
     return res.data;
   },
 
@@ -13,13 +13,13 @@ export const brandApi = {
 
   createBrand: async (brand: { name: string; country: string }, logo: File) => {
     const formData = new FormData();
-    formData.append('name', brand.name);
-    formData.append('country', brand.country);
-    formData.append('file', logo);
+    formData.append("name", brand.name);
+    formData.append("country", brand.country);
+    formData.append("file", logo);
 
-    const res = await instanceAxios.post('/brand/create', formData, {
+    const res = await instanceAxios.post("/brand/create", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
     return res.data;
@@ -31,17 +31,21 @@ export const brandApi = {
     logo?: File,
   ) => {
     const formData = new FormData();
-    formData.append('name', brand.name);
-    formData.append('country', brand.country);
+    formData.append("name", brand.name);
+    formData.append("country", brand.country);
     if (logo) {
-      formData.append('file', logo);
+      formData.append("file", logo);
     }
 
-    const res = await instanceAxios.patch(`/brand/update/${brandId}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
+    const res = await instanceAxios.patch(
+      `/brand/update/${brandId}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       },
-    });
+    );
     return res.data;
   },
 

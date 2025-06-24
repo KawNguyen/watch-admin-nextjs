@@ -18,11 +18,11 @@ export const materialApi = {
 
   updateMaterial: async (
     materialId: string | undefined,
-    material: { name: string }
+    material: { name: string },
   ) => {
     const res = await instanceAxios.patch(
       `/material/update/${materialId}`,
-      material
+      material,
     );
     return res.data;
   },

@@ -1,4 +1,16 @@
-import { BanknoteArrowDownIcon, ChartBarStackedIcon, GalleryVerticalEndIcon, MegaphoneIcon, MessageSquareTextIcon, PackagePlusIcon, ScrollTextIcon, UsersIcon, ViewIcon, WarehouseIcon, WatchIcon } from "lucide-react";
+import {
+  BanknoteArrowDownIcon,
+  ChartBarStackedIcon,
+  GalleryVerticalEndIcon,
+  MegaphoneIcon,
+  MessageSquareTextIcon,
+  PackagePlusIcon,
+  ScrollTextIcon,
+  UsersIcon,
+  ViewIcon,
+  WarehouseIcon,
+  WatchIcon,
+} from "lucide-react";
 
 export const data = {
   user: {
@@ -22,7 +34,7 @@ export const data = {
       items: [
         {
           title: "List",
-          url: "/user",
+          url: "/admin/user",
         },
       ],
     },

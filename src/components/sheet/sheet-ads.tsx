@@ -58,7 +58,7 @@ const SheetAds = ({ mode, adsId, initialData }: SheetAdsProps) => {
       toast.success(
         mode === "create"
           ? "Advertisement created successfully"
-          : "Advertisement updated successfully"
+          : "Advertisement updated successfully",
       );
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["ads"] });
@@ -105,7 +105,7 @@ const SheetAds = ({ mode, adsId, initialData }: SheetAdsProps) => {
         form.setValue("image", imageUrl);
       }
     },
-    [form]
+    [form],
   );
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

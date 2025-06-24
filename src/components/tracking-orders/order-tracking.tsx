@@ -161,7 +161,7 @@ export const OrderTracking = () => {
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const order = orders.find(
-      (o) => o.orderNumber.toLowerCase() === searchQuery.toLowerCase()
+      (o) => o.orderNumber.toLowerCase() === searchQuery.toLowerCase(),
     );
     if (order) {
       setSelectedOrder(order);
@@ -339,7 +339,7 @@ export const OrderTracking = () => {
                   </p>
                   <p className="text-gray-500">
                     {new Date(
-                      selectedOrder.estimatedDelivery
+                      selectedOrder.estimatedDelivery,
                     ).toLocaleDateString()}
                   </p>
                 </div>

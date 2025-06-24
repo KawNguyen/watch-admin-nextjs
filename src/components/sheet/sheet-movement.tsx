@@ -53,7 +53,7 @@ const SheetMovement = ({
       toast.success(
         mode === "create"
           ? "Movement created successfully"
-          : "Movement updated successfully"
+          : "Movement updated successfully",
       );
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["movement"] });

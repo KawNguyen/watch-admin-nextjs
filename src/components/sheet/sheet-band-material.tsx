@@ -54,7 +54,7 @@ const SheetBandMaterial = ({
       toast.success(
         mode === "create"
           ? "Band material created successfully"
-          : "Band material updated successfully"
+          : "Band material updated successfully",
       );
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["bandmaterial"] });

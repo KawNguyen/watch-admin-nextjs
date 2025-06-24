@@ -80,7 +80,7 @@ const SheetBrand = ({
       toast.success(
         mode === "create"
           ? "Brand created successfully"
-          : "Brand updated successfully"
+          : "Brand updated successfully",
       );
       form.reset();
       setLogo(null);

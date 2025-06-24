@@ -69,7 +69,7 @@ type WatchFormValues = z.infer<typeof watchSchema>;
 
 export default function WatchForm({ mode, watchData }: WatchFormProps) {
   const [images, setImages] = useState([]);
-  const [isOpen,setIsOpen]=useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const mutation = useMutation({
     mutationFn: watchApi.create,
   });
@@ -112,7 +112,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
       setImages(response.data.data);
     } catch (error) {
@@ -122,7 +122,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
 
   const onSubmit = async (values: WatchFormValues) => {
     const { files, ...watchData } = values;
-    void files
+    void files;
     const newImages = images?.map((image: any) => ({
       public_id: image.public_id,
       absolute_url: image.secure_url,
@@ -138,12 +138,12 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
           form.reset();
           setImages([]);
           queryClient.invalidateQueries({ queryKey: ["watches"] });
-          setIsOpen(false)
+          setIsOpen(false);
         },
         onError: (error) => {
           console.error("Error creating watch:", error);
         },
-      }
+      },
     );
   };
 
@@ -171,15 +171,15 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
             {isEditMode
               ? "Edit Watch"
               : isViewMode
-              ? "View Watch"
-              : "Create Watch"}
+                ? "View Watch"
+                : "Create Watch"}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
               ? "Edit the details of the watch."
               : isViewMode
-              ? "View the details of the watch."
-              : "Fill in the details to create a new watch."}
+                ? "View the details of the watch."
+                : "Fill in the details to create a new watch."}
           </SheetDescription>
         </SheetHeader>
 
@@ -385,7 +385,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                             >
                               {bandMaterial.name}
                             </SelectItem>
-                          )
+                          ),
                         )}
                       </SelectContent>
                     </Select>

@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { useMutation } from "@tanstack/react-query";
-import {  GenderA } from "@/app/admin/category/gender/columns";
+import { GenderA } from "@/app/admin/category/gender/columns";
 import { toast } from "sonner";
 import { queryClient } from "../provider/provider";
 import { Edit } from "lucide-react";
@@ -47,11 +47,7 @@ interface SheetGenderProps {
   initialData?: GenderA;
   mode?: "create" | "update";
 }
-const SheetCategory = ({
-  mode,
-  genderId,
-  initialData,
-}: SheetGenderProps) => {
+const SheetCategory = ({ mode, genderId, initialData }: SheetGenderProps) => {
   const [open, setOpen] = useState(false);
   const mutation = useMutation({
     mutationFn: async (data: any) => {
@@ -64,7 +60,7 @@ const SheetCategory = ({
       toast.success(
         mode === "create"
           ? "Gender created successfully"
-          : "Gender updated successfully"
+          : "Gender updated successfully",
       );
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["gender"] });

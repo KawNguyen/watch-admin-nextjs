@@ -209,7 +209,7 @@ export const mockReviews = [
 export const ReviewManagement = () => {
   const [selectedPostId, setSelectedPostId] = useState(mockPosts[0].id);
   const postReviews = mockReviews.filter(
-    (review) => review.postId === selectedPostId
+    (review) => review.postId === selectedPostId,
   );
   const renderStars = (rating: number) => {
     return (

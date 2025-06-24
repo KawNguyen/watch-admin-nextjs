@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import { StockDetail } from "@/app/admin/stock/columns";
 import { StockAPI } from "@/services/stock";
 

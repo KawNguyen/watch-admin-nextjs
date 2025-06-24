@@ -62,7 +62,7 @@ const SheetCoupon = ({ mode, couponId, initialData }: SheetCouponProps) => {
       toast.success(
         mode === "create"
           ? "Coupon created successfully"
-          : "Coupon updated successfully"
+          : "Coupon updated successfully",
       );
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["coupon"] });
