@@ -1,13 +1,52 @@
-"use client";
-import { useMaterials } from "@/queries/use-material";
-import { columns } from "./columns";
-import DataTable from "./data-table";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
 
-export default function CaseMaterialPage() {
-  const { data, isLoading } = useMaterials();
+import { Metadata } from "next";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
+import CaseMaterialsDataTable from "./_components/case-material-data-table";
+import CaseMaterialForm from "./_components/case-material-form";
+
+
+export const metadata: Metadata = {
+  title: "Admin | Watches",
+  description: "Manage watches in the admin panel",
+};
+
+export default async function CaseMaterialsPage() {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["materials"],
+    queryFn: () =>
+      import("@/queries/use-material").then((mod) => mod.useMaterials()),
+  });
+
   return (
-    <div className="container mx-auto py-10">
-      <DataTable columns={columns} isLoading={isLoading} data={data || []} />
-    </div>
+    <Card>
+      <CardHeader>
+        <div className="w-full flex items-center justify-between">
+          <div>
+            <CardTitle>Watches</CardTitle>
+            <CardDescription>Manage watches</CardDescription>
+          </div>
+
+          <CaseMaterialForm mode="create" />
+        </div>
+      </CardHeader>
+      <CardContent>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <CaseMaterialsDataTable/>
+        </HydrationBoundary>
+      </CardContent>
+    </Card>
   );
 }

@@ -35,10 +35,12 @@ export default function RootLayout({
           toastOptions={{
             unstyled: true,
             classNames: {
-              error: "bg-red-400 w-full h-10  text-white p-4 rounded-lg",
+              error:
+                "flex w-full h-20 p-4 py-2 rounded-lg gap-x-2 bg-red-500 text-black",
               success:
                 "flex w-full h-10 p-4 py-2 rounded-lg gap-x-2 bg-green-400 text-white",
-              warning: "text-yellow-400 w-full h-10  p-4 rounded-lg",
+              warning:
+                "flex w-full h-10 p-4 py-2 rounded-lg gap-x-2 bg-yellow-400 text-black",
               info: "bg-blue-400 w-full h-10  text-white p-4 rounded-lg",
             },
           }}

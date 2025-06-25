@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
@@ -6,25 +7,16 @@ import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/components/provider/provider";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import SheetBrand from "@/app/admin/category/brand/_components/brand-form";
-import Image from "next/image";
-import { brandApi } from "@/services/brand";
-import { BrandTypes } from "@/types/brand";
-import BrandForm from "@/app/admin/category/brand/_components/brand-form";
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
-import { useState } from "react";
-
-export const columns: ColumnDef<BrandTypes>[] = [
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { AlertDialogFooter } from "@/components/ui/alert-dialog";
+import { Material } from "@/types/material";
+import { materialApi } from "@/services/material";
+import CaseMaterialForm from "./case-material-form";
+export const columns: ColumnDef<Material>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -48,38 +40,8 @@ export const columns: ColumnDef<BrandTypes>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "logo",
-    header: "Logo",
-    cell: ({ row }) => {
-      const imageUrl = row.getValue("logo");
-      return (
-        <div className="relative h-16 w-16">
-          {imageUrl ? (
-            <Image
-              src={imageUrl as string}
-              alt={row.getValue("name")}
-              fill
-              sizes="(max-width: 64px) 100vw, 64px"
-              className="rounded-md object-cover"
-              priority
-              unoptimized
-            />
-          ) : (
-            <div className="h-full w-full bg-muted rounded-md flex items-center justify-center">
-              <span className="text-xs text-muted-foreground">No image</span>
-            </div>
-          )}
-        </div>
-      );
-    },
-  },
-  {
     accessorKey: "name",
     header: "Name",
-  },
-  {
-    accessorKey: "country",
-    header: "Country",
   },
   {
     accessorKey: "actions",
@@ -87,14 +49,14 @@ export const columns: ColumnDef<BrandTypes>[] = [
     cell: ({ row }: { row: any }) => {
       const [isDialogOpen, setIsDialogOpen] = useState(false);
       const mutationDelete = useMutation({
-        mutationFn: (brandId: string) =>
-          brandApi.deleteBrand(brandId),
+        mutationFn: (materialId: string) =>
+          materialApi.deleteMaterial(materialId),
         onSuccess: () => {
-          toast.success("Brand deleted successfully");
-          queryClient.invalidateQueries({ queryKey: ["brands"] });
+          toast.success("Case material deleted successfully");
+          queryClient.invalidateQueries({ queryKey: ["materials"] });
         },
         onError: () => {
-          toast.error("Failed to delete brand");
+          toast.error("Failed to delete case material");
         },
       });
       const handleDelete = () => {
@@ -104,12 +66,12 @@ export const columns: ColumnDef<BrandTypes>[] = [
 
       return (
         <div className="flex items-center gap-2">
-          <BrandForm mode="view" brandData={row.original} />
-          <BrandForm mode="edit" brandData={row.original} />
+          <CaseMaterialForm mode="view" caseMaterialData={row.original} />
+          <CaseMaterialForm mode="edit" caseMaterialData={row.original} />
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               {mutationDelete.isPending ? (
-                <Loader2 className="size-4 animate-spin text-red-500" />
+                <Loader2  className="size-4 animate-spin text-red-500"/>
               ) : (
                 <Trash2
                   className="size-4 text-red-500 cursor-pointer"

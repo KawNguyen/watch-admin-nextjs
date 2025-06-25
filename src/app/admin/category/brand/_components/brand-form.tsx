@@ -1,6 +1,41 @@
+"use client";
+import { queryClient } from "@/components/provider/provider";
+import { Button } from "@/components/ui/button";
+import {
+  FileUpload,
+  FileUploadDropzone,
+  FileUploadItem,
+  FileUploadItemDelete,
+  FileUploadItemMetadata,
+  FileUploadItemPreview,
+  FileUploadList,
+  FileUploadTrigger,
+} from "@/components/ui/file-upload";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { instanceAxios } from "@/lib/instantceAxios";
 import { brandSchema } from "@/schema/brand";
 import { brandApi } from "@/services/brand";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { CloudUpload, Eye, Loader2, Pencil, Plus, X } from "lucide-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -10,21 +45,248 @@ interface BrandFormProps {
   brandData?: any;
 }
 type BrandFormValues = z.infer<typeof brandSchema>;
-
 export default function BrandForm({ mode, brandData }: BrandFormProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const mutation = useMutation({
-    mutationFn: brandApi.createBrand,
-  });
+  const [images, setImages] = useState([]);
   const isEditMode = mode === "edit";
   const isViewMode = mode === "view";
+
+  const createBrandWrapper = async (data: BrandFormValues) => {
+    const brandInfo = {
+      name: data.name,
+      country: data.country,
+      image: data.image,
+    };
+    return brandApi.createBrand(brandInfo);
+  };
+
+  const updateBrandWrapper = async (data: BrandFormValues) => {
+    const brandInfo = {
+      name: data.name,
+      country: data.country,
+      image: data.image,
+    };
+    return brandApi.updateBrand(brandData._id, brandInfo);
+  };
+
+  const mutation = useMutation({
+    mutationFn: isEditMode ? updateBrandWrapper : createBrandWrapper,
+  });
   const form = useForm<BrandFormValues>({
+    resolver: zodResolver(brandSchema),
     defaultValues: {
       name: isEditMode && brandData ? brandData.name : "",
       country: isEditMode && brandData ? brandData.country : "",
-      logo: isEditMode && brandData ? brandData.logo : "",
+      image: [],
     },
   });
+  const handleUpload = async (files: File[]) => {
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append("files", file);
+    });
 
-  return <div></div>;
+    try {
+      const response = await instanceAxios.post(
+        `/cloudinary/upload-single?width=${400}&height=${400}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setImages(response.data.data);
+    } catch (error) {
+      console.error("Error uploading files:", error);
+    }
+  };
+  const onSubmit = async (values: BrandFormValues) => {
+    const { image, ...brandData } = values;
+    const newImages = images?.map((image: any) => ({
+      public_id: image.public_id,
+      absolute_url: image.secure_url,
+    }));
+
+    mutation.mutate(
+      {
+        ...brandData,
+        image: newImages,
+      },
+      {
+        onSuccess: () => {
+          form.reset();
+          setImages([]);
+          queryClient.invalidateQueries({ queryKey: ["brands"] });
+          setIsOpen(false);
+        },
+        onError: (error) => {
+          console.error("Error creating watch:", error);
+        },
+      }
+    );
+  };
+
+  return (
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
+        {isEditMode ? (
+          <Button variant="ghost" size="icon">
+            <Pencil />
+          </Button>
+        ) : isViewMode ? (
+          <Button variant="ghost" size="icon">
+            <Eye />
+          </Button>
+        ) : (
+          <Button>
+            <Plus />
+            Create
+          </Button>
+        )}
+      </SheetTrigger>
+      <SheetContent className="sm:max-w-lg hide-scrollbar">
+        <SheetHeader>
+          <SheetTitle>
+            {isEditMode
+              ? "Edit Watch"
+              : isViewMode
+              ? "View Watch"
+              : "Create Watch"}
+          </SheetTitle>
+          <SheetDescription>
+            {isEditMode
+              ? "Edit the details of the watch."
+              : isViewMode
+              ? "View the details of the watch."
+              : "Fill in the details to create a new watch."}
+          </SheetDescription>
+        </SheetHeader>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Attachments</FormLabel>
+                  <FormControl>
+                    <FileUpload
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      onUpload={handleUpload}
+                      accept="image/*"
+                      maxFiles={2}
+                      maxSize={5 * 1024 * 1024}
+                      onFileReject={(_, message) => {
+                        form.setError("image", {
+                          message,
+                        });
+                      }}
+                      multiple
+                    >
+                      <FileUploadDropzone className="flex-row flex-wrap border-dotted text-center">
+                        <CloudUpload className="size-4" />
+                        Drag and drop or
+                        <FileUploadTrigger asChild>
+                          <Button variant="link" size="sm" className="p-0">
+                            choose files
+                          </Button>
+                        </FileUploadTrigger>
+                        to upload
+                      </FileUploadDropzone>
+                      <FileUploadList>
+                        {field.value.map((image, index) => (
+                          <FileUploadItem key={index} value={image}>
+                            <FileUploadItemPreview />
+                            <FileUploadItemMetadata />
+                            <FileUploadItemDelete asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-7"
+                              >
+                                <X />
+                                <span className="sr-only">Delete</span>
+                              </Button>
+                            </FileUploadItemDelete>
+                          </FileUploadItem>
+                        ))}
+                      </FileUploadList>
+                    </FileUpload>
+                  </FormControl>
+                  <FormDescription>
+                    Upload up to 2 images up to 5MB each.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Name <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Brand name"
+                      {...field}
+                      disabled={isViewMode}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* <div className="grid grid-cols-3 gap-4"> */}
+            <FormField
+              control={form.control}
+              name="country"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Country <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Brand country"
+                      {...field}
+                      disabled={isViewMode}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <SheetFooter>
+              {!isViewMode && (
+                <Button type="submit" disabled={mutation.isPending}>
+                  {mutation.isPending ? (
+                    <Loader2 className="animate-spin" />
+                  ) : isEditMode ? (
+                    <>
+                      <Pencil />
+                      Update
+                    </>
+                  ) : (
+                    <>
+                      <Plus />
+                      Create
+                    </>
+                  )}
+                </Button>
+              )}
+            </SheetFooter>
+          </form>
+        </Form>
+      </SheetContent>
+    </Sheet>
+  );
 }

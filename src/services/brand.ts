@@ -11,11 +11,11 @@ export const brandApi = {
     return res.data;
   },
 
-  createBrand: async (brand: { name: string; country: string }, logo: File) => {
+  createBrand: async (brand: { name: string; country: string; image: any }) => {
     const formData = new FormData();
     formData.append("name", brand.name);
     formData.append("country", brand.country);
-    formData.append("file", logo);
+    formData.append("file", brand.image);
 
     const res = await instanceAxios.post("/brand/create", formData, {
       headers: {
@@ -28,7 +28,7 @@ export const brandApi = {
   updateBrand: async (
     brandId: string | undefined,
     brand: { name: string; country: string },
-    logo?: File,
+    logo?: any
   ) => {
     const formData = new FormData();
     formData.append("name", brand.name);
@@ -44,7 +44,7 @@ export const brandApi = {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      },
+      }
     );
     return res.data;
   },
