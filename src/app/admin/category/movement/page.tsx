@@ -27,7 +27,7 @@ export default async function MovementsPage() {
       <CardHeader>
         <div className="w-full flex items-center justify-between">
           <div>
-            <CardTitle>Movment</CardTitle>
+            <CardTitle>Movement</CardTitle>
             <CardDescription>Manage movements</CardDescription>
           </div>
 
