@@ -5,8 +5,6 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-
-import { Metadata } from "next";
 import {
   dehydrate,
   HydrationBoundary,
@@ -14,11 +12,6 @@ import {
 } from "@tanstack/react-query";
 import MovementsDataTable from "./_components/movement-data-table";
 import MovementForm from "./_components/movement-form";
-
-export const metadata: Metadata = {
-  title: "Admin | Watches",
-  description: "Manage watches in the admin panel",
-};
 
 export default async function MovementsPage() {
   const queryClient = new QueryClient();
@@ -34,8 +27,8 @@ export default async function MovementsPage() {
       <CardHeader>
         <div className="w-full flex items-center justify-between">
           <div>
-            <CardTitle>Watches</CardTitle>
-            <CardDescription>Manage watches</CardDescription>
+            <CardTitle>Movment</CardTitle>
+            <CardDescription>Manage movements</CardDescription>
           </div>
 
           <MovementForm mode="create" />
@@ -43,7 +36,7 @@ export default async function MovementsPage() {
       </CardHeader>
       <CardContent>
         <HydrationBoundary state={dehydrate(queryClient)}>
-          <MovementsDataTable/>
+          <MovementsDataTable />
         </HydrationBoundary>
       </CardContent>
     </Card>

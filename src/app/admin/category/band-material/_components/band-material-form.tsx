@@ -61,7 +61,7 @@ export default function BandMaterialForm({
         setIsOpen(false);
       },
       onError: (error: any) => {
-        console.error("Error creating watch:", error);
+        console.error("Error creating band material:", error);
       },
     });
   };
@@ -79,7 +79,7 @@ export default function BandMaterialForm({
         ) : (
           <Button>
             <Plus />
-            Create
+            Create Band Material
           </Button>
         )}
       </SheetTrigger>
@@ -87,17 +87,17 @@ export default function BandMaterialForm({
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? "Edit Watch"
+              ? "Edit Band Material"
               : isViewMode
-              ? "View Watch"
-              : "Create Watch"}
+              ? "View Band Material"
+              : "Create Band Material"}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
-              ? "Edit the details of the watch."
+              ? "Edit the details of the band material."
               : isViewMode
-              ? "View the details of the watch."
-              : "Fill in the details to create a new watch."}
+              ? "View the details of the band material."
+              : "Fill in the details to create a new band material."}
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>

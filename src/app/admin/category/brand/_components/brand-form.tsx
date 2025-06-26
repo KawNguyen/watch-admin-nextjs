@@ -121,7 +121,7 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
           setIsOpen(false);
         },
         onError: (error) => {
-          console.error("Error creating watch:", error);
+          console.error("Error creating brand:", error);
         },
       }
     );
@@ -141,7 +141,7 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
         ) : (
           <Button>
             <Plus />
-            Create
+            Create Brand
           </Button>
         )}
       </SheetTrigger>
@@ -149,17 +149,17 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? "Edit Watch"
+              ? "Edit Brand"
               : isViewMode
-              ? "View Watch"
-              : "Create Watch"}
+              ? "View Brand"
+              : "Create Brand"}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
-              ? "Edit the details of the watch."
+              ? "Edit the details of the brand."
               : isViewMode
-              ? "View the details of the watch."
-              : "Fill in the details to create a new watch."}
+              ? "View the details of the brand."
+              : "Fill in the details to create a new brand."}
           </SheetDescription>
         </SheetHeader>
 

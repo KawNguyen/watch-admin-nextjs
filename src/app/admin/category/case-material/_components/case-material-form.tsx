@@ -60,7 +60,7 @@ export default function CaseMaterialForm({
         setIsOpen(false);
       },
       onError: (error: any) => {
-        console.error("Error creating watch:", error);
+        console.error("Error creating material:", error);
       },
     });
   };
@@ -78,7 +78,7 @@ export default function CaseMaterialForm({
         ) : (
           <Button>
             <Plus />
-            Create
+            Create Case Material
           </Button>
         )}
       </SheetTrigger>
@@ -86,17 +86,17 @@ export default function CaseMaterialForm({
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? "Edit Watch"
+              ? "Edit case material"
               : isViewMode
-              ? "View Watch"
-              : "Create Watch"}
+              ? "View case material"
+              : "Create case material"}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
-              ? "Edit the details of the watch."
+              ? "Edit the details of the case material."
               : isViewMode
-              ? "View the details of the watch."
-              : "Fill in the details to create a new watch."}
+              ? "View the details of the case material."
+              : "Fill in the details to create a new case material."}
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>

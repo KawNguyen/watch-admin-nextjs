@@ -34,8 +34,8 @@ export default async function BrandsPage() {
       <CardHeader>
         <div className="w-full flex items-center justify-between">
           <div>
-            <CardTitle>Watches</CardTitle>
-            <CardDescription>Manage watches</CardDescription>
+            <CardTitle>Brands</CardTitle>
+            <CardDescription>Manage brands</CardDescription>
           </div>
 
           <BrandForm mode="create" />

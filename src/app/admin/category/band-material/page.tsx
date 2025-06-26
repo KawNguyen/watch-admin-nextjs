@@ -35,8 +35,8 @@ export default async function BandMaterialsPage() {
       <CardHeader>
         <div className="w-full flex items-center justify-between">
           <div>
-            <CardTitle>Watches</CardTitle>
-            <CardDescription>Manage watches</CardDescription>
+            <CardTitle>Band Material</CardTitle>
+            <CardDescription>Manage band material</CardDescription>
           </div>
 
           <BandMaterialForm mode="create" />

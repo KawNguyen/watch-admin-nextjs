@@ -60,7 +60,7 @@ export default function MovementForm({
         setIsOpen(false);
       },
       onError: (error: any) => {
-        console.error("Error creating watch:", error);
+        console.error("Error creating movement :", error);
       },
     });
   };
@@ -78,7 +78,7 @@ export default function MovementForm({
         ) : (
           <Button>
             <Plus />
-            Create
+            Create Movement
           </Button>
         )}
       </SheetTrigger>
@@ -86,17 +86,17 @@ export default function MovementForm({
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? "Edit Watch"
+              ? "Edit Movement"
               : isViewMode
-              ? "View Watch"
-              : "Create Watch"}
+              ? "View Movement"
+              : "Create Movement"}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
-              ? "Edit the details of the watch."
+              ? "Edit the details of the movement."
               : isViewMode
-              ? "View the details of the watch."
-              : "Fill in the details to create a new watch."}
+              ? "View the details of the movement."
+              : "Fill in the details to create a new movement."}
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>

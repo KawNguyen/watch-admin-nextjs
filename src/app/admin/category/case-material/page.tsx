@@ -35,8 +35,8 @@ export default async function CaseMaterialsPage() {
       <CardHeader>
         <div className="w-full flex items-center justify-between">
           <div>
-            <CardTitle>Watches</CardTitle>
-            <CardDescription>Manage watches</CardDescription>
+            <CardTitle>Case Material</CardTitle>
+            <CardDescription>Manage case material</CardDescription>
           </div>
 
           <CaseMaterialForm mode="create" />
