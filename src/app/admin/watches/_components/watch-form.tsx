@@ -43,7 +43,7 @@ import { useMovements } from "@/queries/use-movement";
 import { Movement } from "@/types/movement";
 import { useMaterials } from "@/queries/use-material";
 import { Material } from "@/types/material";
-import { useMutation } from "@tanstack/react-query";
+import { useIsMutating, useMutation } from "@tanstack/react-query";
 import { watchApi } from "@/services/watch";
 import { Loader2 } from "lucide-react";
 import {
@@ -56,10 +56,10 @@ import {
   FileUploadItemMetadata,
   FileUploadItemDelete,
 } from "@/components/ui/file-upload";
-import { instanceAxios } from "@/lib/instantceAxios";
 import { queryClient } from "@/components/provider/provider";
 import Image from "next/image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { cloudinaryApi } from "@/services/cloudinary";
 
 interface WatchFormProps {
   mode: "create" | "edit" | "view";
@@ -70,12 +70,14 @@ interface WatchFormProps {
 type WatchFormValues = z.infer<typeof watchSchema>;
 
 export default function WatchForm({ mode, watchData }: WatchFormProps) {
-  const [images, setImages] = useState([]);
+  const isMutating = useIsMutating();
   const [isOpen, setIsOpen] = useState(false);
   const { data: brands } = useBrands();
   const { data: materials } = useMaterials();
   const { data: bandMaterials } = useBandMaterials();
   const { data: movements } = useMovements();
+  const WIDTH_IMAGE = 500,
+    HEIGHT_IMAGE = 500;
 
   const isEditMode = mode === "edit";
   const isViewMode = mode === "view";
@@ -85,6 +87,18 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
       isEditMode
         ? watchApi.update(watchData?.id as string, data)
         : watchApi.create(data),
+  });
+
+  const uploadMutation = useMutation({
+    mutationFn: ({
+      width,
+      height,
+      formData,
+    }: {
+      width: number;
+      height: number;
+      formData: FormData;
+    }) => cloudinaryApi.singleFileUpload(width, height, formData),
   });
 
   const form = useForm<WatchFormValues>({
@@ -112,16 +126,18 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
     });
 
     try {
-      const response = await instanceAxios.post(
-        `/cloudinary/upload?width=${500}&height=${500}`,
+      const response = await uploadMutation.mutateAsync({
+        width: WIDTH_IMAGE,
+        height: HEIGHT_IMAGE,
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      setImages(response.data.data);
+      });
+
+      const uploadedImages = response.data.items.map((image: any) => ({
+        ...image,
+        absolute_url: image.secure_url,
+      }));
+
+      return uploadedImages;
     } catch (error) {
       console.error("Error uploading files:", error);
     }
@@ -129,22 +145,17 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
 
   const onSubmit = async (values: WatchFormValues) => {
     const { files, ...watchData } = values;
-    void files;
 
-    const newImages = images?.map((image: any) => ({
-      public_id: image.public_id,
-      absolute_url: image.secure_url,
-    }));
+    const uploadImages = await handleUpload(files);
 
     mutation.mutate(
       {
         ...watchData,
-        images: newImages,
+        images: uploadImages,
       },
       {
         onSuccess: () => {
           form.reset();
-          setImages([]);
           queryClient.invalidateQueries({ queryKey: ["watches"] });
           setIsOpen(false);
         },
@@ -203,9 +214,9 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                     <FileUpload
                       value={field.value}
                       onValueChange={field.onChange}
-                      onUpload={handleUpload}
+                      // onUpload={handleUpload}
                       accept="image/*"
-                      maxFiles={2}
+                      maxFiles={8}
                       maxSize={5 * 1024 * 1024}
                       onFileReject={(_, message) => {
                         form.setError("files", {
@@ -245,7 +256,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                     </FileUpload>
                   </FormControl>
                   <FormDescription>
-                    Upload up to 2 images up to 5MB each.
+                    Upload up to 8 images up to 5MB each.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -550,9 +561,12 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
 
             <SheetFooter>
               {!isViewMode && (
-                <Button type="submit" disabled={mutation.isPending}>
-                  {mutation.isPending ? (
-                    <Loader2 className="animate-spin" />
+                <Button type="submit" disabled={isMutating > 0}>
+                  {isMutating ? (
+                    <>
+                      <Loader2 className="animate-spin" />
+                      Processing...
+                    </>
                   ) : isEditMode ? (
                     <>
                       <Pencil />

@@ -11,40 +11,18 @@ export const brandApi = {
     return res.data;
   },
 
-  createBrand: async (brand: { name: string; country: string; image: any }) => {
-    const formData = new FormData();
-    formData.append("name", brand.name);
-    formData.append("country", brand.country);
-    formData.append("file", brand.image);
-
-    const res = await instanceAxios.post("/brand/create", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+  createBrand: async (brandData: any) => {
+    const res = await instanceAxios.post("/brand/create", brandData, {});
     return res.data;
   },
 
   updateBrand: async (
     brandId: string | undefined,
-    brand: { name: string; country: string },
-    logo?: any
+    brandData: { name: string; country: string }
   ) => {
-    const formData = new FormData();
-    formData.append("name", brand.name);
-    formData.append("country", brand.country);
-    if (logo) {
-      formData.append("file", logo);
-    }
-
     const res = await instanceAxios.patch(
       `/brand/update/${brandId}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
+      brandData
     );
     return res.data;
   },

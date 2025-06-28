@@ -35,9 +35,6 @@ export const columns: ColumnDef<Watch>[] = [
   {
     header: "Poster",
     cell: ({ row }: { row: any }) => {
-      const images = row.getValue("images");
-      console.log("images", images);
-
       return (
         <PhotoView
           width={500}

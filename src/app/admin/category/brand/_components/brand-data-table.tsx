@@ -6,10 +6,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useBrands } from "@/queries/use-brand";
 
 export default function BrandsDataTable() {
-  const { data, isLoading } = useBrands();
+  const { data, isFetching } = useBrands();
   const brands = data?.data?.items || [];
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-10 w-[300px]" />

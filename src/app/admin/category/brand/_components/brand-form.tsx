@@ -47,30 +47,15 @@ interface BrandFormProps {
 type BrandFormValues = z.infer<typeof brandSchema>;
 export default function BrandForm({ mode, brandData }: BrandFormProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [images, setImages] = useState([]);
+  const [brandImage, setBrandImage] = useState({});
   const isEditMode = mode === "edit";
   const isViewMode = mode === "view";
 
-  const createBrandWrapper = async (data: BrandFormValues) => {
-    const brandInfo = {
-      name: data.name,
-      country: data.country,
-      image: data.image,
-    };
-    return brandApi.createBrand(brandInfo);
-  };
-
-  const updateBrandWrapper = async (data: BrandFormValues) => {
-    const brandInfo = {
-      name: data.name,
-      country: data.country,
-      image: data.image,
-    };
-    return brandApi.updateBrand(brandData._id, brandInfo);
-  };
-
   const mutation = useMutation({
-    mutationFn: isEditMode ? updateBrandWrapper : createBrandWrapper,
+    mutationFn: (data: any) =>
+      isEditMode
+        ? brandApi.updateBrand(brandData.id, data)
+        : brandApi.createBrand(data),
   });
   const form = useForm<BrandFormValues>({
     resolver: zodResolver(brandSchema),
@@ -83,7 +68,7 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
   const handleUpload = async (files: File[]) => {
     const formData = new FormData();
     files.forEach((file) => {
-      formData.append("files", file);
+      formData.append("file", file);
     });
 
     try {
@@ -96,27 +81,25 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
           },
         }
       );
-      setImages(response.data.data);
+      setBrandImage(response.data.data);
     } catch (error) {
       console.error("Error uploading files:", error);
     }
   };
   const onSubmit = async (values: BrandFormValues) => {
     const { image, ...brandData } = values;
-    const newImages = images?.map((image: any) => ({
-      public_id: image.public_id,
-      absolute_url: image.secure_url,
-    }));
+
+    void image;
 
     mutation.mutate(
       {
         ...brandData,
-        image: newImages,
+        image: brandImage,
       },
       {
         onSuccess: () => {
           form.reset();
-          setImages([]);
+          setBrandImage([]);
           queryClient.invalidateQueries({ queryKey: ["brands"] });
           setIsOpen(false);
         },
@@ -177,21 +160,21 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
                       onValueChange={field.onChange}
                       onUpload={handleUpload}
                       accept="image/*"
-                      maxFiles={2}
+                      maxFiles={1}
                       maxSize={5 * 1024 * 1024}
                       onFileReject={(_, message) => {
                         form.setError("image", {
                           message,
                         });
                       }}
-                      multiple
+                      multiple={false}
                     >
                       <FileUploadDropzone className="flex-row flex-wrap border-dotted text-center">
                         <CloudUpload className="size-4" />
                         Drag and drop or
                         <FileUploadTrigger asChild>
                           <Button variant="link" size="sm" className="p-0">
-                            choose files
+                            choose file
                           </Button>
                         </FileUploadTrigger>
                         to upload
@@ -216,9 +199,7 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
                       </FileUploadList>
                     </FileUpload>
                   </FormControl>
-                  <FormDescription>
-                    Upload up to 2 images up to 5MB each.
-                  </FormDescription>
+                  <FormDescription>Upload 1 image up to 5MB.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
