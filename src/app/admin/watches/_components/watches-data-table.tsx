@@ -6,10 +6,10 @@ import { columns } from "./columns";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function WatchesDataTable() {
-  const { data, isLoading } = useWatches();
+  const { data, isFetching } = useWatches();
   const watches = data?.data?.items || [];
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-10 w-[300px]" />
@@ -40,5 +40,11 @@ export default function WatchesDataTable() {
     );
   }
 
-  return <DataTable columns={columns} data={watches} searchKey="name" />;
+  return (
+    <DataTable
+      columns={columns}
+      data={watches}
+      searchKey="name"
+    />
+  );
 }

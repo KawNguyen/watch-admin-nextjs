@@ -58,6 +58,8 @@ import {
 } from "@/components/ui/file-upload";
 import { instanceAxios } from "@/lib/instantceAxios";
 import { queryClient } from "@/components/provider/provider";
+import Image from "next/image";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface WatchFormProps {
   mode: "create" | "edit" | "view";
@@ -70,15 +72,20 @@ type WatchFormValues = z.infer<typeof watchSchema>;
 export default function WatchForm({ mode, watchData }: WatchFormProps) {
   const [images, setImages] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const mutation = useMutation({
-    mutationFn: watchApi.create,
-  });
-  const isEditMode = mode === "edit";
-  const isViewMode = mode === "view";
   const { data: brands } = useBrands();
   const { data: materials } = useMaterials();
   const { data: bandMaterials } = useBandMaterials();
   const { data: movements } = useMovements();
+
+  const isEditMode = mode === "edit";
+  const isViewMode = mode === "view";
+
+  const mutation = useMutation({
+    mutationFn: (data: any) =>
+      isEditMode
+        ? watchApi.update(watchData?.id as string, data)
+        : watchApi.create(data),
+  });
 
   const form = useForm<WatchFormValues>({
     resolver: zodResolver(watchSchema),
@@ -112,7 +119,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        },
+        }
       );
       setImages(response.data.data);
     } catch (error) {
@@ -123,6 +130,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
   const onSubmit = async (values: WatchFormValues) => {
     const { files, ...watchData } = values;
     void files;
+
     const newImages = images?.map((image: any) => ({
       public_id: image.public_id,
       absolute_url: image.secure_url,
@@ -143,7 +151,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
         onError: (error) => {
           console.error("Error creating watch:", error);
         },
-      },
+      }
     );
   };
 
@@ -171,15 +179,15 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
             {isEditMode
               ? "Edit Watch"
               : isViewMode
-                ? "View Watch"
-                : "Create Watch"}
+              ? "View Watch"
+              : "Create Watch"}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
               ? "Edit the details of the watch."
               : isViewMode
-                ? "View the details of the watch."
-                : "Fill in the details to create a new watch."}
+              ? "View the details of the watch."
+              : "Fill in the details to create a new watch."}
           </SheetDescription>
         </SheetHeader>
 
@@ -243,6 +251,23 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                 </FormItem>
               )}
             />
+
+            {watchData?.images && watchData.images.length > 0 && (
+              <div className="grid grid-cols-4 gap-4">
+                {watchData.images.map(
+                  (image: { absolute_url: string }, index: any) => (
+                    <AspectRatio ratio={1} key={index} className="relative">
+                      <Image
+                        src={image.absolute_url}
+                        alt="Image"
+                        fill
+                        sizes="10vw"
+                      />
+                    </AspectRatio>
+                  )
+                )}
+              </div>
+            )}
 
             <FormField
               control={form.control}
@@ -385,7 +410,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                             >
                               {bandMaterial.name}
                             </SelectItem>
-                          ),
+                          )
                         )}
                       </SelectContent>
                     </Select>
