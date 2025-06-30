@@ -33,7 +33,7 @@ export const columns: ColumnDef<Watch>[] = [
     enableHiding: false,
   },
   {
-    header: "Poster",
+    header: "Image",
     cell: ({ row }: { row: any }) => {
       return (
         <PhotoView

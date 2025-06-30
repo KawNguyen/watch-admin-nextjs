@@ -4,6 +4,7 @@ import {
   GalleryVerticalEndIcon,
   MegaphoneIcon,
   MessageSquareTextIcon,
+  Newspaper,
   PackagePlusIcon,
   ScrollTextIcon,
   UsersIcon,
@@ -159,6 +160,18 @@ export const data = {
         {
           title: "List",
           url: "/admin/coupon",
+        },
+      ],
+    },
+    {
+      title: "Manage Blogs",
+      url: "#",
+      icon: Newspaper,
+      isActive: true,
+      items: [
+        {
+          title: "List",
+          url: "/admin/blog",
         },
       ],
     },
