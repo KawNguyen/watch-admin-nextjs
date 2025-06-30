@@ -1,4 +1,17 @@
-import { BanknoteArrowDownIcon, ChartBarStackedIcon, GalleryVerticalEndIcon, MegaphoneIcon, MessageSquareTextIcon, PackagePlusIcon, ScrollTextIcon, UsersIcon, ViewIcon, WarehouseIcon, WatchIcon } from "lucide-react";
+import {
+  BanknoteArrowDownIcon,
+  ChartBarStackedIcon,
+  GalleryVerticalEndIcon,
+  MegaphoneIcon,
+  MessageSquareTextIcon,
+  Newspaper,
+  PackagePlusIcon,
+  ScrollTextIcon,
+  UsersIcon,
+  ViewIcon,
+  WarehouseIcon,
+  WatchIcon,
+} from "lucide-react";
 
 export const data = {
   user: {
@@ -22,7 +35,7 @@ export const data = {
       items: [
         {
           title: "List",
-          url: "/user",
+          url: "/admin/user",
         },
       ],
     },
@@ -62,7 +75,7 @@ export const data = {
       items: [
         {
           title: "List",
-          url: "/admin/watch",
+          url: "/admin/watches",
         },
       ],
     },
@@ -147,6 +160,18 @@ export const data = {
         {
           title: "List",
           url: "/admin/coupon",
+        },
+      ],
+    },
+    {
+      title: "Manage Blogs",
+      url: "#",
+      icon: Newspaper,
+      isActive: true,
+      items: [
+        {
+          title: "List",
+          url: "/admin/blog",
         },
       ],
     },

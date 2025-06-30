@@ -26,7 +26,7 @@ export type Stock = {
 export type StockDetail = {
   productId: string;
   quantity: number;
-  price:number;
+  price: number;
 };
 
 export const columns: ColumnDef<Stock>[] = [

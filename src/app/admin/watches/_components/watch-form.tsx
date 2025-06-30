@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,11 +22,12 @@ import {
 import { watchSchema } from "@/schema/watch";
 import { Gender } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, Pencil, Plus } from "lucide-react";
+import { CloudUpload, Eye, Pencil, Plus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 import {
   Select,
   SelectContent,
@@ -41,9 +43,23 @@ import { useMovements } from "@/queries/use-movement";
 import { Movement } from "@/types/movement";
 import { useMaterials } from "@/queries/use-material";
 import { Material } from "@/types/material";
-import { useMutation } from "@tanstack/react-query";
+import { useIsMutating, useMutation } from "@tanstack/react-query";
 import { watchApi } from "@/services/watch";
 import { Loader2 } from "lucide-react";
+import {
+  FileUpload,
+  FileUploadDropzone,
+  FileUploadTrigger,
+  FileUploadList,
+  FileUploadItem,
+  FileUploadItemPreview,
+  FileUploadItemMetadata,
+  FileUploadItemDelete,
+} from "@/components/ui/file-upload";
+import { queryClient } from "@/components/provider/provider";
+import Image from "next/image";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { cloudinaryApi } from "@/services/cloudinary";
 
 interface WatchFormProps {
   mode: "create" | "edit" | "view";
@@ -53,30 +69,37 @@ interface WatchFormProps {
 
 type WatchFormValues = z.infer<typeof watchSchema>;
 
-// const defaultValues = {
-//   name: "",
-//   description: "",
-//   gender: Gender.MEN,
-//   diameter: 0,
-//   waterResistance: 0,
-//   warranty: 0,
-//   price: 0,
-//   brandId: "",
-//   materialId: "",
-//   bandMaterialId: "",
-//   movementId: "",
-// };
-
 export default function WatchForm({ mode, watchData }: WatchFormProps) {
-  const mutation = useMutation({
-    mutationFn: watchApi.create,
-  });
-  const isEditMode = mode === "edit";
-  const isViewMode = mode === "view";
+  const isMutating = useIsMutating();
+  const [isOpen, setIsOpen] = useState(false);
   const { data: brands } = useBrands();
   const { data: materials } = useMaterials();
   const { data: bandMaterials } = useBandMaterials();
   const { data: movements } = useMovements();
+  const WIDTH_IMAGE = 500,
+    HEIGHT_IMAGE = 500;
+
+  const isEditMode = mode === "edit";
+  const isViewMode = mode === "view";
+
+  const mutation = useMutation({
+    mutationFn: (data: any) =>
+      isEditMode
+        ? watchApi.update(watchData?.id as string, data)
+        : watchApi.create(data),
+  });
+
+  const uploadMutation = useMutation({
+    mutationFn: ({
+      width,
+      height,
+      formData,
+    }: {
+      width: number;
+      height: number;
+      formData: FormData;
+    }) => cloudinaryApi.multipleFileUpload(width, height, formData),
+  });
 
   const form = useForm<WatchFormValues>({
     resolver: zodResolver(watchSchema),
@@ -92,22 +115,59 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
       materialId: isEditMode && watchData ? watchData.materialId : "",
       bandMaterialId: isEditMode && watchData ? watchData.bandMaterialId : "",
       movementId: isEditMode && watchData ? watchData.movementId : "",
+      files: [],
     },
   });
 
-  const onSubmit = (values: WatchFormValues) => {
-    mutation.mutate(values, {
-      onSuccess: () => {
-        form.reset();
-      },
-      onError: (error) => {
-        console.error("Error creating watch:", error);
-      },
+  const handleUpload = async (files: File[]) => {
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append("files", file);
     });
+
+    try {
+      const response = await uploadMutation.mutateAsync({
+        width: WIDTH_IMAGE,
+        height: HEIGHT_IMAGE,
+        formData,
+      });
+
+      const uploadedImages = response.data.items.map((image: any) => ({
+        ...image,
+        absolute_url: image.secure_url,
+      }));
+
+      return uploadedImages;
+    } catch (error) {
+      console.error("Error uploading files:", error);
+    }
+  };
+
+  const onSubmit = async (values: WatchFormValues) => {
+    const { files, ...watchData } = values;
+
+    const uploadImages = await handleUpload(files);
+
+    mutation.mutate(
+      {
+        ...watchData,
+        images: uploadImages,
+      },
+      {
+        onSuccess: () => {
+          form.reset();
+          queryClient.invalidateQueries({ queryKey: ["watches"] });
+          setIsOpen(false);
+        },
+        onError: (error) => {
+          console.error("Error creating watch:", error);
+        },
+      }
+    );
   };
 
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         {isEditMode ? (
           <Button variant="ghost" size="icon">
@@ -124,7 +184,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
           </Button>
         )}
       </SheetTrigger>
-      <SheetContent className="sm:max-w-lg">
+      <SheetContent className="sm:max-w-lg hide-scrollbar">
         <SheetHeader>
           <SheetTitle>
             {isEditMode
@@ -144,6 +204,82 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="files"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Attachments</FormLabel>
+                  <FormControl>
+                    <FileUpload
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      // onUpload={handleUpload}
+                      accept="image/*"
+                      maxFiles={8}
+                      maxSize={5 * 1024 * 1024}
+                      onFileReject={(_, message) => {
+                        form.setError("files", {
+                          message,
+                        });
+                      }}
+                      multiple
+                    >
+                      <FileUploadDropzone className="flex-row flex-wrap border-dotted text-center">
+                        <CloudUpload className="size-4" />
+                        Drag and drop or
+                        <FileUploadTrigger asChild>
+                          <Button variant="link" size="sm" className="p-0">
+                            choose files
+                          </Button>
+                        </FileUploadTrigger>
+                        to upload
+                      </FileUploadDropzone>
+                      <FileUploadList>
+                        {field.value.map((file, index) => (
+                          <FileUploadItem key={index} value={file}>
+                            <FileUploadItemPreview />
+                            <FileUploadItemMetadata />
+                            <FileUploadItemDelete asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-7"
+                              >
+                                <X />
+                                <span className="sr-only">Delete</span>
+                              </Button>
+                            </FileUploadItemDelete>
+                          </FileUploadItem>
+                        ))}
+                      </FileUploadList>
+                    </FileUpload>
+                  </FormControl>
+                  <FormDescription>
+                    Upload up to 8 images up to 5MB each.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {watchData?.images && watchData.images.length > 0 && (
+              <div className="grid grid-cols-4 gap-4">
+                {watchData.images.map(
+                  (image: { absolute_url: string }, index: any) => (
+                    <AspectRatio ratio={1} key={index} className="relative">
+                      <Image
+                        src={image.absolute_url}
+                        alt="Image"
+                        fill
+                        sizes="10vw"
+                      />
+                    </AspectRatio>
+                  )
+                )}
+              </div>
+            )}
+
             <FormField
               control={form.control}
               name="name"
@@ -425,9 +561,12 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
 
             <SheetFooter>
               {!isViewMode && (
-                <Button type="submit" disabled={mutation.isPending}>
-                  {mutation.isPending ? (
-                    <Loader2 className="animate-spin" />
+                <Button type="submit" disabled={isMutating > 0}>
+                  {isMutating ? (
+                    <>
+                      <Loader2 className="animate-spin" />
+                      Processing...
+                    </>
                   ) : isEditMode ? (
                     <>
                       <Pencil />

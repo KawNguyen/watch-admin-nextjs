@@ -18,11 +18,11 @@ export const movementApi = {
 
   updateMovement: async (
     movementId: string | undefined,
-    movement: { name: string }
+    movement: { name: string },
   ) => {
     const res = await instanceAxios.patch(
       `/movement/update/${movementId}`,
-      movement
+      movement,
     );
     return res.data;
   },

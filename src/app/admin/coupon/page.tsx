@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import {  columns } from "./columns";
+import { columns } from "./columns";
 import DataTable from "./data-table";
 import { useCouponData } from "@/hooks/useCoupon";
 // const data: Coupon[] = [
@@ -14,7 +14,7 @@ import { useCouponData } from "@/hooks/useCoupon";
 //   },
 // ];
 const CouponPage = () => {
-  const{data,isLoading}=useCouponData();
+  const { data, isLoading } = useCouponData();
   return (
     <div>
       <DataTable columns={columns} isLoading={isLoading} data={data} />

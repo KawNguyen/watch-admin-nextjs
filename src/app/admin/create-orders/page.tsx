@@ -88,7 +88,9 @@ export default function CreateOrderPage() {
       return;
     }
 
-    const existingIndex = orderItems.findIndex((item) => item.product.id === product.id);
+    const existingIndex = orderItems.findIndex(
+      (item) => item.product.id === product.id,
+    );
     if (existingIndex !== -1) {
       const updated = [...orderItems];
       const existingItem = updated[existingIndex];
@@ -176,7 +178,11 @@ export default function CreateOrderPage() {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="Enter email" {...field} />
+                        <Input
+                          type="email"
+                          placeholder="Enter email"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -202,7 +208,10 @@ export default function CreateOrderPage() {
                     <FormItem>
                       <FormLabel>Address</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter delivery address" {...field} />
+                        <Input
+                          placeholder="Enter delivery address"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -213,12 +222,17 @@ export default function CreateOrderPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Add Products</CardTitle>
-                  <CardDescription>Select products and quantity to add to order</CardDescription>
+                  <CardDescription>
+                    Select products and quantity to add to order
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex gap-4 mb-4">
                     <div className="flex-1">
-                      <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+                      <Select
+                        value={selectedProduct}
+                        onValueChange={setSelectedProduct}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select a product" />
                         </SelectTrigger>
@@ -236,10 +250,16 @@ export default function CreateOrderPage() {
                         type="number"
                         min={1}
                         value={quantity}
-                        onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value)))}
+                        onChange={(e) =>
+                          setQuantity(Math.max(1, parseInt(e.target.value)))
+                        }
                       />
                     </div>
-                    <Button type="button" onClick={addItem} disabled={!selectedProduct}>
+                    <Button
+                      type="button"
+                      onClick={addItem}
+                      disabled={!selectedProduct}
+                    >
                       <Plus className="w-4 h-4 mr-2" />
                       Add
                     </Button>
@@ -251,7 +271,9 @@ export default function CreateOrderPage() {
                         className="flex items-center justify-between p-2 border rounded"
                       >
                         <div>
-                          <span className="font-medium">{item.product.name}</span>
+                          <span className="font-medium">
+                            {item.product.name}
+                          </span>
                           <span className="text-sm text-gray-500 ml-2">
                             ${item.product.price} x {item.quantity}
                           </span>
@@ -278,7 +300,10 @@ export default function CreateOrderPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Payment Method</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select payment method" />
@@ -302,7 +327,10 @@ export default function CreateOrderPage() {
                     <div className="border-b pb-4">
                       <h3 className="font-medium mb-2">Order Items</h3>
                       {orderItems.map((item, index) => (
-                        <div key={index} className="flex justify-between text-sm">
+                        <div
+                          key={index}
+                          className="flex justify-between text-sm"
+                        >
                           <span>
                             {item.product.name} x {item.quantity}
                           </span>

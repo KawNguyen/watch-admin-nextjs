@@ -1,3 +1,5 @@
+import "react-photo-view/dist/react-photo-view.css";
+
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Watch } from "@/types/watch";
@@ -5,6 +7,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import WatchForm from "./watch-form";
+import { PhotoView } from "react-photo-view";
 
 export const columns: ColumnDef<Watch>[] = [
   {
@@ -30,20 +33,33 @@ export const columns: ColumnDef<Watch>[] = [
     enableHiding: false,
   },
   {
-    header: "Poster",
+    header: "Image",
     cell: ({ row }: { row: any }) => {
       return (
-        <div className="h-12 w-8">
-          <AspectRatio ratio={2 / 3}>
-            <Image
-              src={row.original.poster[0].url}
-              alt={row.original.name}
-              width={40}
-              height={60}
-              className="object-cover"
-            />
-          </AspectRatio>
-        </div>
+        <PhotoView
+          width={500}
+          height={500}
+          src={row.original.images[0]?.absolute_url}
+        >
+          <div className="h-10 w-10 rounded-md overflow-hidden">
+            <AspectRatio ratio={1}>
+              <Image
+                src={
+                  row.original?.images[0]?.absolute_url ||
+                  "https://placehold.co/300x300.png"
+                }
+                alt={row.original.name}
+                fill
+                sizes="10vw"
+                className="object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src =
+                    "https://placehold.co/300x300.png";
+                }}
+              />
+            </AspectRatio>
+          </div>
+        </PhotoView>
       );
     },
   },

@@ -1,13 +1,44 @@
-"use client";
-import { useMovements } from "@/queries/use-movement";
-import { columns } from "./columns";
-import DataTable from "./data-table";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
+import MovementsDataTable from "./_components/movement-data-table";
+import MovementForm from "./_components/movement-form";
 
-export default function MovementPage() {
-  const { data, isLoading } = useMovements();
+export default async function MovementsPage() {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["movements"],
+    queryFn: () =>
+      import("@/queries/use-movement").then((mod) => mod.useMovements()),
+  });
+
   return (
-    <div className="container mx-auto py-10">
-      <DataTable columns={columns} isLoading={isLoading} data={data || []} />
-    </div>
+    <Card>
+      <CardHeader>
+        <div className="w-full flex items-center justify-between">
+          <div>
+            <CardTitle>Movement</CardTitle>
+            <CardDescription>Manage movements</CardDescription>
+          </div>
+
+          <MovementForm mode="create" />
+        </div>
+      </CardHeader>
+      <CardContent>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <MovementsDataTable />
+        </HydrationBoundary>
+      </CardContent>
+    </Card>
   );
 }

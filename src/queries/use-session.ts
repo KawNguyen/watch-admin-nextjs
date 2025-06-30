@@ -17,4 +17,4 @@ export const useMe = () => {
     refetchOnWindowFocus: false,
     staleTime: 24 * 60 * 1000,
   });
-}
+};

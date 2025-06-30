@@ -7,3 +7,7 @@ export enum Status {
   Active = "Active",
   Inactive = "Inactive",
 }
+export enum UserGender {
+  MALE = "Male",
+  FEMALE = "Female",
+}

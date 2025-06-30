@@ -11,7 +11,7 @@ import { useStockData } from "@/hooks/useStock";
 //   },
 // ];
 const StockPage = () => {
-  const{data,isLoading}=useStockData();
+  const { data, isLoading } = useStockData();
   return (
     <div>
       <DataTable columns={columns} isLoading={isLoading} data={data} />

@@ -22,5 +22,5 @@ export const authAPI = {
   getMe: async () => {
     const res = await instanceAxios.get("/user/me");
     return res.data;
-  }
+  },
 };

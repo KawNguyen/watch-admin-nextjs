@@ -19,7 +19,7 @@ const ImageDropzone = ({ preview, onDrop, onRemove }: ImageDropzoneProps) => {
         onDrop(acceptedFiles[0]);
       }
     },
-    [onDrop]
+    [onDrop],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

@@ -9,4 +9,8 @@ export const watchApi = {
     const res = await instanceAxios.post("/watch/create", data);
     return res.data;
   },
+  async update(watchId: string, data: any) {
+    const res = await instanceAxios.patch(`/watch/update/${watchId}`, data);
+    return res.data;
+  },
 };

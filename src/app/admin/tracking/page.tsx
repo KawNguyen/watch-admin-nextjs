@@ -117,15 +117,15 @@
 //     </div>
 //   );
 // }
-import { OrderTracking } from '@/components/TrackingOrders/OrderTracking'
-import React from 'react'
+import { OrderTracking } from "@/components/TrackingOrders/OrderTracking";
+import React from "react";
 
 const TrackingPage = () => {
   return (
     <div>
       <OrderTracking />
     </div>
-  )
-}
+  );
+};
 
-export default TrackingPage
+export default TrackingPage;
