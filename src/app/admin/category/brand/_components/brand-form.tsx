@@ -47,7 +47,10 @@ interface BrandFormProps {
 type BrandFormValues = z.infer<typeof brandSchema>;
 export default function BrandForm({ mode, brandData }: BrandFormProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [brandImage, setBrandImage] = useState({});
+  const [brandImage, setBrandImage] = useState({
+    public_id: "",
+    absolute_url: "",
+  });
   const isEditMode = mode === "edit";
   const isViewMode = mode === "view";
 
@@ -81,7 +84,12 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
           },
         }
       );
-      setBrandImage(response.data.data);
+      setBrandImage({
+        public_id: response.data.data.item.public_id,
+        absolute_url: response.data.data.item.secure_url,
+      });
+      console.log(brandImage);
+      
     } catch (error) {
       console.error("Error uploading files:", error);
     }
@@ -99,7 +107,7 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
       {
         onSuccess: () => {
           form.reset();
-          setBrandImage([]);
+          setBrandImage({ public_id: "", absolute_url: "" });
           queryClient.invalidateQueries({ queryKey: ["brands"] });
           setIsOpen(false);
         },

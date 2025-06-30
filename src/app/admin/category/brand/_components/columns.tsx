@@ -21,7 +21,12 @@ import Image from "next/image";
 import { brandApi } from "@/services/brand";
 import { BrandTypes } from "@/types/brand";
 import BrandForm from "@/app/admin/category/brand/_components/brand-form";
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useState } from "react";
 
 export const columns: ColumnDef<BrandTypes>[] = [
@@ -48,15 +53,21 @@ export const columns: ColumnDef<BrandTypes>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "logo",
+    accessorKey: "image",
     header: "Logo",
     cell: ({ row }) => {
-      const imageUrl = row.getValue("logo");
+      const image = row.getValue("image");
+
+      const imageUrl =
+        image && typeof image === "object" && "absolute_url" in image
+          ? (image as { absolute_url: string }).absolute_url
+          : null;
+
       return (
         <div className="relative h-16 w-16">
           {imageUrl ? (
             <Image
-              src={imageUrl as string}
+              src={imageUrl}
               alt={row.getValue("name")}
               fill
               sizes="(max-width: 64px) 100vw, 64px"
@@ -87,8 +98,7 @@ export const columns: ColumnDef<BrandTypes>[] = [
     cell: ({ row }: { row: any }) => {
       const [isDialogOpen, setIsDialogOpen] = useState(false);
       const mutationDelete = useMutation({
-        mutationFn: (brandId: string) =>
-          brandApi.deleteBrand(brandId),
+        mutationFn: (brandId: string) => brandApi.deleteBrand(brandId),
         onSuccess: () => {
           toast.success("Brand deleted successfully");
           queryClient.invalidateQueries({ queryKey: ["brands"] });
@@ -98,7 +108,7 @@ export const columns: ColumnDef<BrandTypes>[] = [
         },
       });
       const handleDelete = () => {
-        mutationDelete.mutate(row.original.id); 
+        mutationDelete.mutate(row.original.id);
         setIsDialogOpen(false);
       };
 

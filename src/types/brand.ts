@@ -1,13 +1,19 @@
 export interface CreateBrandTypes {
   name: string;
   country: string;
+  image: BrandImage;
 }
 
 export interface BrandTypes {
   brandId: string;
   name: string;
   country: string;
-  logo: string;
+  image: BrandImage;
+}
+
+export interface BrandImage {
+  absolute_url: string;
+  public_id: string;
 }
 
 export interface Brand {
