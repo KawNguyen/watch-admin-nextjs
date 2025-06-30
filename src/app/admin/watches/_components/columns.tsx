@@ -20,6 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { watchApi } from "@/services/watch"
 import { AlertDialogFooter } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+import { queryClient } from "@/components/provider/provider";
 
 const ActionCell = ({ row }: { row: any }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
