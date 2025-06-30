@@ -3,13 +3,6 @@ export interface CreateBrandTypes {
   country: string;
 }
 
-export interface BrandTypes {
-  brandId: string;
-  name: string;
-  country: string;
-  logo: string;
-}
-
 export interface Brand {
   id: string;
   name: string;
