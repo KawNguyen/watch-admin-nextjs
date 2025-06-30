@@ -16,10 +16,7 @@ export const brandApi = {
     return res.data;
   },
 
-  updateBrand: async (
-    brandId: string | undefined,
-    brandData: { name: string; country: string }
-  ) => {
+  updateBrand: async (brandId: string, brandData: any) => {
     const res = await instanceAxios.patch(
       `/brand/update/${brandId}`,
       brandData

@@ -99,7 +99,9 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
         ...response.data.item,
         absolute_url: response.data.item.secure_url,
       };
+
       return uploadImage;
+
     } catch (error) {
       console.error("Error uploading files:", error);
     }

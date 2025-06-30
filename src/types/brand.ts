@@ -1,6 +1,12 @@
 export interface CreateBrandTypes {
   name: string;
   country: string;
+  image: BrandImage;
+}
+
+export interface BrandImage {
+  absolute_url: string;
+  public_id: string;
 }
 
 export interface Brand {
@@ -8,10 +14,7 @@ export interface Brand {
   name: string;
   code: string;
   slug: string;
-  image: {
-    absolute_url: string;
-    public_id: string;
-  };
+  image: BrandImage
   country: string;
   createdAt: Date;
   updatedAt: Date;

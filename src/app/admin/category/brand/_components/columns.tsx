@@ -137,6 +137,7 @@ export const columns: ColumnDef<Brand>[] = [
   {
     accessorKey: "actions",
     header: "Actions",
+
     cell: ({ row }: { row: any }) => <ActionCell row={row} />,
   },
 ];
