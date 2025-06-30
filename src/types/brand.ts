@@ -15,7 +15,10 @@ export interface Brand {
   name: string;
   code: string;
   slug: string;
-  logo: string;
+  image: {
+    absolute_url: string;
+    public_id: string;
+  };
   country: string;
   createdAt: Date;
   updatedAt: Date;

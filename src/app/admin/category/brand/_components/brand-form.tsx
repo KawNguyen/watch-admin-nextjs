@@ -30,11 +30,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { instanceAxios } from "@/lib/instantceAxios";
+
 import { brandSchema } from "@/schema/brand";
 import { brandApi } from "@/services/brand";
+import { cloudinaryApi } from "@/services/cloudinary";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useIsMutating, useMutation } from "@tanstack/react-query";
 import { CloudUpload, Eye, Loader2, Pencil, Plus, X } from "lucide-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -46,10 +47,12 @@ interface BrandFormProps {
 }
 type BrandFormValues = z.infer<typeof brandSchema>;
 export default function BrandForm({ mode, brandData }: BrandFormProps) {
+  const isMutating = useIsMutating();
   const [isOpen, setIsOpen] = useState(false);
-  const [brandImage, setBrandImage] = useState({});
   const isEditMode = mode === "edit";
   const isViewMode = mode === "view";
+  const WIDTH_IMAGE = 400,
+    HEIGHT_IMAGE = 400;
 
   const mutation = useMutation({
     mutationFn: (data: any) =>
@@ -57,6 +60,19 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
         ? brandApi.updateBrand(brandData.id, data)
         : brandApi.createBrand(data),
   });
+
+  const uploadMutation = useMutation({
+    mutationFn: ({
+      width,
+      height,
+      formData,
+    }: {
+      width: number;
+      height: number;
+      formData: FormData;
+    }) => cloudinaryApi.singleFileUpload(width, height, formData),
+  });
+
   const form = useForm<BrandFormValues>({
     resolver: zodResolver(brandSchema),
     defaultValues: {
@@ -65,6 +81,7 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
       image: [],
     },
   });
+
   const handleUpload = async (files: File[]) => {
     const formData = new FormData();
     files.forEach((file) => {
@@ -72,34 +89,35 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
     });
 
     try {
-      const response = await instanceAxios.post(
-        `/cloudinary/upload-single?width=${400}&height=${400}`,
+      const response = await uploadMutation.mutateAsync({
+        width: WIDTH_IMAGE,
+        height: HEIGHT_IMAGE,
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      setBrandImage(response.data.data);
+      });
+
+      const uploadImage = {
+        ...response.data.item,
+        absolute_url: response.data.item.secure_url,
+      };
+      return uploadImage;
     } catch (error) {
       console.error("Error uploading files:", error);
     }
   };
+
   const onSubmit = async (values: BrandFormValues) => {
     const { image, ...brandData } = values;
 
-    void image;
+    const uploadImage = await handleUpload(image);
 
     mutation.mutate(
       {
         ...brandData,
-        image: brandImage,
+        image: uploadImage,
       },
       {
         onSuccess: () => {
           form.reset();
-          setBrandImage([]);
           queryClient.invalidateQueries({ queryKey: ["brands"] });
           setIsOpen(false);
         },
@@ -158,7 +176,7 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
                     <FileUpload
                       value={field.value}
                       onValueChange={field.onChange}
-                      onUpload={handleUpload}
+                      // onUpload={handleUpload}
                       accept="image/*"
                       maxFiles={1}
                       maxSize={5 * 1024 * 1024}
@@ -248,8 +266,8 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
 
             <SheetFooter>
               {!isViewMode && (
-                <Button type="submit" disabled={mutation.isPending}>
-                  {mutation.isPending ? (
+                <Button type="submit" disabled={isMutating > 0}>
+                  {isMutating ? (
                     <Loader2 className="animate-spin" />
                   ) : isEditMode ? (
                     <>

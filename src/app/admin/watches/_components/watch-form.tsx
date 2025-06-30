@@ -98,7 +98,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
       width: number;
       height: number;
       formData: FormData;
-    }) => cloudinaryApi.singleFileUpload(width, height, formData),
+    }) => cloudinaryApi.multipleFileUpload(width, height, formData),
   });
 
   const form = useForm<WatchFormValues>({

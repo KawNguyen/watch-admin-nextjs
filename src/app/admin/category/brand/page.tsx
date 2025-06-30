@@ -14,10 +14,11 @@ import {
 } from "@tanstack/react-query";
 import BrandForm from "./_components/brand-form";
 import BrandsDataTable from "./_components/brand-data-table";
+import { useBrands } from "@/queries/use-brand";
 
 export const metadata: Metadata = {
-  title: "Admin | Watches",
-  description: "Manage watches in the admin panel",
+  title: "Admin | Brands",
+  description: "Manage brands in the admin panel",
 };
 
 export default async function BrandsPage() {
@@ -25,8 +26,7 @@ export default async function BrandsPage() {
 
   await queryClient.prefetchQuery({
     queryKey: ["brands"],
-    queryFn: () =>
-      import("@/queries/use-brand").then((mod) => mod.useBrands()),
+    queryFn: useBrands,
   });
 
   return (
