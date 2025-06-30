@@ -60,6 +60,7 @@ import { queryClient } from "@/components/provider/provider";
 import Image from "next/image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { cloudinaryApi } from "@/services/cloudinary";
+import { toast } from "sonner"
 
 interface WatchFormProps {
   mode: "create" | "edit" | "view";
@@ -156,6 +157,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
       {
         onSuccess: () => {
           form.reset();
+            toast.success(`${isEditMode?"Edit successfully":"Created successfully"}`); 
           queryClient.invalidateQueries({ queryKey: ["watches"] });
           setIsOpen(false);
         },

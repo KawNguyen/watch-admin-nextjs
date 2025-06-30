@@ -40,6 +40,8 @@ import { CloudUpload, Eye, Loader2, Pencil, Plus, X } from "lucide-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { toast } from "sonner"
+
 interface BrandFormProps {
   mode: "create" | "edit" | "view";
   brandId?: string;
@@ -120,6 +122,8 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
       {
         onSuccess: () => {
           form.reset();
+          
+          toast.success(`${isEditMode?"Edit successfully":"Created successfully"}`); 
           queryClient.invalidateQueries({ queryKey: ["brands"] });
           setIsOpen(false);
         },

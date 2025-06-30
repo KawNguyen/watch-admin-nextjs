@@ -13,4 +13,8 @@ export const watchApi = {
     const res = await instanceAxios.patch(`/watch/update/${watchId}`, data);
     return res.data;
   },
+  async delete (watchId: string){
+    const res = await instanceAxios.delete(`/watch/delete/${watchId}`);
+    return res.data;
+  }
 };
