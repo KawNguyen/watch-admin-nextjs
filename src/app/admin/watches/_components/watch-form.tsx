@@ -60,7 +60,7 @@ import { queryClient } from "@/components/provider/provider";
 import Image from "next/image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { cloudinaryApi } from "@/services/cloudinary";
-import { toast } from "sonner"
+import { toast } from "sonner";
 
 interface WatchFormProps {
   mode: "create" | "edit" | "view";
@@ -116,6 +116,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
       materialId: isEditMode && watchData ? watchData.materialId : "",
       bandMaterialId: isEditMode && watchData ? watchData.bandMaterialId : "",
       movementId: isEditMode && watchData ? watchData.movementId : "",
+      videoUrl: isEditMode && watchData ? watchData.videoUrl : "",
       files: [],
     },
   });
@@ -157,7 +158,9 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
       {
         onSuccess: () => {
           form.reset();
-            toast.success(`${isEditMode?"Edit successfully":"Created successfully"}`); 
+          toast.success(
+            `${isEditMode ? "Edit successfully" : "Created successfully"}`
+          );
           queryClient.invalidateQueries({ queryKey: ["watches"] });
           setIsOpen(false);
         },
@@ -541,7 +544,25 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                 )}
               />
             </div>
-
+            <FormField
+              control={form.control}
+              name="videoUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Video Url <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Watch's video url"
+                      {...field}
+                      disabled={isViewMode}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="description"

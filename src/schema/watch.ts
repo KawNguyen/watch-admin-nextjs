@@ -24,6 +24,7 @@ export const watchSchema = z.object({
   materialId: z.string().min(1, "Material is required"),
   bandMaterialId: z.string().min(1, "Band material is required"),
   movementId: z.string().min(1, "Movement is required"),
+  videoUrl:z.string().min(1, "Video url is required"),
   files: z
     .array(z.custom<File>())
     .min(1, "Please select at least one file")
