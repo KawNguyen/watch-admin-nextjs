@@ -22,7 +22,18 @@ import {
 import { watchSchema } from "@/schema/watch";
 import { Gender } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CloudUpload, Eye, Pencil, Plus, X } from "lucide-react";
+import {
+  CloudUpload,
+  Eye,
+  Pencil,
+  Plus,
+  X,
+  Info,
+  Cog,
+  Droplets,
+  Shield,
+  DollarSign,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -189,7 +200,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
           </Button>
         )}
       </SheetTrigger>
-      <SheetContent className="sm:max-w-lg hide-scrollbar">
+      <SheetContent className="sm:max-w-xl hide-scrollbar">
         <SheetHeader>
           <SheetTitle>
             {isEditMode
@@ -284,304 +295,329 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                 )}
               </div>
             )}
-
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Name <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Watch name"
-                      {...field}
-                      disabled={isViewMode}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-3 gap-4">
-              <FormField
-                control={form.control}
-                name="gender"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Gender <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      disabled={isViewMode}
-                    >
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 gap-4">
+                <div className="flex items-center font-bold gap-x-2">
+                  <Info className="size-6" />
+                  <h1 className="text-xl">Basic information</h1>
+                </div>
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Name <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select gender" />
-                        </SelectTrigger>
+                        <Input
+                          placeholder="Watch name"
+                          {...field}
+                          disabled={isViewMode}
+                        />
                       </FormControl>
-                      <SelectContent>
-                        {Object.values(Gender).map((gender, idx) => (
-                          <SelectItem key={idx} value={gender}>
-                            {gender}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="brandId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Brand <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      disabled={isViewMode}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select brand" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {brands?.data?.items.map((brand: Brand) => (
-                          <SelectItem key={brand.id} value={brand.id}>
-                            {brand.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="materialId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Material <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      disabled={isViewMode}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select material" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {materials?.data?.items.map((material: Material) => (
-                          <SelectItem key={material.id} value={material.id}>
-                            {material.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="bandMaterialId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Band Material <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      disabled={isViewMode}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select band material" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {bandMaterials?.data?.items.map(
-                          (bandMaterial: BandMaterial) => (
-                            <SelectItem
-                              key={bandMaterial.id}
-                              value={bandMaterial.id}
-                            >
-                              {bandMaterial.name}
-                            </SelectItem>
-                          )
-                        )}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="movementId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Movement <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      disabled={isViewMode}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select movement" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {movements?.data?.items.map((movement: Movement) => (
-                          <SelectItem key={movement.id} value={movement.id}>
-                            {movement.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="diameter"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Diameter</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Diameter"
-                        type="number"
-                        {...field}
-                        disabled={isViewMode}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="waterResistance"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Water Resistance</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Water resistance"
-                        type="number"
-                        {...field}
-                        disabled={isViewMode}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="warranty"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Warranty</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Warranty"
-                        type="number"
-                        {...field}
-                        disabled={isViewMode}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="price"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Price <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Price"
-                        type="number"
-                        {...field}
-                        disabled={isViewMode}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="gender"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Gender <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={isViewMode}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select gender" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {Object.values(Gender).map((gender, idx) => (
+                              <SelectItem key={idx} value={gender}>
+                                {gender}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="brandId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Brand <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={isViewMode}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select brand" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {brands?.data?.items.map((brand: Brand) => (
+                              <SelectItem key={brand.id} value={brand.id}>
+                                {brand.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-4">
+                <div className="flex items-center font-bold gap-x-2">
+                  <Cog className="size-6" />
+                  <h1 className="text-xl">Techincal Specifications</h1>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <FormField
+                    control={form.control}
+                    name="materialId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Material <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={isViewMode}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Material" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {materials?.data?.items.map(
+                              (material: Material) => (
+                                <SelectItem
+                                  key={material.id}
+                                  value={material.id}
+                                >
+                                  {material.name}
+                                </SelectItem>
+                              )
+                            )}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="bandMaterialId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Band Material <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={isViewMode}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Band Material" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {bandMaterials?.data?.items.map(
+                              (bandMaterial: BandMaterial) => (
+                                <SelectItem
+                                  key={bandMaterial.id}
+                                  value={bandMaterial.id}
+                                >
+                                  {bandMaterial.name}
+                                </SelectItem>
+                              )
+                            )}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="movementId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Movement <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={isViewMode}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Movement" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {movements?.data?.items.map(
+                              (movement: Movement) => (
+                                <SelectItem
+                                  key={movement.id}
+                                  value={movement.id}
+                                >
+                                  {movement.name}
+                                </SelectItem>
+                              )
+                            )}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <FormField
+                    control={form.control}
+                    name="diameter"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Diameter (mm)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Diameter"
+                            type="number"
+                            {...field}
+                            disabled={isViewMode}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="waterResistance"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-x-1">
+                          <Droplets className="size-4" /> Water Resistance
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Water resistance"
+                            type="number"
+                            {...field}
+                            disabled={isViewMode}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="warranty"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-x-1">
+                          <Shield className="size-4" />
+                          Warranty
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Warranty"
+                            type="number"
+                            {...field}
+                            disabled={isViewMode}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="price"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-x-1">
+                          <DollarSign className="size-4" />
+                          Price <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Price"
+                            type="number"
+                            {...field}
+                            disabled={isViewMode}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-1">
+                  <FormField
+                    control={form.control}
+                    name="videoUrl"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Video Url <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Watch's video url"
+                            {...field}
+                            disabled={isViewMode}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Watch description"
+                            {...field}
+                            rows={3}
+                            disabled={isViewMode}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
             </div>
-            <FormField
-              control={form.control}
-              name="videoUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Video Url <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Watch's video url"
-                      {...field}
-                      disabled={isViewMode}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Watch description"
-                      {...field}
-                      rows={3}
-                      disabled={isViewMode}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <SheetFooter>
               {!isViewMode && (
                 <Button type="submit" disabled={isMutating > 0}>
