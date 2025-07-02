@@ -3,13 +3,13 @@
 import { DataTable } from "@/components/data-table/data-table";
 import { columns } from "./columns";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAdvertisement } from "@/queries/use-advertisement";
+import { useCoupon } from "@/queries/use-coupon";
 
-export default function AdsDataTable() {
-  const { data, isFetching } = useAdvertisement();
-  const ads = data?.data?.items || [];
+export default function CouponsDataTable() {
+  const { data, isLoading } = useCoupon();
+  const coupons = data?.data?.items || [];
 
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-10 w-[300px]" />
@@ -40,5 +40,5 @@ export default function AdsDataTable() {
     );
   }
 
-  return <DataTable columns={columns} data={ads} searchKey="title" />;
+  return <DataTable columns={columns} data={coupons} searchKey="code" />;
 }

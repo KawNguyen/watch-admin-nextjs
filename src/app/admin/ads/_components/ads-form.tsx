@@ -119,7 +119,11 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
         height: HEIGHT_IMAGE,
         formData,
       });
-      return response.data.item;
+      const uploadImage = {
+        ...response.data.item,
+        absolute_url: response.data.item.secure_url,
+      };
+      return uploadImage;
     } catch (error) {
       console.error("Error uploading files:", error);
     }
