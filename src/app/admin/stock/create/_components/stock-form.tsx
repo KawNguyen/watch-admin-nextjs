@@ -56,9 +56,6 @@ export default function StockForm() {
     control,
     handleSubmit,
     register,
-    setValue,
-    getValues,
-    formState: { errors },
   } = form;
 
   const { fields, append, remove, update } = useFieldArray({

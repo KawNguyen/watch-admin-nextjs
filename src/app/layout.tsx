@@ -36,12 +36,12 @@ export default function RootLayout({
             unstyled: true,
             classNames: {
               error:
-                "flex w-full h-20 p-4 py-2 rounded-lg gap-x-2 bg-red-500 text-black",
+                "flex items-center w-full h-20 p-4 py-2 rounded-lg gap-x-2 bg-red-500 text-black",
               success:
-                "flex w-full h-10 p-4 py-2 rounded-lg gap-x-2 bg-green-400 text-white",
+                "flex items-center w-full h-10 p-4 py-2 rounded-lg gap-x-2 bg-green-400 text-white",
               warning:
-                "flex w-full h-10 p-4 py-2 rounded-lg gap-x-2 bg-yellow-400 text-black",
-              info: "bg-blue-400 w-full h-10  text-white p-4 rounded-lg",
+                "flex items-center w-full h-10 p-4 py-2 rounded-lg gap-x-2 bg-yellow-400 text-black",
+              info: " items-center bg-blue-400 w-full h-10  text-white p-4 rounded-lg",
             },
           }}
         />
