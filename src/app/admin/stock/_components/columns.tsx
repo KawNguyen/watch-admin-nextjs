@@ -1,12 +1,13 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { StockEntry } from "@/types/stock-entry";
-import StockForm from "../create/stock-form";
+import StockDetailDialog from "../create/_components/stock-detail-dialog";
 
 const ActionCell = ({ row }: { row: any }) => {
+  const data = row.original as StockEntry;
+
   return (
     <div className="flex items-center gap-2">
-      <StockForm mode="view" stockData={row.original} />
-      <StockForm mode="edit" stockData={row.original} />
+      <StockDetailDialog data={data} />
     </div>
   );
 };
@@ -21,8 +22,7 @@ const StockItemsCell = ({ row }: { row: any }) => {
     <div className="space-y-1">
       {items.map((item, index) => (
         <div key={index} className="text-sm">
-          🕒 <strong>{item.watchId}</strong> — SL: {item.quantity}, Giá:{" "}
-          {item.price}
+          <strong>{item.watchId}</strong>
         </div>
       ))}
     </div>
@@ -31,7 +31,7 @@ const StockItemsCell = ({ row }: { row: any }) => {
 
 export const columns: ColumnDef<StockEntry>[] = [
   {
-    accessorKey: "addedById",
+    accessorKey: "createdBy",
     header: "Added By",
   },
   {

@@ -107,10 +107,15 @@ export function StockProductSelection({
                       </div>
                     </div>
                   </div>
-                  <div className="col-span-2 flex items-center justify-end">
-                    <span className="text-sm">
-                      Stock: {product.currentStock}
-                    </span>
+                  <div className="col-span-2 flex items-center justify-end gap-10">
+                    <div className="flex flex-col items-center space-y-2 ">
+                      <span>Brand</span>
+                      <span>{product.brand?.name}</span>
+                    </div>
+                    <div className="flex flex-col items-center space-y-2 ">
+                      <span>Stock</span>
+                      <span> {product.currentStock}</span>
+                    </div>
                   </div>
                 </div>
               ))}

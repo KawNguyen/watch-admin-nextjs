@@ -1,10 +1,6 @@
 import React from "react";
-import StockForm from "./stock-form";
+import StockForm from "./_components/stock-form";
 
 export default function CreatePage() {
-  return (
-    <div>
-      <StockForm />
-    </div>
-  );
+  return <StockForm />;
 }

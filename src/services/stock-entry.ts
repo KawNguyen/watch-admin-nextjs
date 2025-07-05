@@ -10,7 +10,7 @@ export const StockAPI = {
     return res.data;
   },
   createStockEntry: async (data: any) => {
-    const res = await instanceAxios.post("/stock-entry/add", data);
+    const res = await instanceAxios.post("/stock-entry/add-stock", data);
     return res.data;
   },
 };

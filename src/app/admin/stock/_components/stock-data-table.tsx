@@ -40,5 +40,5 @@ export default function StockDataTable() {
     );
   }
 
-  return <DataTable columns={columns} data={stock} searchKey="addedById" />;
+  return <DataTable columns={columns} data={stock} searchKey="createdBy" />;
 }

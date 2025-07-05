@@ -15,6 +15,7 @@ import type {
   Control,
   UseFormRegister,
   FieldArrayWithId,
+  UseFormWatch,
 } from "react-hook-form";
 import { StockSchema } from "@/schema/stock-entry";
 import { z } from "zod";
@@ -27,6 +28,7 @@ interface Props {
   fields: FieldArrayWithId<StockFormValues, "stockItems", "id">[];
   update: (index: number, value: any) => void;
   remove: (index: number) => void;
+  watch: UseFormWatch<StockFormValues>;
 }
 
 export const StockEntryTable = ({
@@ -35,6 +37,7 @@ export const StockEntryTable = ({
   fields,
   update,
   remove,
+  watch,
 }: Props) => {
   return (
     <Table>
@@ -54,7 +57,9 @@ export const StockEntryTable = ({
             (p: any) => String(p.id) === field.watchId
           );
           if (!product) return null;
-
+          const quantity = watch(`stockItems.${index}.quantity`) || 0;
+          const costPrice = watch(`stockItems.${index}.costPrice`) || 0;
+          const total = quantity * costPrice;
           return (
             <TableRow key={field.id}>
               <TableCell>{product.name}</TableCell>
@@ -113,9 +118,7 @@ export const StockEntryTable = ({
                 </div>
               </TableCell>
               <TableCell>
-                <span className="font-medium">
-                  ${(field.quantity * field.costPrice).toFixed(2)}
-                </span>
+                <span className="font-medium">${total.toFixed(2)}</span>
               </TableCell>
               <TableCell>
                 <Button

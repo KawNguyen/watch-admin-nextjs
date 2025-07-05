@@ -1,4 +1,10 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import { Metadata } from "next";
 import {
@@ -6,9 +12,8 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import StockForm from "./create/stock-form";
 import StockDataTable from "./_components/stock-data-table";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -28,14 +33,16 @@ export default async function StocksPage() {
   return (
     <Card>
       <CardHeader>
-        <div className="w-full flex justify-end">
-          <Link href="/admin/stock/create">
-            <Button
-              className="mt-4 w-full p-4 bg-black text-white"
-              variant="link"
-            >
-              Create Stock Entry
-            </Button>
+        <div className="w-full flex items-center justify-between">
+          <div>
+            <CardTitle>Stock List</CardTitle>
+            <CardDescription>Manage import</CardDescription>
+          </div>
+          <Link
+            href="/admin/stock/create"
+            className={buttonVariants({ variant: "default" })}
+          >
+            Create Stock Entry
           </Link>
         </div>
       </CardHeader>

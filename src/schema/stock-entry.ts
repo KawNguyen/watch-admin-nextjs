@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const StockSchema = z.object({
-  addedById: z.string().min(1, "Added by ID is required"),
+  createdBy: z.string().min(1, "Added by ID is required"),
   stockItems: z.array(
     z.object({
       watchId: z.string().min(1, "Watch ID is required"),

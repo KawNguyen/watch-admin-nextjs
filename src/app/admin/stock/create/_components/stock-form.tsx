@@ -23,22 +23,30 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StockProductSelection } from "./_components/stock-product-selection";
 import { z } from "zod";
-import { StockEntryTable } from "./_components/stock-entry-table";
+import { useMutation } from "@tanstack/react-query";
+import { StockAPI } from "@/services/stock-entry";
+import { queryClient } from "@/components/provider/provider";
+import { toast } from "sonner";
+import { StockEntryTable } from "./stock-entry-table";
+import { StockProductSelection } from "./stock-product-selection";
 
 type StockFormValues = z.infer<typeof StockSchema>;
 
 export default function StockForm() {
   const { data: products = [] } = useWatches();
   const { data: user } = useMe();
+  const id = `${user?.data?.item.id}`;
 
-  const fullName = `${user?.data?.item.firstName} ${user?.data?.item.lastName}`;
-
+  const mutation = useMutation({
+    mutationFn: async (data: StockFormValues) => {
+      return StockAPI.createStockEntry(data);
+    },
+  });
   const form = useForm<StockFormValues>({
     resolver: zodResolver(StockSchema),
     defaultValues: {
-      addedById: fullName || "",
+      createdBy: id || "",
       notes: "",
       stockItems: [],
     },
@@ -101,7 +109,17 @@ export default function StockForm() {
   };
 
   const onSubmit = async (data: StockFormValues) => {
-    console.log("Submit Stock Entry", data);
+    mutation.mutate(data, {
+      onSuccess: () => {
+        form.reset();
+        queryClient.invalidateQueries({ queryKey: ["stockEntries"] });
+        toast.success("Stock entry created successfully!");
+        setIsModalOpen(false);
+      },
+      onError: (error: any) => {
+        toast.error(`Error creating stock entry:` + error.message);
+      },
+    });
   };
 
   return (
@@ -117,10 +135,10 @@ export default function StockForm() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormField
             control={control}
-            name="addedById"
+            name="createdBy"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Added By</FormLabel>
+                <FormLabel>Created By</FormLabel>
                 <FormControl>
                   <Input {...field} disabled />
                 </FormControl>
@@ -166,12 +184,13 @@ export default function StockForm() {
                 fields={fields}
                 update={update}
                 remove={remove}
+                watch={form.watch}
               />
             </CardContent>
           </Card>
 
           <div className="flex justify-end mt-6">
-            <Button type="submit">Submit Stock Entry</Button>
+            <Button type="submit">Import Stock Entry</Button>
           </div>
         </form>
       </Form>
