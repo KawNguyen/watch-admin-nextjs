@@ -1,198 +1,44 @@
-// import { Button } from "@/components/ui/button";
-// import {
-//   Table,
-//   TableHeader,
-//   TableRow,
-//   TableHead,
-//   TableBody,
-//   TableCell,
-// } from "@/components/ui/table";
-// import {
-//   DropdownMenu,
-//   DropdownMenuTrigger,
-//   DropdownMenuContent,
-//   DropdownMenuCheckboxItem,
-// } from "@/components/ui/dropdown-menu";
-// import {
-//   SortingState,
-//   ColumnFiltersState,
-//   VisibilityState,
-//   useReactTable,
-//   getCoreRowModel,
-//   getPaginationRowModel,
-//   getSortedRowModel,
-//   getFilteredRowModel,
-//   flexRender,
-//   ColumnDef,
-// } from "@tanstack/react-table";
-// import { ChevronDown } from "lucide-react";
-// import { Input } from "@/components/ui/input";
-// import React from "react";
-// import SheetStock from "@/components/sheet/sheet-stock";
-// interface DataTableProps<TData, TValue> {
-//   columns: ColumnDef<TData, TValue>[];
-//   data: TData[];
-//   isLoading?: boolean;
-// }
+"use client";
 
-// const DataTable = <TData, TValue>({
-//   columns,
-//   data = [],
-//   isLoading = false,
-// }: DataTableProps<TData, TValue>) => {
-//   const [sorting, setSorting] = React.useState<SortingState>([]);
-//   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-//     [],
-//   );
-//   const [columnVisibility, setColumnVisibility] =
-//     React.useState<VisibilityState>({});
-//   const [rowSelection, setRowSelection] = React.useState({});
+import { DataTable } from "@/components/data-table/data-table";
+import { columns } from "./columns";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useStockEntry } from "@/queries/use-stock-entry";
 
-//   const table = useReactTable({
-//     data,
-//     columns,
-//     onSortingChange: setSorting,
-//     onColumnFiltersChange: setColumnFilters,
-//     getCoreRowModel: getCoreRowModel(),
-//     getPaginationRowModel: getPaginationRowModel(),
-//     getSortedRowModel: getSortedRowModel(),
-//     getFilteredRowModel: getFilteredRowModel(),
-//     onColumnVisibilityChange: setColumnVisibility,
-//     onRowSelectionChange: setRowSelection,
-//     state: {
-//       sorting,
-//       columnFilters,
-//       columnVisibility,
-//       rowSelection,
-//     },
-//   });
-//   return (
-//     <div className="container mx-auto w-full">
-//       <div className="flex items-center py-4">
-//         <Input
-//           placeholder="Seach id..."
-//           value={(table.getColumn("id")?.getFilterValue() as string) ?? ""}
-//           onChange={(event) =>
-//             table.getColumn("id")?.setFilterValue(event.target.value)
-//           }
-//           className="max-w-sm"
-//         />
-//         <DropdownMenu>
-//           <DropdownMenuTrigger asChild>
-//             <Button variant="outline" className="ml-auto">
-//               Filter <ChevronDown />
-//             </Button>
-//           </DropdownMenuTrigger>
-//           <DropdownMenuContent align="end">
-//             {table
-//               .getAllColumns()
-//               .filter((column) => column.getCanHide())
-//               .map((column) => {
-//                 return (
-//                   <DropdownMenuCheckboxItem
-//                     key={column.id}
-//                     className="capitalize"
-//                     checked={column.getIsVisible()}
-//                     onCheckedChange={(value) =>
-//                       column.toggleVisibility(!!value)
-//                     }
-//                   >
-//                     {column.id}
-//                   </DropdownMenuCheckboxItem>
-//                 );
-//               })}
-//           </DropdownMenuContent>
-//         </DropdownMenu>
-//         <SheetStock />
-//       </div>
-//       <div className="rounded-md border">
-//         <Table>
-//           {/* Top */}
-//           <TableHeader>
-//             {table.getHeaderGroups().map((headerGroup) => (
-//               <TableRow key={headerGroup.id}>
-//                 {headerGroup.headers.map((header) => {
-//                   return (
-//                     <TableHead key={header.id}>
-//                       {header.isPlaceholder
-//                         ? null
-//                         : flexRender(
-//                             header.column.columnDef.header,
-//                             header.getContext(),
-//                           )}
-//                     </TableHead>
-//                   );
-//                 })}
-//               </TableRow>
-//             ))}
-//           </TableHeader>
-//           <TableBody>
-//             {isLoading ? (
-//               Array.from({ length: 5 }).map((_, index) => (
-//                 <TableRow key={index}>
-//                   {columns.map((_, cellIndex) => (
-//                     <TableCell key={cellIndex}>
-//                       <div className="h-6 w-full animate-pulse rounded-md bg-muted"></div>
-//                     </TableCell>
-//                   ))}
-//                 </TableRow>
-//               ))
-//             ) : table.getRowModel().rows?.length ? (
-//               table.getRowModel().rows.map((row) => (
-//                 <TableRow
-//                   key={row.id}
-//                   data-state={row.getIsSelected() && "selected"}
-//                 >
-//                   {row.getVisibleCells().map((cell) => (
-//                     <TableCell key={cell.id}>
-//                       {flexRender(
-//                         cell.column.columnDef.cell,
-//                         cell.getContext(),
-//                       )}
-//                     </TableCell>
-//                   ))}
-//                 </TableRow>
-//               ))
-//             ) : (
-//               <TableRow>
-//                 <TableCell
-//                   colSpan={columns.length}
-//                   className="h-24 text-center"
-//                 >
-//                   No results.
-//                 </TableCell>
-//               </TableRow>
-//             )}
-//           </TableBody>
-//         </Table>
-//       </div>
-//       {/* Bottom */}
-//       <div className="flex items-center justify-end space-x-2 py-4">
-//         <div className="flex-1 text-sm text-muted-foreground">
-//           {table.getFilteredSelectedRowModel().rows.length} of{" "}
-//           {table.getFilteredRowModel().rows.length} row(s) selected.
-//         </div>
-//         <div className="space-x-2">
-//           <Button
-//             variant="outline"
-//             size="sm"
-//             onClick={() => table.previousPage()}
-//             disabled={!table.getCanPreviousPage()}
-//           >
-//             Previous
-//           </Button>
-//           <Button
-//             variant="outline"
-//             size="sm"
-//             onClick={() => table.nextPage()}
-//             disabled={!table.getCanNextPage()}
-//           >
-//             Next
-//           </Button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
+export default function StockDataTable() {
+  const { data, isFetching } = useStockEntry();
+  const stock = data?.data?.items || [];
 
-// export default DataTable;
+  if (isFetching) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-10 w-[300px]" />
+        <div className="rounded-md border">
+          <div className="h-16 border-b bg-muted/50 px-4 flex items-center">
+            <Skeleton className="h-4 w-[250px]" />
+          </div>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-16 border-b last:border-b-0 px-4 flex items-center space-x-4"
+            >
+              <Skeleton className="h-4 w-4" />
+              <Skeleton className="h-12 w-8" />
+              <Skeleton className="h-4 w-[150px]" />
+              <Skeleton className="h-4 w-[80px]" />
+              <Skeleton className="h-4 w-[100px]" />
+              <Skeleton className="h-4 w-[80px]" />
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-4 w-4" />
+                <Skeleton className="h-4 w-4" />
+                <Skeleton className="h-4 w-4" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return <DataTable columns={columns} data={stock} searchKey="addedById" />;
+}

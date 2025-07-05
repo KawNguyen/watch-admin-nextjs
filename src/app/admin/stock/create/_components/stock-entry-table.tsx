@@ -1,0 +1,137 @@
+"use client";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Minus, Plus, X } from "lucide-react";
+import type {
+  Control,
+  UseFormRegister,
+  FieldArrayWithId,
+} from "react-hook-form";
+import { StockSchema } from "@/schema/stock-entry";
+import { z } from "zod";
+type StockFormValues = z.infer<typeof StockSchema>;
+
+interface Props {
+  control: Control<StockFormValues>;
+  register: UseFormRegister<StockFormValues>;
+  products: any[];
+  fields: FieldArrayWithId<StockFormValues, "stockItems", "id">[];
+  update: (index: number, value: any) => void;
+  remove: (index: number) => void;
+}
+
+export const StockEntryTable = ({
+  register,
+  products,
+  fields,
+  update,
+  remove,
+}: Props) => {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Product</TableHead>
+          <TableHead>Code</TableHead>
+          <TableHead>Quantity</TableHead>
+          <TableHead>Cost Price</TableHead>
+          <TableHead>Total</TableHead>
+          <TableHead></TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {fields.map((field, index) => {
+          const product = products.find(
+            (p: any) => String(p.id) === field.watchId
+          );
+          if (!product) return null;
+
+          return (
+            <TableRow key={field.id}>
+              <TableCell>{product.name}</TableCell>
+              <TableCell>{product.code}</TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() =>
+                      update(index, {
+                        ...field,
+                        quantity: Math.max(field.quantity - 1, 1),
+                      })
+                    }
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                  <Input
+                    type="number"
+                    {...register(`stockItems.${index}.quantity`, {
+                      valueAsNumber: true,
+                    })}
+                    className="w-20 text-center"
+                    min={1}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() =>
+                      update(index, {
+                        ...field,
+                        quantity: field.quantity + 1,
+                      })
+                    }
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-1">
+                  <span className="text-sm">$</span>
+                  <Input
+                    type="number"
+                    {...register(`stockItems.${index}.costPrice`, {
+                      valueAsNumber: true,
+                    })}
+                    className="w-24"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                  />
+                </div>
+              </TableCell>
+              <TableCell>
+                <span className="font-medium">
+                  ${(field.quantity * field.costPrice).toFixed(2)}
+                </span>
+              </TableCell>
+              <TableCell>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="text-destructive"
+                  onClick={() => remove(index)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </TableCell>
+            </TableRow>
+          );
+        })}
+      </TableBody>
+    </Table>
+  );
+};

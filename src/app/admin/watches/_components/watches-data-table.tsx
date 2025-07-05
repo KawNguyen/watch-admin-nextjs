@@ -6,8 +6,8 @@ import { columns } from "./columns";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function WatchesDataTable() {
-  const { data, isFetching } = useWatches();
-  const watches = data?.data?.items || [];
+  const { data: watches, isFetching } = useWatches();
+  
 
   if (isFetching) {
     return (

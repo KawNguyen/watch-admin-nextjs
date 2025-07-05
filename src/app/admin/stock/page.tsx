@@ -1,29 +1,49 @@
-// "use client";
-// import React from "react";
-// import { columns } from "./columns";
-// import DataTable from "./data-table";
-// import { useStockData } from "@/hooks/useStock";
-// // const data: Stock[] = [
-// //   {
-// //     id: "1",
-// //     totalPrice: 1,
-// //     createdAt: "1/1/2021",
-// //   },
-// // ];
-// const StockPage = () => {
-//   const { data, isLoading } = useStockData();
-//   return (
-//     <div>
-//       <DataTable columns={columns} isLoading={isLoading} data={data} />
-//     </div>
-//   );
-// };
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
-// export default StockPage;
-import React from "react";
+import { Metadata } from "next";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
+import StockForm from "./create/stock-form";
+import StockDataTable from "./_components/stock-data-table";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-const StockPage = () => {
-  return <div>a</div>;
+export const metadata: Metadata = {
+  title: "Admin | Stock",
+  description: "Manage stock in the admin panel",
 };
 
-export default StockPage;
+export default async function StocksPage() {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["stockEntries"],
+    queryFn: () =>
+      import("@/queries/use-stock-entry").then((mod) => mod.useStockEntry()),
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="w-full flex justify-end">
+          <Link href="/admin/stock/create">
+            <Button
+              className="mt-4 w-full p-4 bg-black text-white"
+              variant="link"
+            >
+              Create Stock Entry
+            </Button>
+          </Link>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <StockDataTable />
+        </HydrationBoundary>
+      </CardContent>
+    </Card>
+  );
+}
