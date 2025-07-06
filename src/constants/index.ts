@@ -104,30 +104,6 @@ export const data = {
       ],
     },
     {
-      title: "Create Orders",
-      url: "#",
-      icon: PackagePlusIcon,
-      isActive: true,
-      items: [
-        {
-          title: "List",
-          url: "/admin/create-orders",
-        },
-      ],
-    },
-    {
-      title: "Tracking",
-      url: "#",
-      icon: ViewIcon,
-      isActive: true,
-      items: [
-        {
-          title: "List",
-          url: "/admin/tracking",
-        },
-      ],
-    },
-    {
       title: "Manage Reviews",
       url: "#",
       icon: MessageSquareTextIcon,

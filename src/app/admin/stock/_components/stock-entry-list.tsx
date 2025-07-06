@@ -554,7 +554,7 @@ export default function StockEntryList() {
         </div>
         <div className="flex gap-2">
           <Link
-            href="/admin/stockv2/create"
+            href="/admin/stock/create"
             className={buttonVariants({ variant: "default" })}
           >
             Create Stock Entry
