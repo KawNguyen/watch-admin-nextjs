@@ -1,9 +1,9 @@
-import { authAPI } from "@/services/auth";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
+import { authAPI } from '@/services/auth';
 
 export const useSession = () => {
   return useQuery({
-    queryKey: ["session"],
+    queryKey: ['session'],
     queryFn: () => authAPI.checkAuth(),
     refetchOnWindowFocus: false,
     staleTime: 24 * 60 * 1000,
@@ -12,7 +12,7 @@ export const useSession = () => {
 
 export const useMe = () => {
   return useQuery({
-    queryKey: ["me"],
+    queryKey: ['me'],
     queryFn: () => authAPI.getMe(),
     refetchOnWindowFocus: false,
     staleTime: 24 * 60 * 1000,

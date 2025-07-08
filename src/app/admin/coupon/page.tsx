@@ -1,31 +1,31 @@
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
-import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
-} from "@tanstack/react-query";
-import CouponsDataTable from "./_components/coupon-data-table";
-import CouponForm from "./_components/coupon-form";
+} from '@tanstack/react-query';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import CouponsDataTable from './_components/coupon-data-table';
+import CouponForm from './_components/coupon-form';
 
 export default async function CouponsPage() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ["coupons"],
+    queryKey: ['coupons'],
     queryFn: () =>
-      import("@/queries/use-coupon").then((mod) => mod.useCoupon()),
+      import('@/queries/use-coupon').then((mod) => mod.useCoupon()),
   });
 
   return (
     <Card>
       <CardHeader>
-        <div className="w-full flex items-center justify-between">
+        <div className="flex w-full items-center justify-between">
           <div>
             <CardTitle>Coupon</CardTitle>
             <CardDescription>Manage coupons</CardDescription>

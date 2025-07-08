@@ -1,6 +1,12 @@
-"use client"
-import { queryClient } from "@/components/provider/provider";
-import { Button } from "@/components/ui/button";
+'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { Eye, Loader2, Pencil, Plus } from 'lucide-react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import type { z } from 'zod';
+import { queryClient } from '@/components/provider/provider';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -8,8 +14,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Sheet,
   SheetContent,
@@ -18,18 +24,12 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { caseMaterialSchema } from "@/schema/case-material";
-import { materialApi } from "@/services/material";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import { Eye, Loader2, Pencil, Plus } from "lucide-react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+} from '@/components/ui/sheet';
+import { caseMaterialSchema } from '@/schema/case-material';
+import { materialApi } from '@/services/material';
 
 interface CaseMaterialFormProps {
-  mode: "create" | "edit" | "view";
+  mode: 'create' | 'edit' | 'view';
   caseMaterialData?: any;
 }
 type CaseMaterialFormValues = z.infer<typeof caseMaterialSchema>;
@@ -38,41 +38,42 @@ export default function CaseMaterialForm({
   caseMaterialData,
 }: CaseMaterialFormProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const isEditMode = mode === "edit";
-  const isViewMode = mode === "view";
+  const isEditMode = mode === 'edit';
+  const isViewMode = mode === 'view';
   const mutation = useMutation({
     mutationFn: isEditMode
-    ? (data: CaseMaterialFormValues) => materialApi.updateMaterial(caseMaterialData.id, data)
-    : materialApi.createMaterial,
+      ? (data: CaseMaterialFormValues) =>
+          materialApi.updateMaterial(caseMaterialData.id, data)
+      : materialApi.createMaterial,
   });
-  
+
   const form = useForm<CaseMaterialFormValues>({
     resolver: zodResolver(caseMaterialSchema),
     defaultValues: {
-      name: isEditMode ? caseMaterialData.name : "",
+      name: isEditMode ? caseMaterialData.name : '',
     },
   });
   const onSubmit = async (data: CaseMaterialFormValues) => {
     mutation.mutate(data, {
       onSuccess: () => {
         form.reset();
-        queryClient.invalidateQueries({ queryKey: ["materials"] });
+        queryClient.invalidateQueries({ queryKey: ['materials'] });
         setIsOpen(false);
       },
       onError: (error: any) => {
-        console.error("Error creating material:", error);
+        console.error('Error creating material:', error);
       },
     });
   };
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet onOpenChange={setIsOpen} open={isOpen}>
       <SheetTrigger asChild>
         {isEditMode ? (
-          <Button variant="ghost" size="icon">
+          <Button size="icon" variant="ghost">
             <Pencil />
           </Button>
         ) : isViewMode ? (
-          <Button variant="ghost" size="icon">
+          <Button size="icon" variant="ghost">
             <Eye />
           </Button>
         ) : (
@@ -82,25 +83,25 @@ export default function CaseMaterialForm({
           </Button>
         )}
       </SheetTrigger>
-      <SheetContent className="sm:max-w-lg hide-scrollbar">
+      <SheetContent className="hide-scrollbar sm:max-w-lg">
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? "Edit case material"
+              ? 'Edit case material'
               : isViewMode
-              ? "View case material"
-              : "Create case material"}
+                ? 'View case material'
+                : 'Create case material'}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
-              ? "Edit the details of the case material."
+              ? 'Edit the details of the case material.'
               : isViewMode
-              ? "View the details of the case material."
-              : "Fill in the details to create a new case material."}
+                ? 'View the details of the case material.'
+                : 'Fill in the details to create a new case material.'}
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
               name="name"
@@ -122,7 +123,7 @@ export default function CaseMaterialForm({
             />
             <SheetFooter>
               {!isViewMode && (
-                <Button type="submit" disabled={mutation.isPending}>
+                <Button disabled={mutation.isPending} type="submit">
                   {mutation.isPending ? (
                     <Loader2 className="animate-spin" />
                   ) : isEditMode ? (

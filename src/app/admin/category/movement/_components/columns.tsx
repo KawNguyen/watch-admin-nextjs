@@ -1,51 +1,51 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ColumnDef } from "@tanstack/react-table";
-import { Loader2, Trash2 } from "lucide-react";
-import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
-import { queryClient } from "@/components/provider/provider";
-import { movementApi } from "@/services/movement";
-import { Movement } from "@/types/movement";
-import MovementForm from "@/app/admin/category/movement/_components/movement-form";
+import { useMutation } from '@tanstack/react-query';
+import type { ColumnDef } from '@tanstack/react-table';
+import { Loader2, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import MovementForm from '@/app/admin/category/movement/_components/movement-form';
+import { queryClient } from '@/components/provider/provider';
+import { AlertDialogFooter } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { AlertDialogFooter } from "@/components/ui/alert-dialog";
+} from '@/components/ui/dialog';
+import { movementApi } from '@/services/movement';
+import type { Movement } from '@/types/movement';
 export const columns: ColumnDef<Movement>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) => (
       <Checkbox
+        aria-label="Select all"
         checked={
           table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
+        aria-label="Select row"
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
       />
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: "name",
-    header: "Name",
+    accessorKey: 'name',
+    header: 'Name',
   },
   {
-    accessorKey: "actions",
-    header: "Actions",
+    accessorKey: 'actions',
+    header: 'Actions',
     cell: ({ row }: { row: any }) => {
       const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -54,15 +54,15 @@ export const columns: ColumnDef<Movement>[] = [
         mutationFn: (movementId: string) =>
           movementApi.deleteMovement(movementId),
         onSuccess: () => {
-          toast.success("Movement deleted successfully");
-          queryClient.invalidateQueries({ queryKey: ["movements"] });
+          toast.success('Movement deleted successfully');
+          queryClient.invalidateQueries({ queryKey: ['movements'] });
         },
         onError: () => {
-          toast.error("Failed to delete movement");
+          toast.error('Failed to delete movement');
         },
       });
       const handleDelete = () => {
-        mutationDelete.mutate(row.original.id); 
+        mutationDelete.mutate(row.original.id);
         setIsDialogOpen(false);
       };
 
@@ -70,36 +70,36 @@ export const columns: ColumnDef<Movement>[] = [
         <div className="flex items-center gap-2">
           <MovementForm mode="view" movementData={row.original} />
           <MovementForm mode="edit" movementData={row.original} />
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
             <DialogTrigger asChild>
               {mutationDelete.isPending ? (
-                <Loader2  className="size-4 animate-spin text-red-500"/>
+                <Loader2 className="size-4 animate-spin text-red-500" />
               ) : (
                 <Trash2
-                  className="size-4 text-red-500 cursor-pointer"
+                  className="size-4 cursor-pointer text-red-500"
                   onClick={() => setIsDialogOpen(true)}
                 />
               )}
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <h3 className="text-lg font-semibold">Confirm Deletion</h3>
+                <h3 className="font-semibold text-lg">Confirm Deletion</h3>
               </DialogHeader>
               <p>
                 Are you sure you want to delete
-                <span className=" mx-2 underline text-red-500">
+                <span className=" mx-2 text-red-500 underline">
                   {row.original.name}
                 </span>
                 ?
               </p>
               <AlertDialogFooter>
                 <Button
-                  variant="secondary"
                   onClick={() => setIsDialogOpen(false)}
+                  variant="secondary"
                 >
                   Cancel
                 </Button>
-                <Button variant="destructive" onClick={handleDelete}>
+                <Button onClick={handleDelete} variant="destructive">
                   Confirm Delete
                 </Button>
               </AlertDialogFooter>

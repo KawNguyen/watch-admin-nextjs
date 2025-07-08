@@ -1,6 +1,13 @@
-"use client";
-import { queryClient } from "@/components/provider/provider";
-import { Button } from "@/components/ui/button";
+'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useIsMutating, useMutation } from '@tanstack/react-query';
+import { CloudUpload, Eye, Loader2, Pencil, Plus, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import type { z } from 'zod';
+import { queryClient } from '@/components/provider/provider';
+import { Button } from '@/components/ui/button';
 import {
   FileUpload,
   FileUploadDropzone,
@@ -10,7 +17,7 @@ import {
   FileUploadItemPreview,
   FileUploadList,
   FileUploadTrigger,
-} from "@/components/ui/file-upload";
+} from '@/components/ui/file-upload';
 import {
   Form,
   FormControl,
@@ -19,8 +26,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Sheet,
   SheetContent,
@@ -29,21 +36,13 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-
-import { brandSchema } from "@/schema/brand";
-import { brandApi } from "@/services/brand";
-import { cloudinaryApi } from "@/services/cloudinary";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useIsMutating, useMutation } from "@tanstack/react-query";
-import { CloudUpload, Eye, Loader2, Pencil, Plus, X } from "lucide-react";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { toast } from "sonner"
+} from '@/components/ui/sheet';
+import { brandSchema } from '@/schema/brand';
+import { brandApi } from '@/services/brand';
+import { cloudinaryApi } from '@/services/cloudinary';
 
 interface BrandFormProps {
-  mode: "create" | "edit" | "view";
+  mode: 'create' | 'edit' | 'view';
   brandId?: string;
   brandData?: any;
 }
@@ -51,8 +50,8 @@ type BrandFormValues = z.infer<typeof brandSchema>;
 export default function BrandForm({ mode, brandData }: BrandFormProps) {
   const isMutating = useIsMutating();
   const [isOpen, setIsOpen] = useState(false);
-  const isEditMode = mode === "edit";
-  const isViewMode = mode === "view";
+  const isEditMode = mode === 'edit';
+  const isViewMode = mode === 'view';
   const WIDTH_IMAGE = 400,
     HEIGHT_IMAGE = 400;
 
@@ -78,8 +77,8 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
   const form = useForm<BrandFormValues>({
     resolver: zodResolver(brandSchema),
     defaultValues: {
-      name: isEditMode && brandData ? brandData.name : "",
-      country: isEditMode && brandData ? brandData.country : "",
+      name: isEditMode && brandData ? brandData.name : '',
+      country: isEditMode && brandData ? brandData.country : '',
       image: [],
     },
   });
@@ -87,7 +86,7 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
   const handleUpload = async (files: File[]) => {
     const formData = new FormData();
     files.forEach((file) => {
-      formData.append("file", file);
+      formData.append('file', file);
     });
 
     try {
@@ -103,9 +102,8 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
       };
 
       return uploadImage;
-
     } catch (error) {
-      console.error("Error uploading files:", error);
+      console.error('Error uploading files:', error);
     }
   };
 
@@ -122,27 +120,29 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
       {
         onSuccess: () => {
           form.reset();
-          
-          toast.success(`${isEditMode?"Edit successfully":"Created successfully"}`); 
-          queryClient.invalidateQueries({ queryKey: ["brands"] });
+
+          toast.success(
+            `${isEditMode ? 'Edit successfully' : 'Created successfully'}`
+          );
+          queryClient.invalidateQueries({ queryKey: ['brands'] });
           setIsOpen(false);
         },
         onError: (error) => {
-          console.error("Error creating brand:", error);
+          console.error('Error creating brand:', error);
         },
       }
     );
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet onOpenChange={setIsOpen} open={isOpen}>
       <SheetTrigger asChild>
         {isEditMode ? (
-          <Button variant="ghost" size="icon">
+          <Button size="icon" variant="ghost">
             <Pencil />
           </Button>
         ) : isViewMode ? (
-          <Button variant="ghost" size="icon">
+          <Button size="icon" variant="ghost">
             <Eye />
           </Button>
         ) : (
@@ -152,26 +152,26 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
           </Button>
         )}
       </SheetTrigger>
-      <SheetContent className="sm:max-w-lg hide-scrollbar">
+      <SheetContent className="hide-scrollbar sm:max-w-lg">
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? "Edit Brand"
+              ? 'Edit Brand'
               : isViewMode
-              ? "View Brand"
-              : "Create Brand"}
+                ? 'View Brand'
+                : 'Create Brand'}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
-              ? "Edit the details of the brand."
+              ? 'Edit the details of the brand.'
               : isViewMode
-              ? "View the details of the brand."
-              : "Fill in the details to create a new brand."}
+                ? 'View the details of the brand.'
+                : 'Fill in the details to create a new brand.'}
           </SheetDescription>
         </SheetHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
               name="image"
@@ -180,24 +180,24 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
                   <FormLabel>Attachments</FormLabel>
                   <FormControl>
                     <FileUpload
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      // onUpload={handleUpload}
                       accept="image/*"
                       maxFiles={1}
+                      // onUpload={handleUpload}
                       maxSize={5 * 1024 * 1024}
+                      multiple={false}
                       onFileReject={(_, message) => {
-                        form.setError("image", {
+                        form.setError('image', {
                           message,
                         });
                       }}
-                      multiple={false}
+                      onValueChange={field.onChange}
+                      value={field.value}
                     >
                       <FileUploadDropzone className="flex-row flex-wrap border-dotted text-center">
                         <CloudUpload className="size-4" />
                         Drag and drop or
                         <FileUploadTrigger asChild>
-                          <Button variant="link" size="sm" className="p-0">
+                          <Button className="p-0" size="sm" variant="link">
                             choose file
                           </Button>
                         </FileUploadTrigger>
@@ -210,9 +210,9 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
                             <FileUploadItemMetadata />
                             <FileUploadItemDelete asChild>
                               <Button
-                                variant="ghost"
-                                size="icon"
                                 className="size-7"
+                                size="icon"
+                                variant="ghost"
                               >
                                 <X />
                                 <span className="sr-only">Delete</span>
@@ -272,7 +272,7 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
 
             <SheetFooter>
               {!isViewMode && (
-                <Button type="submit" disabled={isMutating > 0}>
+                <Button disabled={isMutating > 0} type="submit">
                   {isMutating ? (
                     <Loader2 className="animate-spin" />
                   ) : isEditMode ? (

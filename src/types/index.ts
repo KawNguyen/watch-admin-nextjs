@@ -1,13 +1,13 @@
 export enum Gender {
-  MEN = "MEN",
-  WOMEN = "WOMEN",
-  UNISEX = "UNISEX",
+  MEN = 'MEN',
+  WOMEN = 'WOMEN',
+  UNISEX = 'UNISEX',
 }
 export enum Status {
-  Active = "Active",
-  Inactive = "Inactive",
+  Active = 'Active',
+  Inactive = 'Inactive',
 }
 export enum UserGender {
-  MALE = "Male",
-  FEMALE = "Female",
+  MALE = 'Male',
+  FEMALE = 'Female',
 }

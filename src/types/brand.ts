@@ -14,7 +14,7 @@ export interface Brand {
   name: string;
   code: string;
   slug: string;
-  image: BrandImage
+  image: BrandImage;
   country: string;
   createdAt: Date;
   updatedAt: Date;

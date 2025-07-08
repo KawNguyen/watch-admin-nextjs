@@ -1,8 +1,8 @@
-import { instanceAxios } from "@/lib/instantceAxios";
+import { instanceAxios } from '@/lib/instantceAxios';
 
 export const movementApi = {
   getAllMovements: async () => {
-    const res = await instanceAxios.get("/movement");
+    const res = await instanceAxios.get('/movement');
     return res.data;
   },
 
@@ -12,17 +12,17 @@ export const movementApi = {
   },
 
   createMovement: async (movement: { name: string }) => {
-    const res = await instanceAxios.post("/movement/create", movement);
+    const res = await instanceAxios.post('/movement/create', movement);
     return res.data;
   },
 
   updateMovement: async (
     movementId: string | undefined,
-    movement: { name: string },
+    movement: { name: string }
   ) => {
     const res = await instanceAxios.patch(
       `/movement/update/${movementId}`,
-      movement,
+      movement
     );
     return res.data;
   },

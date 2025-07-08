@@ -1,32 +1,32 @@
-import { Button } from "@/components/ui/button";
-import { ColumnDef } from "@tanstack/react-table";
-import { Loader2, Trash2 } from "lucide-react";
-import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
-import { queryClient } from "@/components/provider/provider";
-import { AlertDialogFooter } from "@/components/ui/alert-dialog";
-import Image from "next/image";
+import { useMutation } from '@tanstack/react-query';
+import type { ColumnDef } from '@tanstack/react-table';
+import { Loader2, Trash2 } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { queryClient } from '@/components/provider/provider';
+import { AlertDialogFooter } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { useState } from "react";
-import { advertisementApi } from "@/services/ads";
-import AdvertisementForm from "./ads-form";
-import { Advertisment } from "@/types/advertisement";
+} from '@/components/ui/dialog';
+import { advertisementApi } from '@/services/ads';
+import type { Advertisment } from '@/types/advertisement';
+import AdvertisementForm from './ads-form';
 
 const ActionCell = ({ row }: { row: any }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const mutationDelete = useMutation({
     mutationFn: (adsId: string) => advertisementApi.deleteAds(adsId),
     onSuccess: () => {
-      toast.success("Advertisement deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["advertisements"] });
+      toast.success('Advertisement deleted successfully');
+      queryClient.invalidateQueries({ queryKey: ['advertisements'] });
     },
     onError: () => {
-      toast.error("Failed to delete advertisement");
+      toast.error('Failed to delete advertisement');
     },
   });
   const handleDelete = () => {
@@ -36,35 +36,35 @@ const ActionCell = ({ row }: { row: any }) => {
 
   return (
     <div className="flex items-center gap-2">
-      <AdvertisementForm mode="view" adsData={row.original} />
-      <AdvertisementForm mode="edit" adsData={row.original} />
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <AdvertisementForm adsData={row.original} mode="view" />
+      <AdvertisementForm adsData={row.original} mode="edit" />
+      <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
         <DialogTrigger asChild>
           {mutationDelete.isPending ? (
             <Loader2 className="size-4 animate-spin text-red-500" />
           ) : (
             <Trash2
-              className="size-4 text-red-500 cursor-pointer"
+              className="size-4 cursor-pointer text-red-500"
               onClick={() => setIsDialogOpen(true)}
             />
           )}
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <h3 className="text-lg font-semibold">Confirm Deletion</h3>
+            <h3 className="font-semibold text-lg">Confirm Deletion</h3>
           </DialogHeader>
           <p>
             Are you sure you want to delete
-            <span className=" mx-2 underline text-red-500">
+            <span className=" mx-2 text-red-500 underline">
               {row.original.title}
             </span>
             ?
           </p>
           <AlertDialogFooter>
-            <Button variant="secondary" onClick={() => setIsDialogOpen(false)}>
+            <Button onClick={() => setIsDialogOpen(false)} variant="secondary">
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDelete}>
+            <Button onClick={handleDelete} variant="destructive">
               Confirm Delete
             </Button>
           </AlertDialogFooter>
@@ -76,25 +76,25 @@ const ActionCell = ({ row }: { row: any }) => {
 
 export const columns: ColumnDef<Advertisment>[] = [
   {
-    accessorKey: "imageUrl",
-    header: "Image",
+    accessorKey: 'imageUrl',
+    header: 'Image',
     cell: ({ row }) => {
       const imageUrl = row.original.imageUrl;
       return (
         <div className="relative h-16 w-16">
           {imageUrl ? (
             <Image
-              src={imageUrl}
-              alt={row.getValue("title")}
-              fill
-              sizes="(max-width: 64px) 100vw, 64px"
+              alt={row.getValue('title')}
               className="rounded-md object-cover"
+              fill
               priority
+              sizes="(max-width: 64px) 100vw, 64px"
+              src={imageUrl}
               unoptimized
             />
           ) : (
-            <div className="h-full w-full bg-muted rounded-md flex items-center justify-center">
-              <span className="text-xs text-muted-foreground">No image</span>
+            <div className="flex h-full w-full items-center justify-center rounded-md bg-muted">
+              <span className="text-muted-foreground text-xs">No image</span>
             </div>
           )}
         </div>
@@ -102,28 +102,28 @@ export const columns: ColumnDef<Advertisment>[] = [
     },
   },
   {
-    accessorKey: "title",
-    header: "Title",
+    accessorKey: 'title',
+    header: 'Title',
   },
   {
-    accessorKey: "link",
-    header: "Link",
+    accessorKey: 'link',
+    header: 'Link',
   },
   {
-    accessorKey: "isActive",
-    header: "Active",
+    accessorKey: 'isActive',
+    header: 'Active',
   },
   {
-    accessorKey: "startDate",
-    header: "From",
+    accessorKey: 'startDate',
+    header: 'From',
   },
   {
-    accessorKey: "endDate",
-    header: "To",
+    accessorKey: 'endDate',
+    header: 'To',
   },
   {
-    accessorKey: "actions",
-    header: "Actions",
+    accessorKey: 'actions',
+    header: 'Actions',
     cell: ({ row }) => <ActionCell row={row} />,
   },
 ];

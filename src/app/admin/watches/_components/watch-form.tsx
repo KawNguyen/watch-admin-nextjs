@@ -1,6 +1,38 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useIsMutating, useMutation } from '@tanstack/react-query';
+import {
+  CloudUpload,
+  Cog,
+  DollarSign,
+  Droplets,
+  Eye,
+  Info,
+  Loader2,
+  Pencil,
+  Plus,
+  Shield,
+  X,
+} from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import type { z } from 'zod';
+import { queryClient } from '@/components/provider/provider';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { Button } from '@/components/ui/button';
+import {
+  FileUpload,
+  FileUploadDropzone,
+  FileUploadItem,
+  FileUploadItemDelete,
+  FileUploadItemMetadata,
+  FileUploadItemPreview,
+  FileUploadList,
+  FileUploadTrigger,
+} from '@/components/ui/file-upload';
 import {
   Form,
   FormControl,
@@ -9,7 +41,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Sheet,
   SheetContent,
@@ -18,63 +58,23 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { watchSchema } from "@/schema/watch";
-import { Gender } from "@/types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  CloudUpload,
-  Eye,
-  Pencil,
-  Plus,
-  X,
-  Info,
-  Cog,
-  Droplets,
-  Shield,
-  DollarSign,
-} from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useBrands } from "@/queries/use-brand";
-import { Brand } from "@/types/brand";
-import { useBandMaterials } from "@/queries/use-bandMaterial";
-import { BandMaterial } from "@/types/band-material";
-import { useMovements } from "@/queries/use-movement";
-import { Movement } from "@/types/movement";
-import { useMaterials } from "@/queries/use-material";
-import { Material } from "@/types/material";
-import { useIsMutating, useMutation } from "@tanstack/react-query";
-import { watchApi } from "@/services/watch";
-import { Loader2 } from "lucide-react";
-import {
-  FileUpload,
-  FileUploadDropzone,
-  FileUploadTrigger,
-  FileUploadList,
-  FileUploadItem,
-  FileUploadItemPreview,
-  FileUploadItemMetadata,
-  FileUploadItemDelete,
-} from "@/components/ui/file-upload";
-import { queryClient } from "@/components/provider/provider";
-import Image from "next/image";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { cloudinaryApi } from "@/services/cloudinary";
-import { toast } from "sonner";
+} from '@/components/ui/sheet';
+import { Textarea } from '@/components/ui/textarea';
+import { useBandMaterials } from '@/queries/use-bandMaterial';
+import { useBrands } from '@/queries/use-brand';
+import { useMaterials } from '@/queries/use-material';
+import { useMovements } from '@/queries/use-movement';
+import { watchSchema } from '@/schema/watch';
+import { cloudinaryApi } from '@/services/cloudinary';
+import { watchApi } from '@/services/watch';
+import { Gender } from '@/types';
+import type { BandMaterial } from '@/types/band-material';
+import type { Brand } from '@/types/brand';
+import type { Material } from '@/types/material';
+import type { Movement } from '@/types/movement';
 
 interface WatchFormProps {
-  mode: "create" | "edit" | "view";
+  mode: 'create' | 'edit' | 'view';
   watchId?: string;
   watchData?: any;
 }
@@ -91,8 +91,8 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
   const WIDTH_IMAGE = 500,
     HEIGHT_IMAGE = 500;
 
-  const isEditMode = mode === "edit";
-  const isViewMode = mode === "view";
+  const isEditMode = mode === 'edit';
+  const isViewMode = mode === 'view';
 
   const mutation = useMutation({
     mutationFn: (data: any) =>
@@ -116,18 +116,18 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
   const form = useForm<WatchFormValues>({
     resolver: zodResolver(watchSchema),
     defaultValues: {
-      name: isEditMode && watchData ? watchData.name : "",
-      description: "",
+      name: isEditMode && watchData ? watchData.name : '',
+      description: '',
       gender: isEditMode && watchData ? watchData.gender : Gender.MEN,
       diameter: isEditMode && watchData ? watchData.diameter : 0,
       waterResistance: isEditMode && watchData ? watchData.waterResistance : 0,
       warranty: isEditMode && watchData ? watchData.warranty : 0,
       price: isEditMode && watchData ? watchData.price : 0,
-      brandId: isEditMode && watchData ? watchData.brandId : "",
-      materialId: isEditMode && watchData ? watchData.materialId : "",
-      bandMaterialId: isEditMode && watchData ? watchData.bandMaterialId : "",
-      movementId: isEditMode && watchData ? watchData.movementId : "",
-      videoUrl: isEditMode && watchData ? watchData.videoUrl : "",
+      brandId: isEditMode && watchData ? watchData.brandId : '',
+      materialId: isEditMode && watchData ? watchData.materialId : '',
+      bandMaterialId: isEditMode && watchData ? watchData.bandMaterialId : '',
+      movementId: isEditMode && watchData ? watchData.movementId : '',
+      videoUrl: isEditMode && watchData ? watchData.videoUrl : '',
       files: [],
     },
   });
@@ -135,7 +135,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
   const handleUpload = async (files: File[]) => {
     const formData = new FormData();
     files.forEach((file) => {
-      formData.append("files", file);
+      formData.append('files', file);
     });
 
     try {
@@ -152,7 +152,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
 
       return uploadedImages;
     } catch (error) {
-      console.error("Error uploading files:", error);
+      console.error('Error uploading files:', error);
     }
   };
 
@@ -170,27 +170,27 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
         onSuccess: () => {
           form.reset();
           toast.success(
-            `${isEditMode ? "Edit successfully" : "Created successfully"}`
+            `${isEditMode ? 'Edit successfully' : 'Created successfully'}`
           );
-          queryClient.invalidateQueries({ queryKey: ["watches"] });
+          queryClient.invalidateQueries({ queryKey: ['watches'] });
           setIsOpen(false);
         },
         onError: (error) => {
-          console.error("Error creating watch:", error);
+          console.error('Error creating watch:', error);
         },
       }
     );
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet onOpenChange={setIsOpen} open={isOpen}>
       <SheetTrigger asChild>
         {isEditMode ? (
-          <Button variant="ghost" size="icon">
+          <Button size="icon" variant="ghost">
             <Pencil />
           </Button>
         ) : isViewMode ? (
-          <Button variant="ghost" size="icon">
+          <Button size="icon" variant="ghost">
             <Eye />
           </Button>
         ) : (
@@ -200,26 +200,26 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
           </Button>
         )}
       </SheetTrigger>
-      <SheetContent className="sm:max-w-xl hide-scrollbar">
+      <SheetContent className="hide-scrollbar sm:max-w-xl">
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? "Edit Watch"
+              ? 'Edit Watch'
               : isViewMode
-              ? "View Watch"
-              : "Create Watch"}
+                ? 'View Watch'
+                : 'Create Watch'}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
-              ? "Edit the details of the watch."
+              ? 'Edit the details of the watch.'
               : isViewMode
-              ? "View the details of the watch."
-              : "Fill in the details to create a new watch."}
+                ? 'View the details of the watch.'
+                : 'Fill in the details to create a new watch.'}
           </SheetDescription>
         </SheetHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
               name="files"
@@ -228,24 +228,24 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                   <FormLabel>Attachments</FormLabel>
                   <FormControl>
                     <FileUpload
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      // onUpload={handleUpload}
                       accept="image/*"
                       maxFiles={8}
+                      // onUpload={handleUpload}
                       maxSize={5 * 1024 * 1024}
+                      multiple
                       onFileReject={(_, message) => {
-                        form.setError("files", {
+                        form.setError('files', {
                           message,
                         });
                       }}
-                      multiple
+                      onValueChange={field.onChange}
+                      value={field.value}
                     >
                       <FileUploadDropzone className="flex-row flex-wrap border-dotted text-center">
                         <CloudUpload className="size-4" />
                         Drag and drop or
                         <FileUploadTrigger asChild>
-                          <Button variant="link" size="sm" className="p-0">
+                          <Button className="p-0" size="sm" variant="link">
                             choose files
                           </Button>
                         </FileUploadTrigger>
@@ -258,9 +258,9 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                             <FileUploadItemMetadata />
                             <FileUploadItemDelete asChild>
                               <Button
-                                variant="ghost"
-                                size="icon"
                                 className="size-7"
+                                size="icon"
+                                variant="ghost"
                               >
                                 <X />
                                 <span className="sr-only">Delete</span>
@@ -283,12 +283,12 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
               <div className="grid grid-cols-4 gap-4">
                 {watchData.images.map(
                   (image: { absolute_url: string }, index: any) => (
-                    <AspectRatio ratio={1} key={index} className="relative">
+                    <AspectRatio className="relative" key={index} ratio={1}>
                       <Image
-                        src={image.absolute_url}
                         alt="Image"
                         fill
                         sizes="10vw"
+                        src={image.absolute_url}
                       />
                     </AspectRatio>
                   )
@@ -297,7 +297,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
             )}
             <div className="space-y-6">
               <div className="grid grid-cols-1 gap-4">
-                <div className="flex items-center font-bold gap-x-2">
+                <div className="flex items-center gap-x-2 font-bold">
                   <Info className="size-6" />
                   <h1 className="text-xl">Basic information</h1>
                 </div>
@@ -330,9 +330,9 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                           Gender <span className="text-red-500">*</span>
                         </FormLabel>
                         <Select
-                          onValueChange={field.onChange}
                           defaultValue={field.value}
                           disabled={isViewMode}
+                          onValueChange={field.onChange}
                         >
                           <FormControl>
                             <SelectTrigger>
@@ -360,9 +360,9 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                           Brand <span className="text-red-500">*</span>
                         </FormLabel>
                         <Select
-                          onValueChange={field.onChange}
                           defaultValue={field.value}
                           disabled={isViewMode}
+                          onValueChange={field.onChange}
                         >
                           <FormControl>
                             <SelectTrigger>
@@ -384,7 +384,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                 </div>
               </div>
               <div className="grid grid-cols-1 gap-4">
-                <div className="flex items-center font-bold gap-x-2">
+                <div className="flex items-center gap-x-2 font-bold">
                   <Cog className="size-6" />
                   <h1 className="text-xl">Techincal Specifications</h1>
                 </div>
@@ -398,9 +398,9 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                           Material <span className="text-red-500">*</span>
                         </FormLabel>
                         <Select
-                          onValueChange={field.onChange}
                           defaultValue={field.value}
                           disabled={isViewMode}
+                          onValueChange={field.onChange}
                         >
                           <FormControl>
                             <SelectTrigger>
@@ -433,9 +433,9 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                           Band Material <span className="text-red-500">*</span>
                         </FormLabel>
                         <Select
-                          onValueChange={field.onChange}
                           defaultValue={field.value}
                           disabled={isViewMode}
+                          onValueChange={field.onChange}
                         >
                           <FormControl>
                             <SelectTrigger>
@@ -468,9 +468,9 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                           Movement <span className="text-red-500">*</span>
                         </FormLabel>
                         <Select
-                          onValueChange={field.onChange}
                           defaultValue={field.value}
                           disabled={isViewMode}
+                          onValueChange={field.onChange}
                         >
                           <FormControl>
                             <SelectTrigger>
@@ -607,8 +607,8 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                           <Textarea
                             placeholder="Watch description"
                             {...field}
-                            rows={3}
                             disabled={isViewMode}
+                            rows={3}
                           />
                         </FormControl>
                         <FormMessage />
@@ -620,7 +620,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
             </div>
             <SheetFooter>
               {!isViewMode && (
-                <Button type="submit" disabled={isMutating > 0}>
+                <Button disabled={isMutating > 0} type="submit">
                   {isMutating ? (
                     <>
                       <Loader2 className="animate-spin" />

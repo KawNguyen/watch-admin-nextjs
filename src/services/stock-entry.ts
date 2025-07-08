@@ -1,8 +1,8 @@
-import { instanceAxios } from "@/lib/instantceAxios";
+import { instanceAxios } from '@/lib/instantceAxios';
 
 export const StockAPI = {
   getAllStockEntries: async () => {
-    const res = await instanceAxios.get("/stock-entry");
+    const res = await instanceAxios.get('/stock-entry');
     return res.data;
   },
   getStockEntryById: async (id: string) => {
@@ -10,7 +10,7 @@ export const StockAPI = {
     return res.data;
   },
   createStockEntry: async (data: any) => {
-    const res = await instanceAxios.post("/stock-entry/add-stock", data);
+    const res = await instanceAxios.post('/stock-entry/add-stock', data);
     return res.data;
   },
 };

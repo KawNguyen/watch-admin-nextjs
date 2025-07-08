@@ -1,5 +1,15 @@
-"use client";
+'use client';
 
+import { Minus, Plus, X } from 'lucide-react';
+import type {
+  Control,
+  FieldArrayWithId,
+  UseFormRegister,
+  UseFormWatch,
+} from 'react-hook-form';
+import type { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -7,25 +17,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Minus, Plus, X } from "lucide-react";
-import type {
-  Control,
-  UseFormRegister,
-  FieldArrayWithId,
-  UseFormWatch,
-} from "react-hook-form";
-import { StockSchema } from "@/schema/stock-entry";
-import { z } from "zod";
+} from '@/components/ui/table';
+import type { StockSchema } from '@/schema/stock-entry';
+
 type StockFormValues = z.infer<typeof StockSchema>;
 
 interface Props {
   control: Control<StockFormValues>;
   register: UseFormRegister<StockFormValues>;
   products: any[];
-  fields: FieldArrayWithId<StockFormValues, "stockItems", "id">[];
+  fields: FieldArrayWithId<StockFormValues, 'stockItems', 'id'>[];
   update: (index: number, value: any) => void;
   remove: (index: number) => void;
   watch: UseFormWatch<StockFormValues>;
@@ -48,7 +49,7 @@ export const StockEntryTable = ({
           <TableHead>Quantity</TableHead>
           <TableHead>Cost Price</TableHead>
           <TableHead>Total</TableHead>
-          <TableHead></TableHead>
+          <TableHead />
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -67,15 +68,15 @@ export const StockEntryTable = ({
               <TableCell>
                 <div className="flex items-center gap-2">
                   <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
                     onClick={() =>
                       update(index, {
                         ...field,
                         quantity: Math.max(field.quantity - 1, 1),
                       })
                     }
+                    size="icon"
+                    type="button"
+                    variant="outline"
                   >
                     <Minus className="h-4 w-4" />
                   </Button>
@@ -88,15 +89,15 @@ export const StockEntryTable = ({
                     min={1}
                   />
                   <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
                     onClick={() =>
                       update(index, {
                         ...field,
                         quantity: field.quantity + 1,
                       })
                     }
+                    size="icon"
+                    type="button"
+                    variant="outline"
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
@@ -112,8 +113,8 @@ export const StockEntryTable = ({
                     })}
                     className="w-24"
                     min="0"
-                    step="0.01"
                     placeholder="0.00"
+                    step="0.01"
                   />
                 </div>
               </TableCell>
@@ -122,11 +123,11 @@ export const StockEntryTable = ({
               </TableCell>
               <TableCell>
                 <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
                   className="text-destructive"
                   onClick={() => remove(index)}
+                  size="icon"
+                  type="button"
+                  variant="ghost"
                 >
                   <X className="h-4 w-4" />
                 </Button>

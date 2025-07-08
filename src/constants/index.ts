@@ -11,37 +11,37 @@ import {
   ViewIcon,
   WarehouseIcon,
   WatchIcon,
-} from "lucide-react";
+} from 'lucide-react';
 
 export const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: 'shadcn',
+    email: 'm@example.com',
+    avatar: '/avatars/shadcn.jpg',
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: 'Acme Inc',
       logo: GalleryVerticalEndIcon,
-      plan: "Enterprise",
+      plan: 'Enterprise',
     },
   ],
   navMain: [
     {
-      title: "User",
-      url: "#",
+      title: 'User',
+      url: '#',
       icon: UsersIcon,
       isActive: true,
       items: [
         {
-          title: "List",
-          url: "/admin/user",
+          title: 'List',
+          url: '/admin/user',
         },
       ],
     },
     {
-      title: "Category",
-      url: "#",
+      title: 'Category',
+      url: '#',
       icon: ChartBarStackedIcon,
       isActive: true,
       items: [
@@ -50,104 +50,104 @@ export const data = {
         //   url: "/admin/category/gender",
         // },
         {
-          title: "Brand",
-          url: "/admin/category/brand",
+          title: 'Brand',
+          url: '/admin/category/brand',
         },
         {
-          title: "Movement",
-          url: "/admin/category/movement",
+          title: 'Movement',
+          url: '/admin/category/movement',
         },
         {
-          title: "Band Material",
-          url: "/admin/category/band-material",
+          title: 'Band Material',
+          url: '/admin/category/band-material',
         },
         {
-          title: "Case Material",
-          url: "/admin/category/case-material",
+          title: 'Case Material',
+          url: '/admin/category/case-material',
         },
       ],
     },
     {
-      title: "Watches",
-      url: "#",
+      title: 'Watches',
+      url: '#',
       icon: WatchIcon,
       isActive: true,
       items: [
         {
-          title: "List",
-          url: "/admin/watches",
+          title: 'List',
+          url: '/admin/watches',
         },
       ],
     },
     {
-      title: "Stock",
-      url: "#",
+      title: 'Stock',
+      url: '#',
       icon: WarehouseIcon,
       isActive: true,
       items: [
         {
-          title: "List",
-          url: "/admin/stock",
+          title: 'List',
+          url: '/admin/stock',
         },
       ],
     },
     {
-      title: "Orders",
-      url: "#",
+      title: 'Orders',
+      url: '#',
       icon: ScrollTextIcon,
       isActive: true,
       items: [
         {
-          title: "List",
-          url: "/admin/orders",
+          title: 'List',
+          url: '/admin/orders',
         },
       ],
     },
     {
-      title: "Manage Reviews",
-      url: "#",
+      title: 'Manage Reviews',
+      url: '#',
       icon: MessageSquareTextIcon,
       isActive: true,
       items: [
         {
-          title: "List",
-          url: "/admin/review-manage",
+          title: 'List',
+          url: '/admin/review-manage',
         },
       ],
     },
     {
-      title: "Manage Banners & Ads",
-      url: "#",
+      title: 'Manage Banners & Ads',
+      url: '#',
       icon: MegaphoneIcon,
       isActive: true,
       items: [
         {
-          title: "List",
-          url: "/admin/ads",
+          title: 'List',
+          url: '/admin/ads',
         },
       ],
     },
     {
-      title: "Manage Coupons",
-      url: "#",
+      title: 'Manage Coupons',
+      url: '#',
       icon: BanknoteArrowDownIcon,
       isActive: true,
       items: [
         {
-          title: "List",
-          url: "/admin/coupon",
+          title: 'List',
+          url: '/admin/coupon',
         },
       ],
     },
     {
-      title: "Manage Blogs",
-      url: "#",
+      title: 'Manage Blogs',
+      url: '#',
       icon: Newspaper,
       isActive: true,
       items: [
         {
-          title: "List",
-          url: "/admin/blog",
+          title: 'List',
+          url: '/admin/blog',
         },
       ],
     },

@@ -17,9 +17,9 @@
 //   );
 // };
 
+import React from 'react';
 // export default ReviewPage;
-import { ReviewManagement } from "@/components/ReviewManagement/ReviewManagement";
-import React from "react";
+import { ReviewManagement } from '@/components/ReviewManagement/ReviewManagement';
 
 const ReviewPage = () => {
   return <ReviewManagement />;

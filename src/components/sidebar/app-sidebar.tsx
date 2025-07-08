@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import * as React from "react";
+import type * as React from 'react';
 
-import { NavMain } from "@/components/sidebar/nav-main";
-import { NavUser } from "@/components/sidebar/nav-user";
-import { TeamSwitcher } from "@/components/sidebar/team-switcher";
+import { NavMain } from '@/components/sidebar/nav-main';
+import { NavUser } from '@/components/sidebar/nav-user';
+import { TeamSwitcher } from '@/components/sidebar/team-switcher';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar";
-import { data } from "@/constants";
-import { useMe } from "@/queries/use-session";
+} from '@/components/ui/sidebar';
+import { data } from '@/constants';
+import { useMe } from '@/queries/use-session';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: userData } = useMe();

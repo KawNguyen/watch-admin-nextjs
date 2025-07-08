@@ -1,5 +1,6 @@
-"use client";
+'use client';
 
+import { useMutation } from '@tanstack/react-query';
 import {
   BadgeCheck,
   Bell,
@@ -7,9 +8,9 @@ import {
   CreditCard,
   LogOut,
   Sparkles,
-} from "lucide-react";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,16 +19,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar";
-import { useMutation } from "@tanstack/react-query";
-import { authAPI } from "@/services/auth";
-import { useRouter } from "next/navigation";
+} from '@/components/ui/sidebar';
+import { authAPI } from '@/services/auth';
 
 export function NavUser({
   user,
@@ -46,7 +45,7 @@ export function NavUser({
   const mutateLogout = useMutation({
     mutationFn: async () => await authAPI.logout(),
     onSuccess: () => {
-      router.push("/sign-in");
+      router.push('/sign-in');
     },
   });
 
@@ -56,16 +55,16 @@ export function NavUser({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
-              size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              size="lg"
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage
-                  src={user?.profile?.avatar}
                   alt={user?.profile?.firstName}
+                  src={user?.profile?.avatar}
                 />
                 <AvatarFallback className="rounded-lg">
-                  {user?.profile?.firstName?.[0] || "CN"}
+                  {user?.profile?.firstName?.[0] || 'CN'}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -78,17 +77,17 @@ export function NavUser({
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
             align="end"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            side={isMobile ? 'bottom' : 'right'}
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
-                    src={user?.profile?.avatar}
                     alt={user?.profile?.firstName}
+                    src={user?.profile?.avatar}
                   />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
@@ -124,11 +123,11 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => mutateLogout.mutate()}
               disabled={mutateLogout.isPending}
+              onClick={() => mutateLogout.mutate()}
             >
               <LogOut />
-              {mutateLogout.isPending ? "Logging out..." : "Log out"}
+              {mutateLogout.isPending ? 'Logging out...' : 'Log out'}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { PhotoProvider } from "react-photo-view";
-import { ReactNode } from "react";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type { ReactNode } from 'react';
+import { PhotoProvider } from 'react-photo-view';
 
 export const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,8 +1,8 @@
-import { instanceAxios } from "@/lib/instantceAxios";
+import { instanceAxios } from '@/lib/instantceAxios';
 
 export const advertisementApi = {
   getAllAds: async () => {
-    const res = await instanceAxios.get("/advertisement");
+    const res = await instanceAxios.get('/advertisement');
     return res.data;
   },
 
@@ -12,7 +12,7 @@ export const advertisementApi = {
   },
 
   createAds: async (adsData: any) => {
-    const res = await instanceAxios.post("/advertisement/create", adsData);
+    const res = await instanceAxios.post('/advertisement/create', adsData);
     return res.data;
   },
 

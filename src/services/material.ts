@@ -1,8 +1,8 @@
-import { instanceAxios } from "@/lib/instantceAxios";
+import { instanceAxios } from '@/lib/instantceAxios';
 
 export const materialApi = {
   getAllMaterials: async () => {
-    const res = await instanceAxios.get("/material");
+    const res = await instanceAxios.get('/material');
     return res.data;
   },
 
@@ -12,17 +12,17 @@ export const materialApi = {
   },
 
   createMaterial: async (material: { name: string }) => {
-    const res = await instanceAxios.post("/material/create", material);
+    const res = await instanceAxios.post('/material/create', material);
     return res.data;
   },
 
   updateMaterial: async (
     materialId: string | undefined,
-    material: { name: string },
+    material: { name: string }
   ) => {
     const res = await instanceAxios.patch(
       `/material/update/${materialId}`,
-      material,
+      material
     );
     return res.data;
   },

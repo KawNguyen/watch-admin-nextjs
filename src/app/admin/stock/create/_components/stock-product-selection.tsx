@@ -1,18 +1,18 @@
 // components/ProductSelectionModal.tsx
-"use client";
+'use client';
 
+import { Search } from 'lucide-react';
+import Image from 'next/image';
+import { useMemo } from 'react';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import { useMemo } from "react";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 
 interface StockProductSelectionProps {
   open: boolean;
@@ -46,63 +46,63 @@ export function StockProductSelection({
   }, [products, searchQuery]);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[80vh]">
+    <Dialog onOpenChange={onOpenChange} open={open}>
+      <DialogContent className="max-h-[80vh] max-w-6xl">
         <DialogHeader>
           <DialogTitle>Select Products</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-muted-foreground" />
             <Input
+              className="pl-10"
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search products..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
             />
           </div>
 
-          <div className="border rounded-lg">
-            <div className="flex items-center p-4 border-b bg-muted/30">
+          <div className="rounded-lg border">
+            <div className="flex items-center border-b bg-muted/30 p-4">
               <Checkbox
                 checked={
                   selectedIds.length === filteredProducts.length &&
                   filteredProducts.length > 0
                 }
-                onClick={onSelectAll}
                 className="mr-3 h-5 w-5"
+                onClick={onSelectAll}
               />
               <div className="flex-1 font-medium text-sm">
-                Select All ({selectedIds.length} of {filteredProducts.length}{" "}
+                Select All ({selectedIds.length} of {filteredProducts.length}{' '}
                 selected)
               </div>
             </div>
-            <div className="max-h-96 overflow-y-auto divide-y divide-border">
+            <div className="max-h-96 divide-y divide-border overflow-y-auto">
               {filteredProducts.map((product) => (
                 <div
+                  className="grid cursor-pointer grid-cols-12 gap-4 p-4"
                   key={product.id}
-                  className="grid grid-cols-12 gap-4 p-4 cursor-pointer"
                   onClick={() => onToggle(product.id)}
                 >
                   <Checkbox
                     checked={selectedIds.includes(product.id)}
+                    className="col-span-1 h-5 w-5 items-center self-center justify-self-start"
                     onChange={() => onToggle(product.id)}
-                    className="h-5 w-5 items-center col-span-1 self-center justify-self-start"
                   />
                   <div className="col-span-9 flex items-center gap-4">
                     <Image
-                      src={
-                        product.images[0]?.absolute_url || "/placeholder.png"
-                      }
                       alt={product.name}
-                      width={80}
-                      height={80}
                       className="rounded-md object-cover"
+                      height={80}
+                      src={
+                        product.images[0]?.absolute_url || '/placeholder.png'
+                      }
+                      width={80}
                     />
                     <div>
                       <div className="font-semibold">{product.name}</div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-muted-foreground text-sm">
                         Code: {product.code}
                       </div>
                     </div>
@@ -122,15 +122,15 @@ export function StockProductSelection({
             </div>
           </div>
 
-          <div className="flex justify-between items-center pt-4 border-t">
-            <div className="text-sm text-muted-foreground">
+          <div className="flex items-center justify-between border-t pt-4">
+            <div className="text-muted-foreground text-sm">
               {selectedIds.length} selected
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
+              <Button onClick={() => onOpenChange(false)} variant="outline">
                 Cancel
               </Button>
-              <Button onClick={onApply} disabled={selectedIds.length === 0}>
+              <Button disabled={selectedIds.length === 0} onClick={onApply}>
                 Apply
               </Button>
             </div>

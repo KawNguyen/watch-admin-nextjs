@@ -1,8 +1,8 @@
-import { instanceAxios } from "@/lib/instantceAxios";
+import { instanceAxios } from '@/lib/instantceAxios';
 
 export const authAPI = {
   login: async (email: string, password: string) => {
-    const res = await instanceAxios.post("/auth/sign-in", {
+    const res = await instanceAxios.post('/auth/sign-in', {
       email,
       password,
     });
@@ -10,17 +10,17 @@ export const authAPI = {
   },
 
   logout: async () => {
-    const res = await instanceAxios.post("/auth/sign-out");
+    const res = await instanceAxios.post('/auth/sign-out');
     return res.data;
   },
 
   checkAuth: async () => {
-    const res = await instanceAxios.get("/auth/check-auth");
+    const res = await instanceAxios.get('/auth/check-auth');
     return res.data;
   },
 
   getMe: async () => {
-    const res = await instanceAxios.get("/user/me");
+    const res = await instanceAxios.get('/user/me');
     return res.data;
   },
 };

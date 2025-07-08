@@ -1,10 +1,10 @@
 export enum UserRole {
-  ADMIN = "ADMIN",
-  CUSTOMER = "CUSTOMER",
+  ADMIN = 'ADMIN',
+  CUSTOMER = 'CUSTOMER',
 }
 export enum GENDER {
-  MALE = "MALE",
-  FEMALE = "FEMALE",
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
 }
 export interface User {
   id: string;

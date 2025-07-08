@@ -1,9 +1,9 @@
-import { brandApi } from "@/services/brand";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
+import { brandApi } from '@/services/brand';
 
 export const useBrands = () => {
   return useQuery({
-    queryKey: ["brands"],
+    queryKey: ['brands'],
     queryFn: brandApi.getAllBrands,
     refetchOnWindowFocus: false,
     retry: 1,

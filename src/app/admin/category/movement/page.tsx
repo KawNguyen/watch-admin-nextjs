@@ -1,31 +1,31 @@
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
-import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
-} from "@tanstack/react-query";
-import MovementsDataTable from "./_components/movement-data-table";
-import MovementForm from "./_components/movement-form";
+} from '@tanstack/react-query';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import MovementsDataTable from './_components/movement-data-table';
+import MovementForm from './_components/movement-form';
 
 export default async function MovementsPage() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ["movements"],
+    queryKey: ['movements'],
     queryFn: () =>
-      import("@/queries/use-movement").then((mod) => mod.useMovements()),
+      import('@/queries/use-movement').then((mod) => mod.useMovements()),
   });
 
   return (
     <Card>
       <CardHeader>
-        <div className="w-full flex items-center justify-between">
+        <div className="flex w-full items-center justify-between">
           <div>
             <CardTitle>Movement</CardTitle>
             <CardDescription>Manage movements</CardDescription>

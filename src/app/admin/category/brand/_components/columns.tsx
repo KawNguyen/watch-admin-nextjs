@@ -1,34 +1,33 @@
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ColumnDef } from "@tanstack/react-table";
-import { Loader2, Trash2 } from "lucide-react";
-import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
-import { queryClient } from "@/components/provider/provider";
-import { AlertDialogFooter } from "@/components/ui/alert-dialog";
-
-import Image from "next/image";
-import { brandApi } from "@/services/brand";
-import { Brand } from "@/types/brand";
-import BrandForm from "@/app/admin/category/brand/_components/brand-form";
+import { useMutation } from '@tanstack/react-query';
+import type { ColumnDef } from '@tanstack/react-table';
+import { Loader2, Trash2 } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import BrandForm from '@/app/admin/category/brand/_components/brand-form';
+import { queryClient } from '@/components/provider/provider';
+import { AlertDialogFooter } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { useState } from "react";
+} from '@/components/ui/dialog';
+import { brandApi } from '@/services/brand';
+import type { Brand } from '@/types/brand';
 
 const ActionCell = ({ row }: { row: any }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const mutationDelete = useMutation({
     mutationFn: (brandId: string) => brandApi.deleteBrand(brandId),
     onSuccess: () => {
-      toast.success("Brand deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["brands"] });
+      toast.success('Brand deleted successfully');
+      queryClient.invalidateQueries({ queryKey: ['brands'] });
     },
     onError: () => {
-      toast.error("Failed to delete brand");
+      toast.error('Failed to delete brand');
     },
   });
   const handleDelete = () => {
@@ -38,35 +37,35 @@ const ActionCell = ({ row }: { row: any }) => {
 
   return (
     <div className="flex items-center gap-2">
-      <BrandForm mode="view" brandData={row.original} />
-      <BrandForm mode="edit" brandData={row.original} />
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <BrandForm brandData={row.original} mode="view" />
+      <BrandForm brandData={row.original} mode="edit" />
+      <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
         <DialogTrigger asChild>
           {mutationDelete.isPending ? (
             <Loader2 className="size-4 animate-spin text-red-500" />
           ) : (
             <Trash2
-              className="size-4 text-red-500 cursor-pointer"
+              className="size-4 cursor-pointer text-red-500"
               onClick={() => setIsDialogOpen(true)}
             />
           )}
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <h3 className="text-lg font-semibold">Confirm Deletion</h3>
+            <h3 className="font-semibold text-lg">Confirm Deletion</h3>
           </DialogHeader>
           <p>
             Are you sure you want to delete
-            <span className=" mx-2 underline text-red-500">
+            <span className=" mx-2 text-red-500 underline">
               {row.original.name}
             </span>
             ?
           </p>
           <AlertDialogFooter>
-            <Button variant="secondary" onClick={() => setIsDialogOpen(false)}>
+            <Button onClick={() => setIsDialogOpen(false)} variant="secondary">
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDelete}>
+            <Button onClick={handleDelete} variant="destructive">
               Confirm Delete
             </Button>
           </AlertDialogFooter>
@@ -78,30 +77,30 @@ const ActionCell = ({ row }: { row: any }) => {
 
 export const columns: ColumnDef<Brand>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) => (
       <Checkbox
+        aria-label="Select all"
         checked={
           table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
+        aria-label="Select row"
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
       />
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: "image",
-    header: "Logo",
+    accessorKey: 'image',
+    header: 'Logo',
     cell: ({ row }) => {
       const image = row.original.image;
 
@@ -109,17 +108,17 @@ export const columns: ColumnDef<Brand>[] = [
         <div className="relative h-16 w-16">
           {image ? (
             <Image
-              src={image.absolute_url}
-              alt={row.getValue("name")}
-              fill
-              sizes="(max-width: 64px) 100vw, 64px"
+              alt={row.getValue('name')}
               className="rounded-md object-cover"
+              fill
               priority
+              sizes="(max-width: 64px) 100vw, 64px"
+              src={image.absolute_url}
               unoptimized
             />
           ) : (
-            <div className="h-full w-full bg-muted rounded-md flex items-center justify-center">
-              <span className="text-xs text-muted-foreground">No image</span>
+            <div className="flex h-full w-full items-center justify-center rounded-md bg-muted">
+              <span className="text-muted-foreground text-xs">No image</span>
             </div>
           )}
         </div>
@@ -127,16 +126,16 @@ export const columns: ColumnDef<Brand>[] = [
     },
   },
   {
-    accessorKey: "name",
-    header: "Name",
+    accessorKey: 'name',
+    header: 'Name',
   },
   {
-    accessorKey: "country",
-    header: "Country",
+    accessorKey: 'country',
+    header: 'Country',
   },
   {
-    accessorKey: "actions",
-    header: "Actions",
+    accessorKey: 'actions',
+    header: 'Actions',
 
     cell: ({ row }: { row: any }) => <ActionCell row={row} />,
   },

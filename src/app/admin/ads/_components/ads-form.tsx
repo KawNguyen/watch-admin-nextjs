@@ -1,7 +1,24 @@
-"use client";
+'use client';
 
-import { queryClient } from "@/components/provider/provider";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { RadioGroup } from '@radix-ui/react-radio-group';
+import { useIsMutating, useMutation } from '@tanstack/react-query';
+import {
+  CalendarIcon,
+  CloudUpload,
+  Eye,
+  Loader2,
+  Pencil,
+  Plus,
+  X,
+} from 'lucide-react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import type { z } from 'zod';
+import { queryClient } from '@/components/provider/provider';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import {
   FileUpload,
   FileUploadDropzone,
@@ -11,7 +28,7 @@ import {
   FileUploadItemPreview,
   FileUploadList,
   FileUploadTrigger,
-} from "@/components/ui/file-upload";
+} from '@/components/ui/file-upload';
 import {
   Form,
   FormControl,
@@ -20,9 +37,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { RadioGroupItem } from "@/components/ui/radio-group";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Sheet,
   SheetContent,
@@ -31,37 +53,15 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { Textarea } from "@/components/ui/textarea";
-import { advertisementSchema } from "@/schema/advertisement";
-import { advertisementApi } from "@/services/ads";
-import { cloudinaryApi } from "@/services/cloudinary";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { RadioGroup } from "@radix-ui/react-radio-group";
-import { useIsMutating, useMutation } from "@tanstack/react-query";
-import {
-  CalendarIcon,
-  CloudUpload,
-  Eye,
-  Loader2,
-  Pencil,
-  Plus,
-  X,
-} from "lucide-react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/sheet';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
+import { advertisementSchema } from '@/schema/advertisement';
+import { advertisementApi } from '@/services/ads';
+import { cloudinaryApi } from '@/services/cloudinary';
 
 interface AdsFormProps {
-  mode: "create" | "edit" | "view";
+  mode: 'create' | 'edit' | 'view';
   adsId?: string;
   adsData?: any;
 }
@@ -69,8 +69,8 @@ type AdsFormValues = z.infer<typeof advertisementSchema>;
 export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
   const isMutating = useIsMutating();
   const [isOpen, setIsOpen] = useState(false);
-  const isEditMode = mode === "edit";
-  const isViewMode = mode === "view";
+  const isEditMode = mode === 'edit';
+  const isViewMode = mode === 'view';
   const WIDTH_IMAGE = 400,
     HEIGHT_IMAGE = 400;
 
@@ -96,10 +96,10 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
   const form = useForm<AdsFormValues>({
     resolver: zodResolver(advertisementSchema),
     defaultValues: {
-      title: isEditMode && adsData ? adsData.title : "",
-      content: isEditMode && adsData ? adsData.content : "",
+      title: isEditMode && adsData ? adsData.title : '',
+      content: isEditMode && adsData ? adsData.content : '',
       imageUrl: [],
-      link: isEditMode && adsData ? adsData.link : "",
+      link: isEditMode && adsData ? adsData.link : '',
       isActive: isEditMode && adsData ? adsData.isActive : false,
       startDate:
         isEditMode && adsData ? new Date(adsData.startDate) : new Date(),
@@ -110,7 +110,7 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
   const handleUpload = async (files: File[]) => {
     const formData = new FormData();
     files.forEach((file) => {
-      formData.append("file", file);
+      formData.append('file', file);
     });
 
     try {
@@ -125,7 +125,7 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
       };
       return uploadImage;
     } catch (error) {
-      console.error("Error uploading files:", error);
+      console.error('Error uploading files:', error);
     }
   };
 
@@ -144,27 +144,27 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
           form.reset();
 
           toast.success(
-            `${isEditMode ? "Edit successfully" : "Created successfully"}`
+            `${isEditMode ? 'Edit successfully' : 'Created successfully'}`
           );
-          queryClient.invalidateQueries({ queryKey: ["advertisements"] });
+          queryClient.invalidateQueries({ queryKey: ['advertisements'] });
           setIsOpen(false);
         },
         onError: (error) => {
-          console.error("Error creating advertisement:", error);
+          console.error('Error creating advertisement:', error);
         },
       }
     );
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet onOpenChange={setIsOpen} open={isOpen}>
       <SheetTrigger asChild>
         {isEditMode ? (
-          <Button variant="ghost" size="icon">
+          <Button size="icon" variant="ghost">
             <Pencil />
           </Button>
         ) : isViewMode ? (
-          <Button variant="ghost" size="icon">
+          <Button size="icon" variant="ghost">
             <Eye />
           </Button>
         ) : (
@@ -174,26 +174,26 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
           </Button>
         )}
       </SheetTrigger>
-      <SheetContent className="sm:max-w-xl hide-scrollbar">
+      <SheetContent className="hide-scrollbar sm:max-w-xl">
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? "Edit Advertisement"
+              ? 'Edit Advertisement'
               : isViewMode
-              ? "View Advertisement"
-              : "Create Advertisement"}
+                ? 'View Advertisement'
+                : 'Create Advertisement'}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
-              ? "Edit the details of the advertisement."
+              ? 'Edit the details of the advertisement.'
               : isViewMode
-              ? "View the details of the advertisement."
-              : "Fill in the details to create a new advertisement."}
+                ? 'View the details of the advertisement.'
+                : 'Fill in the details to create a new advertisement.'}
           </SheetDescription>
         </SheetHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
               name="imageUrl"
@@ -202,23 +202,23 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                   <FormLabel>Attachments</FormLabel>
                   <FormControl>
                     <FileUpload
-                      value={field.value}
-                      onValueChange={field.onChange}
                       accept="image/*"
                       maxFiles={1}
                       maxSize={5 * 1024 * 1024}
+                      multiple={false}
                       onFileReject={(_, message) => {
-                        form.setError("imageUrl", {
+                        form.setError('imageUrl', {
                           message,
                         });
                       }}
-                      multiple={false}
+                      onValueChange={field.onChange}
+                      value={field.value}
                     >
                       <FileUploadDropzone className="flex-row flex-wrap border-dotted text-center">
                         <CloudUpload className="size-4" />
                         Drag and drop or
                         <FileUploadTrigger asChild>
-                          <Button variant="link" size="sm" className="p-0">
+                          <Button className="p-0" size="sm" variant="link">
                             choose file
                           </Button>
                         </FileUploadTrigger>
@@ -231,9 +231,9 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                             <FileUploadItemMetadata />
                             <FileUploadItemDelete asChild>
                               <Button
-                                variant="ghost"
-                                size="icon"
                                 className="size-7"
+                                size="icon"
+                                variant="ghost"
                               >
                                 <X />
                                 <span className="sr-only">Delete</span>
@@ -299,13 +299,13 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                       <FormLabel>Active</FormLabel>
                       <FormControl>
                         <RadioGroup
-                          value={field.value.toString()}
-                          onValueChange={(val) =>
-                            field.onChange(val === "true")
-                          }
                           className="flex space-x-4"
+                          onValueChange={(val) =>
+                            field.onChange(val === 'true')
+                          }
+                          value={field.value.toString()}
                         >
-                          <FormItem className="space-y-0 mt-2 flex items-center space-x-2">
+                          <FormItem className="mt-2 flex items-center space-x-2 space-y-0">
                             <FormControl>
                               <RadioGroupItem value="true" />
                             </FormControl>
@@ -313,7 +313,7 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                               Active
                             </FormLabel>
                           </FormItem>
-                          <FormItem className="space-y-0 mt-2 flex items-center space-x-2">
+                          <FormItem className="mt-2 flex items-center space-x-2 space-y-0">
                             <FormControl>
                               <RadioGroupItem value="false" />
                             </FormControl>
@@ -340,26 +340,26 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={"outline"}
                             className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              'w-full pl-3 text-left font-normal',
+                              !field.value && 'text-muted-foreground'
                             )}
+                            variant={'outline'}
                           >
                             {field.value
-                              ? field.value.toLocaleDateString("vi-VN")
-                              : "Choose Date"}
+                              ? field.value.toLocaleDateString('vi-VN')
+                              : 'Choose Date'}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
+                      <PopoverContent align="start" className="w-auto p-0">
                         <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) => date < new Date("1900-01-01")}
+                          disabled={(date) => date < new Date('1900-01-01')}
                           initialFocus
+                          mode="single"
+                          onSelect={field.onChange}
+                          selected={field.value}
                         />
                       </PopoverContent>
                     </Popover>
@@ -378,25 +378,25 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={"outline"}
                             className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              'w-full pl-3 text-left font-normal',
+                              !field.value && 'text-muted-foreground'
                             )}
+                            variant={'outline'}
                           >
                             {field.value
-                              ? field.value.toLocaleDateString("vi-VN")
-                              : "Choose Date"}
+                              ? field.value.toLocaleDateString('vi-VN')
+                              : 'Choose Date'}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
+                      <PopoverContent align="start" className="w-auto p-0">
                         <Calendar
+                          disabled={(date) => date < new Date('1900-01-01')}
                           mode="single"
-                          selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) => date < new Date("1900-01-01")}
+                          selected={field.value}
                         />
                       </PopoverContent>
                     </Popover>
@@ -426,7 +426,7 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
             />
             <SheetFooter>
               {!isViewMode && (
-                <Button type="submit" disabled={isMutating > 0}>
+                <Button disabled={isMutating > 0} type="submit">
                   {isMutating ? (
                     <Loader2 className="animate-spin" />
                   ) : isEditMode ? (

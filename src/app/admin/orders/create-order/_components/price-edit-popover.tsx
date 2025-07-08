@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/popover';
 
 interface PriceEditPopoverProps {
   price: number;
@@ -46,20 +46,20 @@ export default function PriceEditPopover({
   const isPriceChanged = price !== originalPrice;
 
   return (
-    <Popover open={isOpen} onOpenChange={handleOpenChange}>
+    <Popover onOpenChange={handleOpenChange} open={isOpen}>
       <PopoverTrigger asChild>
         <div className="cursor-pointer">
           {isPriceChanged ? (
             <div className="flex flex-col">
-              <span className="text-xs text-gray-400 line-through">
+              <span className="text-gray-400 text-xs line-through">
                 ${originalPrice.toFixed(2)}
               </span>
-              <span className="font-semibold text-green-600 hover:text-green-700 hover:underline">
+              <span className="font-medium text-black hover:underline">
                 ${price.toFixed(2)}
               </span>
             </div>
           ) : (
-            <span className="font-semibold text-green-600 hover:text-green-700 hover:underline">
+            <span className="font-medium text-black hover:underline">
               ${price.toFixed(2)}
             </span>
           )}
@@ -69,25 +69,25 @@ export default function PriceEditPopover({
         <div className="space-y-3">
           <h4 className="font-semibold">Edit Price</h4>
           {isPriceChanged && (
-            <div className="text-sm text-muted-foreground">
+            <div className="text-muted-foreground text-sm">
               Original price: ${originalPrice.toFixed(2)}
             </div>
           )}
           <div>
             <Input
-              type="number"
-              step="0.01"
               min="0"
-              value={tempPrice}
               onChange={(e) => setTempPrice(e.target.value)}
               placeholder="Enter new price"
+              step="0.01"
+              type="number"
+              value={tempPrice}
             />
           </div>
           <div className="flex justify-end gap-2">
-            <Button variant="outline" size="sm" onClick={handleCancel}>
+            <Button onClick={handleCancel} size="sm" variant="outline">
               Cancel
             </Button>
-            <Button size="sm" onClick={handleSave}>
+            <Button onClick={handleSave} size="sm">
               Save
             </Button>
           </div>

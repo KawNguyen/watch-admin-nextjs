@@ -1,39 +1,38 @@
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
-
-import { Metadata } from "next";
-import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
-} from "@tanstack/react-query";
+} from '@tanstack/react-query';
 
-import AdvertisementForm from "./_components/ads-form";
-import AdsDataTable from "./_components/ads-data-table";
-import { useAdvertisement } from "@/queries/use-advertisement";
+import type { Metadata } from 'next';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { useAdvertisement } from '@/queries/use-advertisement';
+import AdsDataTable from './_components/ads-data-table';
+import AdvertisementForm from './_components/ads-form';
 
 export const metadata: Metadata = {
-  title: "Admin | Adsvertisements",
-  description: "Manage advertisements in the admin panel",
+  title: 'Admin | Adsvertisements',
+  description: 'Manage advertisements in the admin panel',
 };
 
 export default async function AdsPage() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ["advertisements"],
+    queryKey: ['advertisements'],
     queryFn: useAdvertisement,
   });
 
   return (
     <Card>
       <CardHeader>
-        <div className="w-full flex items-center justify-between">
+        <div className="flex w-full items-center justify-between">
           <div>
             <CardTitle>Advertisment</CardTitle>
             <CardDescription>Manage advertisement</CardDescription>

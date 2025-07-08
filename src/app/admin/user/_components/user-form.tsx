@@ -1,15 +1,22 @@
-"use client";
+'use client';
 
-import { queryClient } from "@/components/provider/provider";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { Eye, Loader2, Pencil, Plus } from 'lucide-react';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import type { z } from 'zod';
+import { queryClient } from '@/components/provider/provider';
+import { Button } from '@/components/ui/button';
 import {
+  Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Sheet,
   SheetContent,
@@ -18,21 +25,14 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { userSchema } from "@/schema/user";
-import { userApi } from "@/services/user";
-import { UserGender } from "@/types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import { Eye, Loader2, Pencil, Plus } from "lucide-react";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { Form } from "@/components/ui/form";
-import { z } from "zod";
-import { UserRole } from "@/types/user";
+} from '@/components/ui/sheet';
+import { userSchema } from '@/schema/user';
+import { userApi } from '@/services/user';
+import { UserGender } from '@/types';
+import { UserRole } from '@/types/user';
 
 interface UserFormProps {
-  mode: "create" | "edit" | "view";
+  mode: 'create' | 'edit' | 'view';
   userId?: string;
   userData?: any;
 }
@@ -43,18 +43,18 @@ export default function UserForm({ mode, userData }: UserFormProps) {
   const mutation = useMutation({
     mutationFn: userApi.createUser,
   });
-  const isEditMode = mode === "edit";
-  const isViewMode = mode === "view";
+  const isEditMode = mode === 'edit';
+  const isViewMode = mode === 'view';
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      email: isEditMode && userData ? userData.email : "",
+      email: isEditMode && userData ? userData.email : '',
       role: isEditMode && userData ? userData.role : UserRole.CUSTOMER,
-      phone: isEditMode && userData ? userData.phone : "",
+      phone: isEditMode && userData ? userData.phone : '',
       gender: isEditMode && userData ? userData.gender : UserGender.MALE,
-      firstname: isEditMode && userData ? userData.firstName : "",
-      lastname: isEditMode && userData ? userData.lastName : "",
-      avatar: isEditMode && userData ? userData.avatar : "",
+      firstname: isEditMode && userData ? userData.firstName : '',
+      lastname: isEditMode && userData ? userData.lastName : '',
+      avatar: isEditMode && userData ? userData.avatar : '',
     },
   });
 
@@ -62,23 +62,23 @@ export default function UserForm({ mode, userData }: UserFormProps) {
     mutation.mutate(data, {
       onSuccess: () => {
         form.reset();
-        queryClient.invalidateQueries({ queryKey: ["users"] });
+        queryClient.invalidateQueries({ queryKey: ['users'] });
         setIsOpen(false);
       },
       onError: (error: any) => {
-        console.error("Error creating watch:", error);
+        console.error('Error creating watch:', error);
       },
     });
   };
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet onOpenChange={setIsOpen} open={isOpen}>
       <SheetTrigger asChild>
         {isEditMode ? (
-          <Button variant="ghost" size="icon">
+          <Button size="icon" variant="ghost">
             <Pencil />
           </Button>
         ) : isViewMode ? (
-          <Button variant="ghost" size="icon">
+          <Button size="icon" variant="ghost">
             <Eye />
           </Button>
         ) : (
@@ -88,25 +88,25 @@ export default function UserForm({ mode, userData }: UserFormProps) {
           </Button>
         )}
       </SheetTrigger>
-      <SheetContent className="sm:max-w-lg hide-scrollbar">
+      <SheetContent className="hide-scrollbar sm:max-w-lg">
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? "Edit Watch"
+              ? 'Edit Watch'
               : isViewMode
-              ? "View Watch"
-              : "Create Watch"}
+                ? 'View Watch'
+                : 'Create Watch'}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
-              ? "Edit the details of the watch."
+              ? 'Edit the details of the watch.'
               : isViewMode
-              ? "View the details of the watch."
-              : "Fill in the details to create a new watch."}
+                ? 'View the details of the watch.'
+                : 'Fill in the details to create a new watch.'}
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
               name="email"
@@ -200,7 +200,7 @@ export default function UserForm({ mode, userData }: UserFormProps) {
             />
             <SheetFooter>
               {!isViewMode && (
-                <Button type="submit" disabled={mutation.isPending}>
+                <Button disabled={mutation.isPending} type="submit">
                   {mutation.isPending ? (
                     <Loader2 className="animate-spin" />
                   ) : isEditMode ? (

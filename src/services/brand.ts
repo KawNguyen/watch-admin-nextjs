@@ -1,8 +1,8 @@
-import { instanceAxios } from "@/lib/instantceAxios";
+import { instanceAxios } from '@/lib/instantceAxios';
 
 export const brandApi = {
   getAllBrands: async () => {
-    const res = await instanceAxios.get("/brand");
+    const res = await instanceAxios.get('/brand');
     return res.data;
   },
 
@@ -12,7 +12,7 @@ export const brandApi = {
   },
 
   createBrand: async (brandData: any) => {
-    const res = await instanceAxios.post("/brand/create", brandData, {});
+    const res = await instanceAxios.post('/brand/create', brandData, {});
     return res.data;
   },
 

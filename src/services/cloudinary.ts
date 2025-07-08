@@ -1,4 +1,4 @@
-import { instanceAxios } from "@/lib/instantceAxios";
+import { instanceAxios } from '@/lib/instantceAxios';
 
 export const cloudinaryApi = {
   async singleFileUpload(width: number, height: number, formData: FormData) {
@@ -7,7 +7,7 @@ export const cloudinaryApi = {
       formData,
       {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       }
     );
@@ -21,7 +21,7 @@ export const cloudinaryApi = {
       formData,
       {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       }
     );

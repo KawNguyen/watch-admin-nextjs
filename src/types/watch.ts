@@ -4,7 +4,7 @@ export interface Watch {
   code: string;
   name: string;
   description: string;
-  gender: "MEN" | "WOMEN" | "UNISEX";
+  gender: 'MEN' | 'WOMEN' | 'UNISEX';
   brandId: string;
   materialId: string;
   bandMaterialId: string;

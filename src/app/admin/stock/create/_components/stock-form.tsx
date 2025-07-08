@@ -1,35 +1,33 @@
 // app/(admin)/stock/StockForm.tsx
-"use client";
+'use client';
 
-import { useState } from "react";
-import { CornerDownLeft, Search } from "lucide-react";
-import Link from "next/link";
-import { useForm, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { useWatches } from "@/queries/use-watches";
-import { useMe } from "@/queries/use-session";
-import { StockSchema } from "@/schema/stock-entry";
-
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { CornerDownLeft, Search } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import type { z } from 'zod';
+import { queryClient } from '@/components/provider/provider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
-import { StockAPI } from "@/services/stock-entry";
-import { queryClient } from "@/components/provider/provider";
-import { toast } from "sonner";
-import { StockEntryTable } from "./stock-entry-table";
-import { StockProductSelection } from "./stock-product-selection";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { useMe } from '@/queries/use-session';
+import { useWatches } from '@/queries/use-watches';
+import { StockSchema } from '@/schema/stock-entry';
+import { StockAPI } from '@/services/stock-entry';
+import { StockEntryTable } from './stock-entry-table';
+import { StockProductSelection } from './stock-product-selection';
 
 type StockFormValues = z.infer<typeof StockSchema>;
 
@@ -46,25 +44,21 @@ export default function StockForm() {
   const form = useForm<StockFormValues>({
     resolver: zodResolver(StockSchema),
     defaultValues: {
-      createdBy: id || "",
-      notes: "",
+      createdBy: id || '',
+      notes: '',
       stockItems: [],
     },
   });
 
-  const {
-    control,
-    handleSubmit,
-    register,
-  } = form;
+  const { control, handleSubmit, register } = form;
 
   const { fields, append, remove, update } = useFieldArray({
     control,
-    name: "stockItems",
+    name: 'stockItems',
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [productSearchQuery, setProductSearchQuery] = useState("");
+  const [productSearchQuery, setProductSearchQuery] = useState('');
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
 
   const handleProductToggle = (id: number) => {
@@ -102,19 +96,19 @@ export default function StockForm() {
 
     setSelectedProductIds([]);
     setIsModalOpen(false);
-    setProductSearchQuery("");
+    setProductSearchQuery('');
   };
 
   const onSubmit = async (data: StockFormValues) => {
     mutation.mutate(data, {
       onSuccess: () => {
         form.reset();
-        queryClient.invalidateQueries({ queryKey: ["stockEntries"] });
-        toast.success("Stock entry created successfully!");
+        queryClient.invalidateQueries({ queryKey: ['stockEntries'] });
+        toast.success('Stock entry created successfully!');
         setIsModalOpen(false);
       },
       onError: (error: any) => {
-        toast.error(`Error creating stock entry:` + error.message);
+        toast.error('Error creating stock entry:' + error.message);
       },
     });
   };
@@ -122,8 +116,8 @@ export default function StockForm() {
   return (
     <div>
       <Link
+        className="mb-4 flex items-center gap-1 underline"
         href="/admin/stock/"
-        className="flex underline gap-1 mb-4 items-center"
       >
         <CornerDownLeft className="size-5" /> Back
       </Link>
@@ -160,11 +154,11 @@ export default function StockForm() {
 
           <div className="mt-6">
             <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-muted-foreground" />
               <Input
-                placeholder="Search products to add..."
-                onFocus={() => setIsModalOpen(true)}
                 className="pl-10"
+                onFocus={() => setIsModalOpen(true)}
+                placeholder="Search products to add..."
               />
             </div>
           </div>
@@ -176,32 +170,32 @@ export default function StockForm() {
             <CardContent>
               <StockEntryTable
                 control={control}
-                register={register}
-                products={products}
                 fields={fields}
-                update={update}
+                products={products}
+                register={register}
                 remove={remove}
+                update={update}
                 watch={form.watch}
               />
             </CardContent>
           </Card>
 
-          <div className="flex justify-end mt-6">
+          <div className="mt-6 flex justify-end">
             <Button type="submit">Import Stock Entry</Button>
           </div>
         </form>
       </Form>
 
       <StockProductSelection
-        open={isModalOpen}
+        onApply={handleApplySelection}
         onOpenChange={setIsModalOpen}
+        onSelectAll={handleSelectAll}
+        onToggle={handleProductToggle}
+        open={isModalOpen}
         products={products}
         searchQuery={productSearchQuery}
-        setSearchQuery={setProductSearchQuery}
         selectedIds={selectedProductIds}
-        onToggle={handleProductToggle}
-        onSelectAll={handleSelectAll}
-        onApply={handleApplySelection}
+        setSearchQuery={setProductSearchQuery}
       />
     </div>
   );

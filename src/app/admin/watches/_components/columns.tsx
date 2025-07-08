@@ -1,38 +1,37 @@
-import "react-photo-view/dist/react-photo-view.css";
+import 'react-photo-view/dist/react-photo-view.css';
 
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Watch } from "@/types/watch";
-import { ColumnDef } from "@tanstack/react-table";
-import { Trash2 } from "lucide-react";
-import Image from "next/image";
-import WatchForm from "./watch-form";
-import { PhotoView } from "react-photo-view";
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation } from '@tanstack/react-query';
+import type { ColumnDef } from '@tanstack/react-table';
+import { Loader2, Trash2 } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
+import { PhotoView } from 'react-photo-view';
+import { toast } from 'sonner';
+import { queryClient } from '@/components/provider/provider';
+import { AlertDialogFooter } from '@/components/ui/alert-dialog';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { watchApi } from "@/services/watch"
-import { AlertDialogFooter } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
-import { queryClient } from "@/components/provider/provider";
+} from '@/components/ui/dialog';
+import { watchApi } from '@/services/watch';
+import type { Watch } from '@/types/watch';
+import WatchForm from './watch-form';
 
 const ActionCell = ({ row }: { row: any }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const mutationDelete = useMutation({
     mutationFn: (watchId: string) => watchApi.delete(watchId),
     onSuccess: () => {
-      toast.success("Watch deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["watches"] });
+      toast.success('Watch deleted successfully');
+      queryClient.invalidateQueries({ queryKey: ['watches'] });
     },
     onError: () => {
-      toast.error("Failed to delete watch");
+      toast.error('Failed to delete watch');
     },
   });
   const handleDelete = () => {
@@ -44,33 +43,33 @@ const ActionCell = ({ row }: { row: any }) => {
     <div className="flex items-center gap-2">
       <WatchForm mode="view" watchData={row.original} />
       <WatchForm mode="edit" watchData={row.original} />
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
         <DialogTrigger asChild>
           {mutationDelete.isPending ? (
             <Loader2 className="size-4 animate-spin text-red-500" />
           ) : (
             <Trash2
-              className="size-4 text-red-500 cursor-pointer"
+              className="size-4 cursor-pointer text-red-500"
               onClick={() => setIsDialogOpen(true)}
             />
           )}
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <h3 className="text-lg font-semibold">Confirm Deletion</h3>
+            <h3 className="font-semibold text-lg">Confirm Deletion</h3>
           </DialogHeader>
           <p>
             Are you sure you want to delete
-            <span className=" mx-2 underline text-red-500">
+            <span className=" mx-2 text-red-500 underline">
               {row.original.name}
             </span>
             ?
           </p>
           <AlertDialogFooter>
-            <Button variant="secondary" onClick={() => setIsDialogOpen(false)}>
+            <Button onClick={() => setIsDialogOpen(false)} variant="secondary">
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDelete}>
+            <Button onClick={handleDelete} variant="destructive">
               Confirm Delete
             </Button>
           </AlertDialogFooter>
@@ -81,51 +80,51 @@ const ActionCell = ({ row }: { row: any }) => {
 };
 export const columns: ColumnDef<Watch>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }: { table: any }) => (
       <Checkbox
+        aria-label="Select all"
         checked={
           table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
       />
     ),
     cell: ({ row }: { row: any }) => (
       <Checkbox
+        aria-label="Select row"
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
       />
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    header: "Image",
+    header: 'Image',
     cell: ({ row }: { row: any }) => {
       return (
         <PhotoView
-          width={500}
           height={500}
           src={row.original.images[0]?.absolute_url}
+          width={500}
         >
-          <div className="h-10 w-10 rounded-md overflow-hidden">
+          <div className="h-10 w-10 overflow-hidden rounded-md">
             <AspectRatio ratio={1}>
               <Image
-                src={
-                  row.original?.images[0]?.absolute_url ||
-                  "https://placehold.co/300x300.png"
-                }
                 alt={row.original.name}
-                fill
-                sizes="10vw"
                 className="object-cover"
+                fill
                 onError={(e) => {
                   (e.target as HTMLImageElement).src =
-                    "https://placehold.co/300x300.png";
+                    'https://placehold.co/300x300.png';
                 }}
+                sizes="10vw"
+                src={
+                  row.original?.images[0]?.absolute_url ||
+                  'https://placehold.co/300x300.png'
+                }
               />
             </AspectRatio>
           </div>
@@ -134,24 +133,24 @@ export const columns: ColumnDef<Watch>[] = [
     },
   },
   {
-    accessorKey: "name",
-    header: "Name",
+    accessorKey: 'name',
+    header: 'Name',
   },
   {
-    accessorKey: "gender",
-    header: "Gender",
+    accessorKey: 'gender',
+    header: 'Gender',
   },
   {
-    accessorKey: "brand.name",
-    header: "Brand",
+    accessorKey: 'brand.name',
+    header: 'Brand',
   },
   {
-    accessorKey: "price",
-    header: "Price",
+    accessorKey: 'price',
+    header: 'Price',
   },
   {
-    accessorKey: "actions",
-    header: "Actions",
-     cell: ({ row }: { row: any }) => <ActionCell row={row} />,
+    accessorKey: 'actions',
+    header: 'Actions',
+    cell: ({ row }: { row: any }) => <ActionCell row={row} />,
   },
 ];

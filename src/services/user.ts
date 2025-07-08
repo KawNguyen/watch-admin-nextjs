@@ -1,7 +1,7 @@
-import { instanceAxios } from "@/lib/instantceAxios";
+import { instanceAxios } from '@/lib/instantceAxios';
 export const userApi = {
   getAllUsers: async () => {
-    const res = await instanceAxios.get("/user");
+    const res = await instanceAxios.get('/user');
     return res.data;
   },
   getUserById: async (userId: string) => {
@@ -9,7 +9,7 @@ export const userApi = {
     return res.data;
   },
   createUser: async (user: any) => {
-    const res = await instanceAxios.post("/user/create", user);
+    const res = await instanceAxios.post('/user/create', user);
     return res.data;
   },
   deleteUser: async (userId: string) => {
