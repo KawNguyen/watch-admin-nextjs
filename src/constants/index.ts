@@ -5,10 +5,9 @@ import {
   MegaphoneIcon,
   MessageSquareTextIcon,
   Newspaper,
-  PackagePlusIcon,
   ScrollTextIcon,
   UsersIcon,
-  ViewIcon,
+  MessageSquareWarning,
   WarehouseIcon,
   WatchIcon,
 } from 'lucide-react';
@@ -45,10 +44,6 @@ export const data = {
       icon: ChartBarStackedIcon,
       isActive: true,
       items: [
-        // {
-        //   title: "Gender",
-        //   url: "/admin/category/gender",
-        // },
         {
           title: 'Brand',
           url: '/admin/category/brand',
@@ -148,6 +143,18 @@ export const data = {
         {
           title: 'List',
           url: '/admin/blog',
+        },
+      ],
+    },
+    {
+      title: 'Manage Support',
+      url: '#',
+      icon: MessageSquareWarning,
+      isActive: true,
+      items: [
+        {
+          title: 'List',
+          url: '/admin/support',
         },
       ],
     },
