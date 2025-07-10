@@ -76,7 +76,6 @@ export default function CustomerEditModal({
   };
 
   const handleSubmit = async (data: CustomerInfo) => {
-    // Tìm tên tương ứng với code
     const provinceName =
       provinces?.find((p) => p.code.toString() === data.province)?.name || '';
     const districtName =
@@ -85,7 +84,6 @@ export default function CustomerEditModal({
     const wardName =
       wards?.wards?.find((w:any) => w.code.toString() === data.ward)?.name || '';
 
-    // Tạo object mới với cả code và name
     const customerData = {
       ...data,
       provinceName,

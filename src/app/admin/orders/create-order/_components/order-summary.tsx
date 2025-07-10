@@ -1,26 +1,26 @@
-/** biome-ignore-all assist/source/useSortedAttributes: <explanation> */
 import { CircleDollarSign, Wallet } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import type { Product } from '@/types/order';
 
 interface ShowSelectedListProps {
-  selectedProducts: Product[];
+  paymentMethod: string;
+  setPaymentMethod: Dispatch<SetStateAction<'MOMO' | 'COD'>>;
+  totalPrice: number;
+  subtotal: number;
+  discountPct: number;
+  discountValue: number;
 }
-const OrderSummary = ({ selectedProducts }: ShowSelectedListProps) => {
-  const [discountPct] = useState(0);
-  const [paymentMethod, setPaymentMethod] = useState<'COD' | 'MOMO'>('COD');
-
-  const subtotal = selectedProducts.reduce(
-    (sum, p) => sum + p.price * p.quantity,
-    0
-  );
-  const discountValue = (subtotal * discountPct) / 100;
-  const totalPrice = subtotal - discountValue;
-
+const OrderSummary = ({
+  paymentMethod,
+  setPaymentMethod,
+  totalPrice,
+  subtotal,
+  discountPct,
+  discountValue,
+}: ShowSelectedListProps) => {
   return (
     <Card>
       <CardHeader>
@@ -85,6 +85,10 @@ const OrderSummary = ({ selectedProducts }: ShowSelectedListProps) => {
           <div className="flex justify-between">
             <span>Subtotal:</span>
             <span>${subtotal.toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Shipping:</span>
+            <span className="">Free</span>
           </div>
           {discountPct > 0 && (
             <div className="flex justify-between text-green-600">

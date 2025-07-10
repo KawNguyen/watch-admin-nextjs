@@ -25,3 +25,18 @@ export interface CustomerInfo {
   districtName?: string;
   wardName?: string;
 }
+export interface OrderItem {
+  watchId: string;
+  quantity: number;
+  price: number;
+}
+
+export interface Order {
+  addressId: string;
+  couponId: string;
+  shippingNotes: string;
+  paymentMethod: string;
+  totalPrice: number;
+  orginalPrice: number;
+  orderItems: OrderItem[];
+}
