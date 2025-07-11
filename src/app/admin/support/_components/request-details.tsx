@@ -22,15 +22,7 @@ export const RequestDetails = ({ request, onClose, onStatusChange }) => {
           <div className="flex items-center justify-between">
             <DialogTitle className="font-semibold text-gray-900 text-lg">
               Support Request Details
-            </DialogTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              className="text-muted-foreground hover:text-gray-900"
-            >
-              <XIcon className="h-5 w-5" />
-            </Button>
+            </DialogTitle>  
           </div>
         </DialogHeader>
 

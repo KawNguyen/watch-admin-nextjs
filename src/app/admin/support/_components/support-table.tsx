@@ -17,14 +17,13 @@ import { Badge } from '@/components/ui/badge';
 export const SupportTable = ({ requests, onViewDetails }) => {
   return (
     <div className="rounded-xl border bg-white shadow-sm">
-      <ScrollArea className="w-full overflow-auto rounded-t-xl">
+      <ScrollArea className="w-full overflow-auto rounded-t-xl ">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[80px]">ID</TableHead>
               <TableHead>Customer</TableHead>
-              <TableHead>Date Submitted</TableHead>
-              <TableHead>Priority</TableHead>
+              <TableHead>Date Submitted</TableHead>  
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Action</TableHead>
             </TableRow>
@@ -53,21 +52,6 @@ export const SupportTable = ({ requests, onViewDetails }) => {
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
                     {new Date(request.dateSubmitted).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={
-                        request.priority === 'high'
-                          ? 'bg-red-100 text-red-800 border-none'
-                          : request.priority === 'medium'
-                            ? 'border-none bg-yellow-100 text-yellow-800'
-                            : 'border-none bg-green-100 text-green-800'
-                      }
-                    >
-                      {request.priority.charAt(0).toUpperCase() +
-                        request.priority.slice(1)}
-                    </Badge>
                   </TableCell>
                   <TableCell>
                     <StatusBadge status={request.status} />
