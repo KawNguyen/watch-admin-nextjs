@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import {
   ChevronDown,
   ChevronRight,
@@ -9,20 +9,20 @@ import {
   Package,
   Search,
   User,
-} from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
+} from "@/components/ui/collapsible";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -30,23 +30,23 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { useMe } from '@/queries/use-session';
-import { StockAPI } from '@/services/stock-entry';
+} from "@/components/ui/table";
+import { useMe } from "@/queries/use-session";
+import { StockAPI } from "@/services/stock-entry";
 
 export default function StockEntryList() {
   const { data: user } = useMe();
-  const fullName = `${user?.data?.item.firstName ?? ''} ${
-    user?.data?.item.lastName ?? ''
+  const fullName = `${user?.data?.item.firstName ?? ""} ${
+    user?.data?.item.lastName ?? ""
   }`;
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [expandedEntries, setExpandedEntries] = useState<Set<string>>(
     new Set()
   );
 
   // Fetch stock entries using React Query
   const { data: stockEntries, isLoading } = useQuery({
-    queryKey: ['stock-entries'],
+    queryKey: ["stock-entries"],
     queryFn: StockAPI.getAllStockEntries,
   });
 
@@ -83,17 +83,17 @@ export default function StockEntryList() {
     ) || 0;
   const totalItems =
     stockEntries?.data?.items?.reduce(
-      (sum: number, entry: any) => sum + entry.stockItems.length,
+      (sum: number, entry: any) => sum + (entry.stockItems?.length ?? 0),
       0
     ) || 0;
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -146,7 +146,7 @@ export default function StockEntryList() {
         </div>
         <div className="flex gap-2">
           <Link
-            className={buttonVariants({ variant: 'default' })}
+            className={buttonVariants({ variant: "default" })}
             href="/admin/stock/create"
           >
             Create Stock Entry
@@ -246,7 +246,7 @@ export default function StockEntryList() {
                       </div>
                       <div className="flex items-center gap-4">
                         <Badge variant="secondary">
-                          {entry.stockItems.length} items
+                          {entry?.stockItems?.length} items
                         </Badge>
                         <div className="text-muted-foreground text-sm">
                           {formatDate(entry.createdAt)}
@@ -286,7 +286,7 @@ export default function StockEntryList() {
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {entry.stockItems.map((item: any) => (
+                            {entry?.stockItems?.map((item: any) => (
                               <TableRow key={item.id}>
                                 <TableCell>
                                   <div className="relative h-12 w-12 overflow-hidden rounded-md bg-muted">
@@ -297,7 +297,7 @@ export default function StockEntryList() {
                                         fill
                                         src={
                                           item.watch.images[0].absolute_url ||
-                                          '/placeholder.svg'
+                                          "/placeholder.svg"
                                         }
                                       />
                                     ) : (
@@ -344,8 +344,8 @@ export default function StockEntryList() {
                             <User className="h-4 w-4 text-muted-foreground" />
                             <span className="font-medium">Created by:</span>
                             <span>
-                              {entry.user?.firstName || 'Unknown'}{' '}
-                              <span>({entry.user?.email || 'No email'})</span>
+                              {entry.user?.firstName || "Unknown"}{" "}
+                              <span>({entry.user?.email || "No email"})</span>
                             </span>
                           </div>
                           <div className="flex items-center gap-2">

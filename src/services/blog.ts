@@ -1,24 +1,24 @@
-import { instanceAxios } from '@/lib/instantceAxios';
+import { instanceAxios } from "@/lib/instantceAxios";
 
 export const blogApi = {
   getAllBlogs: async () => {
-    const res = await instanceAxios.get('/blog');
+    const res = await instanceAxios.get("/blogs");
     return res.data;
   },
   getBlogById: async (blogId: string) => {
-    const res = await instanceAxios.get(`/blog/${blogId}`);
+    const res = await instanceAxios.get(`/blogs/${blogId}`);
     return res.data;
   },
   createBlog: async (blog: any) => {
-    const res = await instanceAxios.post('/blog/create', blog);
+    const res = await instanceAxios.post("/blogs/create", blog);
     return res.data;
   },
   updateBlog: async (blogId: string, blog: any) => {
-    const res = await instanceAxios.put(`/blog/update/${blogId}`, blog);
+    const res = await instanceAxios.put(`/blogs/update/${blogId}`, blog);
     return res.data;
   },
   deleteBlog: async (blogId: string) => {
-    const res = await instanceAxios.delete(`/blog/delete/${blogId}`);
+    const res = await instanceAxios.delete(`/blogs/delete/${blogId}`);
     return res.data;
   },
 };
