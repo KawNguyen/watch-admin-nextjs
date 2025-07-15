@@ -1,15 +1,21 @@
-import { ShoppingCart, X } from 'lucide-react';
-import Image from 'next/image';
-import type React from 'react';
-import { useState } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { useWatches } from '@/queries/use-watches';
-import type { Product } from '@/types/order';
-import PriceEditPopover from './price-edit-popover';
-import ProductSearchModal from './product-search-modal';
+import { ShoppingCart, X } from "lucide-react";
+import Image from "next/image";
+import type React from "react";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useWatches } from "@/queries/use-watches";
+import type { Product } from "@/types/order";
+import PriceEditPopover from "./price-edit-popover";
+import ProductSearchModal from "./product-search-modal";
 
 interface ShowSelectedListProps {
   selectedProducts: Product[];
@@ -44,15 +50,21 @@ const ShowSelectedList = ({
     <div>
       <Card>
         <CardHeader>
-          <CardTitle className="mb-2 flex items-center justify-between">
-            All Chosen Products
-            {selectedProducts.length > 0 && (
-              <Badge variant="secondary">
-                {selectedProducts.length} item
-                {selectedProducts.length > 1 && 's'}
-              </Badge>
-            )}
-          </CardTitle>
+          <div className="mb-2">
+            <CardTitle className="flex items-center justify-between">
+              Selected Products
+              {selectedProducts.length > 0 && (
+                <Badge variant="secondary">
+                  {selectedProducts.length} product
+                  {selectedProducts.length > 1 && "s"}
+                </Badge>
+              )}
+            </CardTitle>
+            <CardDescription>
+              Choose products to add to the order. You can adjust quantity and
+              price for each selected product.
+            </CardDescription>
+          </div>
           <Input
             className="w-full"
             onClick={() => setIsSearchOpen(true)}
@@ -71,7 +83,7 @@ const ShowSelectedList = ({
               </Button>
             </div>
           ) : (
-            <div className="max-h-96 space-y-4 overflow-y-auto pr-2">
+            <div className="max-h-96 space-y-4 overflow-y-auto">
               {selectedProducts.map((p) => (
                 <div
                   className="grid grid-cols-12 gap-4 rounded-lg border bg-white p-4"
@@ -82,7 +94,7 @@ const ShowSelectedList = ({
                       alt={p.name}
                       className="h-20 w-20 flex-shrink-0 rounded-md object-cover"
                       height={80}
-                      src={p.images[0]?.absolute_url || '/placeholder.png'}
+                      src={p.images[0]?.absolute_url || "/placeholder.png"}
                       width={80}
                     />
                     <div className="flex-1">
@@ -120,7 +132,7 @@ const ShowSelectedList = ({
                     <Button
                       className="text-red-500 hover:bg-red-50 hover:text-red-700"
                       onClick={() => removeProduct(p.id)}
-                      size="sm"
+                      size="icon"
                       variant="ghost"
                     >
                       <X className="h-4 w-4" />

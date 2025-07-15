@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { Search } from 'lucide-react';
-import Image from 'next/image';
-import { Fragment, useMemo, useState } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Search } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
-import type { Product } from '@/types/order';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import type { Product } from "@/types/order";
 
 interface ProductSearchModalProps {
   isOpen: boolean;
@@ -31,37 +31,43 @@ export default function ProductSearchModal({
   selectedProducts,
   onProductSelect,
 }: ProductSearchModalProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [tempSelectedProducts, setTempSelectedProducts] =
     useState<Product[]>(selectedProducts);
 
   // Reset temp selection when modal opens
-  useState(() => {
+  useEffect(() => {
     if (isOpen) {
       setTempSelectedProducts(selectedProducts);
+      setSearchTerm("");
+      setSelectedCategory("all");
     }
-  });
+  }, [isOpen, selectedProducts]);
 
   const filteredProducts = useMemo(() => {
+    const term = searchTerm.toLowerCase();
     return products.filter((product) => {
       const matchesSearch =
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchTerm.toLowerCase());
+        product.name.toLowerCase().includes(term) ||
+        product.description.toLowerCase().includes(term);
       const matchesCategory =
-        selectedCategory === 'all' || product.category === selectedCategory;
+        selectedCategory === "all" || product.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
   }, [products, searchTerm, selectedCategory]);
 
+  const selectedIds = useMemo(
+    () => new Set(tempSelectedProducts.map((p) => p.id)),
+    [tempSelectedProducts]
+  );
+
   const handleProductToggle = (product: Product) => {
-    setTempSelectedProducts((prev) => {
-      const isSelected = prev.some((p) => p.id === product.id);
-      if (isSelected) {
-        return prev.filter((p) => p.id !== product.id);
-      }
-      return [...prev, product];
-    });
+    setTempSelectedProducts((prev) =>
+      selectedIds.has(product.id)
+        ? prev.filter((p) => p.id !== product.id)
+        : [...prev, product]
+    );
   };
 
   const handleSubmit = () => {
@@ -70,8 +76,8 @@ export default function ProductSearchModal({
 
   const handleCancel = () => {
     setTempSelectedProducts(selectedProducts);
-    setSearchTerm('');
-    setSelectedCategory('all');
+    setSearchTerm("");
+    setSelectedCategory("all");
     onClose();
   };
 
@@ -86,17 +92,16 @@ export default function ProductSearchModal({
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Search and Filter Controls */}
+          {/* Search Controls */}
           <div className="flex gap-4">
-            <div className="flex-1">
-              <Input
-                className="w-full"
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search products..."
-                value={searchTerm}
-              />
-            </div>
+            <Input
+              className="w-full"
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search products..."
+              value={searchTerm}
+            />
           </div>
+
           {/* Product List */}
           <div className="hide-scrollbar max-h-96 overflow-y-auto rounded-lg border">
             {filteredProducts.length === 0 ? (
@@ -107,14 +112,12 @@ export default function ProductSearchModal({
             ) : (
               <div className="space-y-2 p-4">
                 {filteredProducts.map((product) => {
-                  const isSelected = tempSelectedProducts.some(
-                    (p) => p.id === product.id
-                  );
+                  const isSelected = selectedIds.has(product.id);
                   return (
-                    <Fragment key={product.id}>
+                    <div key={product.id}>
                       <button
                         className={`flex w-full cursor-pointer items-center gap-4 rounded-lg p-4 ${
-                          isSelected ? 'bg-gray-100 ' : 'bg-white'
+                          isSelected ? "bg-gray-100" : "bg-white"
                         }`}
                         onClick={() => handleProductToggle(product)}
                         type="button"
@@ -122,7 +125,6 @@ export default function ProductSearchModal({
                         <Checkbox
                           checked={isSelected}
                           className="pointer-events-none"
-                          onChange={() => handleProductToggle(product)}
                         />
                         <Image
                           alt={product.name}
@@ -130,7 +132,7 @@ export default function ProductSearchModal({
                           height={80}
                           src={
                             product.images[0]?.absolute_url ||
-                            '/placeholder.png'
+                            "/placeholder.png"
                           }
                           width={80}
                         />
@@ -140,7 +142,6 @@ export default function ProductSearchModal({
                             Code: {product.code}
                           </div>
                         </div>
-
                         <div className="flex w-28 flex-col items-center justify-center text-center">
                           <div className="text-muted-foreground text-sm">
                             Brand
@@ -149,7 +150,6 @@ export default function ProductSearchModal({
                             {product.brand?.name}
                           </div>
                         </div>
-
                         <div className="flex w-24 flex-col items-center justify-center text-center">
                           <div className="text-muted-foreground text-sm">
                             Stock
@@ -164,7 +164,7 @@ export default function ProductSearchModal({
                         </div>
                       </button>
                       <Separator className="last:hidden" />
-                    </Fragment>
+                    </div>
                   );
                 })}
               </div>
