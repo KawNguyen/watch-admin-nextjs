@@ -18,6 +18,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import Tiptap from "@/components/rich-text/page";
+import TextEditor from "@/components/tip-tap/text-editor";
 
 interface BlogPost {
   id: string;
@@ -165,75 +166,75 @@ export function BlogFormDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
-            <ScrollArea className="h-[60vh] pr-4">
-              <div className="space-y-4">
-                <div className="grid grid-cols-12 gap-4">
-                  <div className="col-span-10">
-                    <Label htmlFor="title">Title</Label>
-                    <Input
-                      id="title"
-                      value={formData.title}
-                      placeholder="Enter blog title"
-                      onChange={(e) => handleTitleChange(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="col-span-2">
-                    <Label htmlFor="userId">Created By</Label>
-                    <Input
-                      id="userId"
-                      value={formData.userId}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          userId: e.target.value,
-                        }))
-                      }
-                      placeholder="Who created this"
-                      required
-                    />
-                  </div>
+          <ScrollArea className="h-[60vh] pr-4">
+            <div className="space-y-4">
+              <div className="grid grid-cols-12 gap-4">
+                <div className="col-span-10">
+                  <Label htmlFor="title">Title</Label>
+                  <Input
+                    id="title"
+                    value={formData.title}
+                    placeholder="Enter blog title"
+                    onChange={(e) => handleTitleChange(e.target.value)}
+                    required
+                  />
                 </div>
-
-                <div className="grid grid-cols-12 gap-4">
-                  <div className="col-span-10">
-                    <Label htmlFor="thumbnail">Thumbnail URL</Label>
-                    <Input
-                      id="thumbnail"
-                      value={formData.thumbnail}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          thumbnail: e.target.value,
-                        }))
-                      }
-                      placeholder="https://example.com/image.jpg"
-                    />
-                  </div>
-                  <div className="col-span-2 ml-1 flex items-center mt-6 gap-x-2">
-                    <Switch
-                      id="isPublished"
-                      checked={formData.isPublished}
-                      onCheckedChange={(checked) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          isPublished: checked,
-                        }))
-                      }
-                    />
-                    <Label htmlFor="isPublished">Published</Label>
-                  </div>
-                </div>
-
-                <div className="col-span-4">
-                  <Label htmlFor="content">Content</Label>
-                  {/* <RichText /> */}
-                  <div className="w-full my-2">
-                    <Tiptap content={post} onChange={onChange} />
-                  </div>
+                <div className="col-span-2">
+                  <Label htmlFor="userId">Created By</Label>
+                  <Input
+                    id="userId"
+                    value={formData.userId}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        userId: e.target.value,
+                      }))
+                    }
+                    placeholder="Who created this"
+                    required
+                  />
                 </div>
               </div>
-            </ScrollArea>
+
+              <div className="grid grid-cols-12 gap-4">
+                <div className="col-span-10">
+                  <Label htmlFor="thumbnail">Thumbnail URL</Label>
+                  <Input
+                    id="thumbnail"
+                    value={formData.thumbnail}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        thumbnail: e.target.value,
+                      }))
+                    }
+                    placeholder="https://example.com/image.jpg"
+                  />
+                </div>
+                <div className="col-span-2 ml-1 flex items-center mt-6 gap-x-2">
+                  <Switch
+                    id="isPublished"
+                    checked={formData.isPublished}
+                    onCheckedChange={(checked) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        isPublished: checked,
+                      }))
+                    }
+                  />
+                  <Label htmlFor="isPublished">Published</Label>
+                </div>
+              </div>
+
+              <div className="col-span-4">
+                <Label htmlFor="content">Content</Label>
+                {/* <RichText /> */}
+                <div className="w-full my-2">
+                  <TextEditor />
+                </div>
+              </div>
+            </div>
+          </ScrollArea>
 
           <DialogFooter className="mt-6">
             <Button

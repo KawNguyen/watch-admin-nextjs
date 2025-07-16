@@ -1,0 +1,314 @@
+/* Scrollbar styles for modern browsers */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  /* light grayish-white */
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  /* gray */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #ccc #f5f5f558;
+}
+
+.tiptap {
+  width: 100%;
+  padding: 16px;
+  border-radius: 0 0 5px 5px;
+  display: block;
+}
+
+.ProseMirror {
+  width: 100%;
+  min-height: 100%;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  white-space: break-spaces;
+}
+
+/* hide scroll bar for kanban columns */
+/*  Chrome, Safari and Opera */
+.hide-scroll-bar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hide-scroll-bar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.tiptap > * + * {
+  margin-top: 0.75em;
+}
+
+.tiptap ul {
+  padding: 0 1rem;
+  list-style: disc !important;
+  width: 100%;
+}
+
+.tiptap ol {
+  padding: 0 2rem;
+  list-style: decimal !important;
+  width: 100%;
+}
+
+.tiptap img {
+  width: 100%;
+}
+
+.tiptap h1,
+.tiptap h2,
+.tiptap h3,
+.tiptap h4,
+.tiptap h5,
+.tiptap h6 {
+  line-height: 1;
+  width: 100%;
+}
+
+.tiptap h1 {
+  display: block;
+  font-size: 2em;
+  margin-top: 0.67em;
+  margin-bottom: 0.67em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+
+.tiptap h2 {
+  display: block;
+  font-size: 1.5em;
+  margin-top: 0.83em;
+  margin-bottom: 0.83em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+
+.tiptap h3 {
+  display: block;
+  font-size: 1.17em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+
+.tiptap h4 {
+  display: block;
+  font-size: 1em;
+  margin-top: 1.33em;
+  margin-bottom: 1.33em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+
+.tiptap h5 {
+  display: block;
+  font-size: 0.83em;
+  margin-top: 1.67em;
+  margin-bottom: 1.67em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+
+.tiptap h6 {
+  display: block;
+  font-size: 0.67em;
+  margin-top: 2.33em;
+  margin-bottom: 2.33em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+
+.tiptap p {
+  line-height: 1.5;
+  min-height: 21px;
+  width: 100%;
+  width: 100%;
+}
+
+.tiptap code {
+  background-color: white;
+  /* color: #616161; */
+  width: 100%;
+}
+
+.tiptap pre {
+  background: rgb(0, 24, 38);
+  color: #21b0ed;
+  font-family: "JetBrainsMono", monospace;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  width: 100%;
+}
+
+.tiptap code {
+  color: inherit;
+  padding: 0;
+  background: none;
+  font-size: 0.8rem;
+  width: 100%;
+}
+
+.tiptap blockquote {
+  padding-left: 1rem;
+  border-left: 3px solid #999999;
+  width: 100%;
+}
+
+.tiptap hr {
+  border: none;
+  border-top: 3px solid #999999;
+  margin: 2rem 0;
+  width: 100%;
+}
+
+.heading3 {
+  font-size: 15px;
+  width: 100%;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  /* color: #adb5bd; */
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.tiptap table {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  display: block;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tiptap th,
+.tiptap td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.tiptap a {
+  color: rgb(5, 92, 192);
+  cursor: pointer;
+}
+
+/* Code styling */
+.hljs-comment,
+.hljs-quote {
+  color: #616161;
+}
+
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-regexp,
+.hljs-link,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #f98181;
+}
+
+.hljs-number,
+.hljs-meta,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params {
+  color: #fbbc88;
+}
+
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet {
+  color: #b9f18d;
+}
+
+.hljs-title,
+.hljs-section {
+  color: #faf594;
+}
+
+.hljs-keyword,
+.hljs-selector-tag {
+  color: #70cff8;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: 700;
+}
+
+.scroll-mt-16 {
+  scroll-margin-top: 4rem;
+}
+
+.toc-item {
+  transition: all 0.2s ease;
+}
+
+.toc-item:hover {
+  background-color: #f3f4f6;
+}
+
+.toc-item.active {
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+.tiptap .text-align-left {
+  text-align: left;
+}
+
+.tiptap .text-align-center {
+  text-align: center;
+}
+
+.tiptap .text-align-right {
+  text-align: right;
+}
+.tiptap .ProseMirror {
+  width: 100%;
+  min-height: 100%;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  white-space: break-spaces;
+}
+.tiptap .text {
+  text-decoration: underline;
+}
