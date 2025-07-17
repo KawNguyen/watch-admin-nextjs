@@ -74,7 +74,6 @@ export default function StockEntryList() {
       );
     }) || [];
 
-  // Calculate summary statistics
   const totalEntries = stockEntries?.data?.items?.length || 0;
   const totalValue =
     stockEntries?.data?.items?.reduce(
@@ -83,7 +82,7 @@ export default function StockEntryList() {
     ) || 0;
   const totalItems =
     stockEntries?.data?.items?.reduce(
-      (sum: number, entry: any) => sum + (entry.stockItems?.length ?? 0),
+      (sum: number, entry: any) => sum + (entry.stockItems?.length || 0),
       0
     ) || 0;
 
@@ -154,7 +153,6 @@ export default function StockEntryList() {
         </div>
       </div>
 
-      {/* Search */}
       <Card>
         <CardContent className="pt-6">
           <div className="relative">
@@ -169,7 +167,6 @@ export default function StockEntryList() {
         </CardContent>
       </Card>
 
-      {/* Summary Stats */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -205,7 +202,6 @@ export default function StockEntryList() {
         </Card>
       </div>
 
-      {/* Stock Entries List */}
       <div className="space-y-4">
         {filteredEntries.length === 0 ? (
           <Card>
@@ -246,7 +242,7 @@ export default function StockEntryList() {
                       </div>
                       <div className="flex items-center gap-4">
                         <Badge variant="secondary">
-                          {entry?.stockItems?.length} items
+                          {entry.stockItems?.length} items
                         </Badge>
                         <div className="text-muted-foreground text-sm">
                           {formatDate(entry.createdAt)}
@@ -286,7 +282,7 @@ export default function StockEntryList() {
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {entry?.stockItems?.map((item: any) => (
+                            {entry.stockItems?.map((item: any) => (
                               <TableRow key={item.id}>
                                 <TableCell>
                                   <div className="relative h-12 w-12 overflow-hidden rounded-md bg-muted">
