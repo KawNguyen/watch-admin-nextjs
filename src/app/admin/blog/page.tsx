@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Search, Eye, Edit, Trash2, Calendar, Globe } from "lucide-react";
+import { useState, useMemo } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Plus, Search, Eye, Edit, Trash2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,27 +14,30 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { BlogPost } from "@/types/blog";
-import { BlogDetailDialog } from "./_components/blog-details";
 import { BlogFormDialog } from "./_components/blog-form";
 import { DeleteConfirmDialog } from "./_components/blog-delete";
+import { blogApi } from "@/services/blog";
+import { BlogDetailDialog } from "./_components/blog-details";
 
-const mockBlogs: BlogPost[] = [
-  {
-    id: "1",
-    title: "Getting Started with Next.js 14",
-    slug: "getting-started-nextjs-14",
-    content:
-      "Next.js 14 introduces several exciting features including the App Router, Server Components, and improved performance optimizations. In this comprehensive guide, we'll explore how to build modern web applications with the latest version of Next.js.",
-    thumbnail: "",
-    userId: "user1",
-    isPublished: true,
-    createdAt: "2024-01-15",
-    author: "John Doe",
-  },
-];
+// Query keys for better organization
+const QUERY_KEYS = {
+  blogs: ["blogs"] as const,
+} as const;
+
+// Helper function to format blog data
+const formatBlogData = (data: any[]): BlogPost[] => {
+  return data.map((item: any) => ({
+    ...item,
+    createdAt: item.createdAt.slice(0, 10),
+  }));
+};
+
+// Helper function to strip HTML tags
+const stripHtmlTags = (html: string): string => {
+  return html.replace(/<[^>]+>/g, "");
+};
 
 export default function BlogManagement() {
-  const [blogs, setBlogs] = useState<BlogPost[]>(mockBlogs);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -42,11 +46,57 @@ export default function BlogManagement() {
   const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
   const [deletingBlog, setDeletingBlog] = useState<BlogPost | null>(null);
 
-  const filteredBlogs = blogs.filter(
-    (blog) =>
-      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.content.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const queryClient = useQueryClient();
+
+  // Fetch blogs with useQuery
+  const {
+    data: blogs = [],
+    isLoading,
+    error,
+    isError,
+  } = useQuery({
+    queryKey: QUERY_KEYS.blogs,
+    queryFn: async () => {
+      const data = await blogApi.getAllBlogs();
+      return formatBlogData(data);
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+  });
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (slug: string) => {
+      await blogApi.deleteBlog(slug);
+    },
+    onSuccess: () => {
+      // Invalidate and refetch blogs
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.blogs });
+      setIsDeleteOpen(false);
+      setDeletingBlog(null);
+    },
+    onError: (error) => {
+      console.error("Delete failed:", error);
+    },
+  });
+
+  // Memoized filtered blogs for performance
+  const filteredBlogs = useMemo(() => {
+    if (!searchTerm) return blogs;
+
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    return blogs.filter(
+      (blog) =>
+        blog.title.toLowerCase().includes(lowerSearchTerm) ||
+        blog.content.toLowerCase().includes(lowerSearchTerm)
+    );
+  }, [blogs, searchTerm]);
+
+  // Event handlers
+  const handleConfirmDelete = async () => {
+    if (!deletingBlog) return;
+    deleteMutation.mutate(deletingBlog.slug);
+  };
 
   const handleViewDetail = (blog: BlogPost) => {
     setSelectedBlog(blog);
@@ -68,37 +118,37 @@ export default function BlogManagement() {
     setIsDeleteOpen(true);
   };
 
-  const handleSaveBlog = (
-    blogData: Omit<BlogPost, "id" | "createdAt" | "author">
-  ) => {
-    if (editingBlog) {
-      // Update existing blog
-      setBlogs(
-        blogs.map((blog) =>
-          blog.id === editingBlog.id ? { ...blog, ...blogData } : blog
-        )
-      );
-    } else {
-      // Add new blog
-      const newBlog: BlogPost = {
-        ...blogData,
-        id: Date.now().toString(),
-        createdAt: new Date().toISOString().split("T")[0],
-        author: "Current User",
-      };
-      setBlogs([newBlog, ...blogs]);
-    }
-    setIsFormOpen(false);
-    setEditingBlog(null);
-  };
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    );
+  }
 
-  const handleConfirmDelete = () => {
-    if (deletingBlog) {
-      setBlogs(blogs.filter((blog) => blog.id !== deletingBlog.id));
-      setIsDeleteOpen(false);
-      setDeletingBlog(null);
-    }
-  };
+  // Error state
+  if (isError) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="text-center py-12">
+          <p className="text-destructive">
+            Failed to load blogs. Please try again later.
+          </p>
+          <Button
+            onClick={() =>
+              queryClient.invalidateQueries({ queryKey: QUERY_KEYS.blogs })
+            }
+            className="mt-4"
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -126,6 +176,7 @@ export default function BlogManagement() {
           className="pl-10"
         />
       </div>
+
       {/* Blog Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredBlogs.map((blog) => (
@@ -140,12 +191,6 @@ export default function BlogManagement() {
                   alt={blog.title}
                   className="w-full h-48 object-cover rounded-t-lg"
                 />
-                <Badge
-                  variant={blog.isPublished ? "default" : "secondary"}
-                  className="absolute top-2 right-2"
-                >
-                  {blog.isPublished ? "Published" : "Draft"}
-                </Badge>
               </div>
             </CardHeader>
             <CardContent className="p-4" onClick={() => handleViewDetail(blog)}>
@@ -153,11 +198,9 @@ export default function BlogManagement() {
                 {blog.title}
               </CardTitle>
               <p className="text-muted-foreground text-sm line-clamp-3 mb-4">
-                {blog.content.replace(/[#*\n]/g, " ").substring(0, 120)}...
+                {stripHtmlTags(blog.content).substring(0, 120)}
               </p>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span>{blog.author}</span>
-                <span>•</span>
                 <Calendar className="h-3 w-3" />
                 <span>{blog.createdAt}</span>
               </div>
@@ -190,6 +233,7 @@ export default function BlogManagement() {
                   e.stopPropagation();
                   handleDelete(blog);
                 }}
+                disabled={deleteMutation.isPending}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -198,9 +242,14 @@ export default function BlogManagement() {
         ))}
       </div>
 
+      {/* Empty State */}
       {filteredBlogs.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">No blog posts found.</p>
+          <p className="text-muted-foreground">
+            {searchTerm
+              ? "No blog posts found matching your search."
+              : "No blog posts found."}
+          </p>
         </div>
       )}
 
@@ -209,17 +258,13 @@ export default function BlogManagement() {
         blog={selectedBlog}
         open={isDetailOpen}
         onOpenChange={setIsDetailOpen}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
       />
-
       <BlogFormDialog
+        mode={editingBlog ? "edit" : "create"}
         blog={editingBlog}
         open={isFormOpen}
         onOpenChange={setIsFormOpen}
-        onSave={handleSaveBlog}
       />
-
       <DeleteConfirmDialog
         blog={deletingBlog}
         open={isDeleteOpen}

@@ -7,5 +7,4 @@ export interface BlogPost {
   userId: string;
   isPublished: boolean;
   createdAt: string;
-  author: string;
 }

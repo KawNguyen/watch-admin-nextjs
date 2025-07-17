@@ -1,8 +1,13 @@
 "use client";
 
 import type React from "react";
+import { useEffect, useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { z } from "zod";
+import { toast } from "sonner";
 
-import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,244 +16,298 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Image from "next/image";
-import Tiptap from "@/components/rich-text/page";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import TextEditor from "@/components/tip-tap/text-editor";
+import { useMe } from "@/queries/use-session";
+import { blogFormSchema } from "@/schema/blog";
+import { blogApi } from "@/services/blog";
+import { Loader2, Pencil, Plus } from "lucide-react";
+import { BlogPost } from "@/types/blog";
 
-interface BlogPost {
-  id: string;
-  title: string;
-  content: string;
-  thumbnail: string;
-  userId: string;
-  isPublished: boolean;
-  createdAt: string;
-  author: string;
-}
+// Query keys constant
+const QUERY_KEYS = {
+  blogs: ["blogs"] as const,
+} as const;
 
 interface BlogFormDialogProps {
-  blog: BlogPost | null;
+  mode: "create" | "edit";
+  blog?: BlogPost | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (blog: Omit<BlogPost, "id" | "createdAt" | "author">) => void;
 }
 
+type BlogFormValues = z.infer<typeof blogFormSchema>;
+
+// Helper function to get form default values
+const getDefaultValues = (userId?: string): BlogFormValues => ({
+  title: "",
+  thumbnail: "",
+  content: "",
+  isPublished: false,
+  userId: userId || "",
+});
+
+// Helper function to format author name
+const formatAuthorName = (firstName?: string, lastName?: string): string => {
+  if (!firstName && !lastName) return "Unknown Author";
+  return `${firstName || ""} ${lastName || ""}`.trim();
+};
+
 export function BlogFormDialog({
+  mode,
   blog,
   open,
   onOpenChange,
-  onSave,
 }: BlogFormDialogProps) {
-  const [formData, setFormData] = useState({
-    title: "",
-    content: "",
-    thumbnail: "",
-    userId: "",
-    isPublished: false,
+  const { data: userData, isLoading: isLoadingUser } = useMe();
+  const queryClient = useQueryClient();
+  const isEditMode = mode === "edit";
+
+  // Memoized user data to prevent unnecessary recalculations
+  const userInfo = useMemo(() => {
+    if (isLoadingUser || !userData?.data?.item) return null;
+    const user = userData.data.item;
+    return {
+      id: user.id,
+      fullName: formatAuthorName(user.firstName, user.lastName),
+    };
+  }, [userData, isLoadingUser]);
+
+  // Create/Update mutation
+  const mutation = useMutation({
+    mutationFn: async (data: BlogFormValues) => {
+      if (isEditMode && blog) {
+        return blogApi.updateBlog(blog.slug, data);
+      } else {
+        return blogApi.createBlog(data);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.blogs });
+      toast.success(
+        isEditMode ? "Blog updated successfully" : "Blog created successfully"
+      );
+      onOpenChange(false);
+      form.reset();
+    },
+    onError: (error) => {
+      console.error("Blog operation failed:", error);
+      toast.error(
+        isEditMode ? "Failed to update blog" : "Failed to create blog"
+      );
+    },
   });
-  const [post, setPost] = useState("");
-  const onChange = (content: string) => {
-    setPost(content);
-  };
+
+  // Form setup
+  const form = useForm<BlogFormValues>({
+    resolver: zodResolver(blogFormSchema),
+    defaultValues: getDefaultValues(userInfo?.id),
+  });
+
+  // Reset form when dialog opens/closes or blog data changes
   useEffect(() => {
-    if (blog) {
-      setFormData({
-        title: blog.title,
-        content: blog.content,
-        thumbnail: blog.thumbnail,
-        userId: blog.userId,
-        isPublished: blog.isPublished,
-      });
-    } else {
-      setFormData({
-        title: "",
-        content: "",
-        thumbnail: "",
-        userId: "",
-        isPublished: false,
-      });
+    if (open) {
+      if (isEditMode && blog) {
+        form.reset({
+          title: blog.title || "",
+          thumbnail: blog.thumbnail || "",
+          content: blog.content || "",
+          isPublished: blog.isPublished || false,
+          userId: userInfo?.id || "",
+        });
+      } else {
+        form.reset(getDefaultValues(userInfo?.id));
+      }
     }
-  }, [blog, open]);
+  }, [open, blog, userInfo?.id, form, isEditMode]);
 
-  const handleTitleChange = (title: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      title,
-    }));
+  // Form submission handler
+  const onSubmit = async (data: BlogFormValues) => {
+    if (!userInfo?.id) {
+      toast.error("User information not available");
+      return;
+    }
+
+    mutation.mutate({
+      ...data,
+      userId: userInfo.id,
+    });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
+  const handleClose = () => {
+    if (!mutation.isPending) {
+      onOpenChange(false);
+      form.reset();
+    }
   };
 
-  // const renderPreview = () => {
-  //   return (
-  //     <div className="prose prose-sm max-w-none">
-  //       <div className="flex items-center  gap-x-4 space-y-2">
-  //         <h1 className="text-2xl font-bold ">
-  //           {formData.title || "Blog Title"}
-  //         </h1>
-  //       </div>
-  //       {formData.thumbnail && (
-  //         <Image
-  //           src={formData.thumbnail || "/placeholder.svg"}
-  //           alt="Thumbnail"
-  //           width={500}
-  //           height={500}
-  //           className="w-full h-48 object-cover rounded-lg mb-4"
-  //         />
-  //       )}
-  //       {formData.content.split("\n").map((paragraph, index) => {
-  //         if (paragraph.startsWith("## ")) {
-  //           return (
-  //             <h2 key={index} className="text-xl font-semibold mt-6 mb-3">
-  //               {paragraph.replace("## ", "")}
-  //             </h2>
-  //           );
-  //         }
-  //         if (paragraph.startsWith("- **")) {
-  //           const match = paragraph.match(/- \*\*(.*?)\*\*: (.*)/);
-  //           if (match) {
-  //             return (
-  //               <div key={index} className="mb-2">
-  //                 <strong>{match[1]}</strong>: {match[2]}
-  //               </div>
-  //             );
-  //           }
-  //         }
-  //         if (paragraph.startsWith("- ")) {
-  //           return (
-  //             <li key={index} className="mb-1">
-  //               {paragraph.replace("- ", "")}
-  //             </li>
-  //           );
-  //         }
-  //         if (paragraph.includes("**")) {
-  //           const parts = paragraph.split(/(\*\*.*?\*\*)/);
-  //           return (
-  //             <p key={index} className="mb-4">
-  //               {parts.map((part, i) =>
-  //                 part.startsWith("**") && part.endsWith("**") ? (
-  //                   <strong key={i}>{part.slice(2, -2)}</strong>
-  //                 ) : (
-  //                   part
-  //                 )
-  //               )}
-  //             </p>
-  //           );
-  //         }
-  //         if (paragraph.trim()) {
-  //           return (
-  //             <p key={index} className="mb-4">
-  //               {paragraph}
-  //             </p>
-  //           );
-  //         }
-  //         return null;
-  //       })}
-  //     </div>
-  //   );
-  // };
+  const dialogTitle = isEditMode ? "Edit Blog Post" : "Create New Blog Post";
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh]">
-        <DialogHeader>
-          <DialogTitle>
-            {blog ? "Edit Blog Post" : "Add New Blog Post"}
-          </DialogTitle>
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto flex flex-col">
+        <DialogHeader className="flex-shrink-0">
+          <DialogTitle className="text-2xl">{dialogTitle}</DialogTitle>
         </DialogHeader>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex-1 flex flex-col"
+          >
+            <ScrollArea className="flex-1 pr-4">
+              <div className="space-y-6 pb-4">
+                {/* Title and Author Row */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem className="lg:col-span-10">
+                        <FormLabel>Title *</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter blog title"
+                            {...field}
+                            disabled={mutation.isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-        <form onSubmit={handleSubmit}>
-          <ScrollArea className="h-[60vh] pr-4">
-            <div className="space-y-4">
-              <div className="grid grid-cols-12 gap-4">
-                <div className="col-span-10">
-                  <Label htmlFor="title">Title</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    placeholder="Enter blog title"
-                    onChange={(e) => handleTitleChange(e.target.value)}
-                    required
+                  <div className="lg:col-span-2">
+                    <Label>Created By</Label>
+                    {isLoadingUser ? (
+                      <Skeleton className="h-9 w-full" />
+                    ) : (
+                      <Input
+                        value={userInfo?.fullName || "Unknown Author"}
+                        disabled
+                        className="bg-muted"
+                      />
+                    )}
+                  </div>
+                </div>
+
+                {/* Thumbnail and Published Row */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="thumbnail"
+                    render={({ field }) => (
+                      <FormItem className="lg:col-span-10">
+                        <FormLabel>Thumbnail URL</FormLabel>
+                        {blog?.thumbnail && (
+                          <img
+                            src={blog?.thumbnail}
+                            alt={blog.title}
+                            className="size-20"
+                          />
+                        )}
+                        <FormControl>
+                          <Input
+                            placeholder="https://example.com/image.jpg"
+                            {...field}
+                            disabled={mutation.isPending}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="isPublished"
+                    render={({ field }) => (
+                      <FormItem className="lg:col-span-2 flex items-center gap-2 space-y-0 lg:mt-6">
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            disabled={mutation.isPending}
+                          />
+                        </FormControl>
+                        <FormLabel className="!mt-0">Published</FormLabel>
+                      </FormItem>
+                    )}
                   />
                 </div>
-                <div className="col-span-2">
-                  <Label htmlFor="userId">Created By</Label>
-                  <Input
-                    id="userId"
-                    value={formData.userId}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        userId: e.target.value,
-                      }))
-                    }
-                    placeholder="Who created this"
-                    required
-                  />
-                </div>
+
+                {/* Content Editor */}
+                <FormField
+                  control={form.control}
+                  name="content"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Content *</FormLabel>
+                      <FormControl>
+                        <div className="border rounded-md">
+                          <TextEditor
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
+            </ScrollArea>
 
-              <div className="grid grid-cols-12 gap-4">
-                <div className="col-span-10">
-                  <Label htmlFor="thumbnail">Thumbnail URL</Label>
-                  <Input
-                    id="thumbnail"
-                    value={formData.thumbnail}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        thumbnail: e.target.value,
-                      }))
-                    }
-                    placeholder="https://example.com/image.jpg"
-                  />
-                </div>
-                <div className="col-span-2 ml-1 flex items-center mt-6 gap-x-2">
-                  <Switch
-                    id="isPublished"
-                    checked={formData.isPublished}
-                    onCheckedChange={(checked) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        isPublished: checked,
-                      }))
-                    }
-                  />
-                  <Label htmlFor="isPublished">Published</Label>
-                </div>
-              </div>
-
-              <div className="col-span-4">
-                <Label htmlFor="content">Content</Label>
-                {/* <RichText /> */}
-                <div className="w-full my-2">
-                  <TextEditor />
-                </div>
-              </div>
-            </div>
-          </ScrollArea>
-
-          <DialogFooter className="mt-6">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit">
-              {blog ? "Update Post" : "Create Post"}
-            </Button>
-          </DialogFooter>
-        </form>
+            {/* Footer Actions */}
+            <DialogFooter className="flex-shrink-0 mt-6 gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClose}
+                disabled={mutation.isPending}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={mutation.isPending || isLoadingUser}
+              >
+                {mutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {isEditMode ? "Updating..." : "Creating..."}
+                  </>
+                ) : (
+                  <>
+                    {isEditMode ? (
+                      <>
+                        <Pencil className="mr-2 h-4 w-4" />
+                        Update Post
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create Post
+                      </>
+                    )}
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

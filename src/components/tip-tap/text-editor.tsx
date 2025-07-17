@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import "./tiptap.css";
@@ -9,12 +9,16 @@ import Image from "@tiptap/extension-image";
 import Bold from "@tiptap/extension-bold";
 import ListItem from "@tiptap/extension-list-item";
 import OrderedList from "@tiptap/extension-ordered-list";
-import { Separator } from "../ui/separator";
-import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
-const TextEditor = () => {
-  const [htmlString, sethtmlString] = useState("");
-  const [render, setrender] = useState(false);
+import TextAlign from "@tiptap/extension-text-align";
+import { Separator } from "../ui/separator";
+
+interface TextEditorProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+
+const TextEditor: React.FC<TextEditorProps> = ({ value, onChange }) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -27,42 +31,33 @@ const TextEditor = () => {
         types: ["heading", "paragraph", "image"],
       }),
     ],
-    content: "",
+    content: value,
     editorProps: {
       attributes: {
-        class: "flex w-full p-4 flex-col text-black",
+        class: "min-h-[300px] flex w-full p-4 flex-col text-black",
       },
-      transformPastedHTML: () => "",
-      transformPastedText: () => "",
-      editable: () => true,
     },
     immediatelyRender: false,
-    onUpdate: ({ editor }) => {
-      sethtmlString(editor.getHTML().trim());
+    onUpdate({ editor }) {
+      const html = editor.getHTML().trim();
+      onChange(html);
     },
   });
+  useEffect(() => {
+    if (editor && value !== editor.getHTML().trim()) {
+      editor.commands.setContent(value);
+    }
+  }, [value]);
 
   return (
-    <div className="flex flex-col w-full h-full items-center ">
-      {render && (
-        <div
-          className="tiptap"
-          dangerouslySetInnerHTML={{ __html: htmlString }}
-        />
-      )}
-      <div className="flex flex-col w-full  h-[30rem]  border  rounded-lg">
+    <div className="flex flex-col w-full h-full items-center">
+      <div className="flex flex-col w-full h-full border rounded-lg">
         {editor && <Toolbar editor={editor} />}
         <Separator />
         <div className="h-full overflow-y-scroll w-full">
-          <EditorContent editor={editor} />
+          <EditorContent className="h-full" editor={editor} />
         </div>
       </div>
-      {/* <button
-        className="bg-blue-500 text-white p-2 rounded-lg mt-4 w-full"
-        onClick={() => setrender(true)}
-      >
-        submit
-      </button> */}
     </div>
   );
 };

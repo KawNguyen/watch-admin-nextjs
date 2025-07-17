@@ -14,11 +14,11 @@ export const blogApi = {
     return res.data;
   },
   updateBlog: async (blogId: string, blog: any) => {
-    const res = await instanceAxios.put(`/blogs/update/${blogId}`, blog);
+    const res = await instanceAxios.patch(`/blogs/${blogId}`, blog);
     return res.data;
   },
   deleteBlog: async (blogId: string) => {
-    const res = await instanceAxios.delete(`/blogs/delete/${blogId}`);
+    const res = await instanceAxios.delete(`/blogs/${blogId}`);
     return res.data;
   },
 };
