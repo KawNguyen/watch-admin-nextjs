@@ -19,7 +19,7 @@ export default function CreateOrderPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       toast.success("Create new order successfully");
-      router.push("/orders");
+      router.push("/admin/orders");
     },
     onError: (err) => {
       toast.error("Create new order failed");
@@ -28,8 +28,7 @@ export default function CreateOrderPage() {
   });
 
   const handleSubmit = (data: OrderFormValues) => {
-    console.log(data);
-    // mutation.mutate(data);
+    mutation.mutate(data);
   };
 
   return (

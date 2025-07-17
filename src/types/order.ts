@@ -6,7 +6,7 @@ export interface Product {
   images: [
     {
       absolute_url: string;
-    },
+    }
   ];
   code: string;
   originalPrice: number;
@@ -39,4 +39,14 @@ export interface Order {
   totalPrice: number;
   orginalPrice: number;
   orderItems: OrderItem[];
+}
+export interface WalkinInformation {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  street: string;
+  provinceName: string;
+  districtName: string;
+  wardName: string;
 }

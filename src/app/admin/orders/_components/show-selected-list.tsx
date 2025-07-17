@@ -18,34 +18,48 @@ import PriceEditPopover from "./price-edit-popover";
 import ProductSearchModal from "./product-search-modal";
 
 interface ShowSelectedListProps {
-  selectedProducts: Product[];
-  setSelectedProducts: React.Dispatch<React.SetStateAction<Product[]>>;
+  selectedProducts: any[]; // Changed to any[] to match the new structure
+  setSelectedProducts: React.Dispatch<React.SetStateAction<any[]>>;
 }
+
 const ShowSelectedList = ({
   selectedProducts,
   setSelectedProducts,
 }: ShowSelectedListProps) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { data: products = [] } = useWatches();
-  const updateQuantity = (id: number, qty: number) =>
+
+  const updateQuantity = (watchId: string, qty: number) =>
     setSelectedProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, quantity: Math.max(1, qty) } : p))
+      prev.map((p) =>
+        p.watchId === watchId ? { ...p, quantity: Math.max(1, qty) } : p
+      )
     );
-  const updatePrice = (id: number, newPrice: number) =>
+
+  const updatePrice = (watchId: string, newPrice: number) =>
     setSelectedProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, price: newPrice } : p))
+      prev.map((p) => (p.watchId === watchId ? { ...p, price: newPrice } : p))
     );
-  const removeProduct = (id: number) =>
-    setSelectedProducts((prev) => prev.filter((p) => p.id !== id));
+
+  const removeProduct = (watchId: string) =>
+    setSelectedProducts((prev) => prev.filter((p) => p.watchId !== watchId));
+
   const handleProductSelect = (selected: Product[]) => {
     const withQty = selected.map((p) => ({
-      ...p,
+      watchId: p.id, // Map to watchId
       quantity: 1,
-      originalPrice: p.price,
+      price: p.price, // Use price directly
     }));
+
     setSelectedProducts(withQty);
     setIsSearchOpen(false);
   };
+
+  // Helper function to get product details by watchId
+  const getProductDetails = (watchId: string) => {
+    return products.find((p: any) => p.id === watchId);
+  };
+
   return (
     <div>
       <Card>
@@ -84,62 +98,70 @@ const ShowSelectedList = ({
             </div>
           ) : (
             <div className="max-h-96 space-y-4 overflow-y-auto">
-              {selectedProducts.map((p) => (
-                <div
-                  className="grid grid-cols-12 gap-4 rounded-lg border bg-white p-4"
-                  key={p.id}
-                >
-                  <div className="col-span-5 flex items-start gap-4">
-                    <Image
-                      alt={p.name}
-                      className="h-20 w-20 flex-shrink-0 rounded-md object-cover"
-                      height={80}
-                      src={p.images[0]?.absolute_url || "/placeholder.png"}
-                      width={80}
-                    />
-                    <div className="flex-1">
-                      <p className="font-semibold">{p.name}</p>
-                      <p className="text-muted-foreground text-sm">{p.code}</p>
+              {selectedProducts.map((p) => {
+                const productDetails = getProductDetails(p.watchId);
+                return (
+                  <div
+                    className="grid grid-cols-12 gap-4 rounded-lg border bg-white p-4"
+                    key={p.watchId}
+                  >
+                    <div className="col-span-5 flex items-start gap-4">
+                      <Image
+                        alt={productDetails?.name || "Product"}
+                        className="h-20 w-20 flex-shrink-0 rounded-md object-cover"
+                        height={80}
+                        src={
+                          productDetails?.images[0]?.absolute_url ||
+                          "/placeholder.png"
+                        }
+                        width={80}
+                      />
+                      <div className="flex-1">
+                        <p className="font-semibold">{productDetails?.name}</p>
+                        <p className="text-muted-foreground text-sm">
+                          {productDetails?.code}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="col-span-2 place-content-center text-center">
+                      <PriceEditPopover
+                        onPriceChange={(price) => updatePrice(p.watchId, price)}
+                        originalPrice={productDetails?.price || p.price}
+                        price={p.price}
+                      />
+                    </div>
+                    <div className="col-span-2 place-content-center">
+                      <Input
+                        className="w-full"
+                        min={1}
+                        onChange={(e) =>
+                          updateQuantity(
+                            p.watchId,
+                            Number.parseInt(e.target.value, 10) || 1
+                          )
+                        }
+                        type="number"
+                        value={p.quantity}
+                      />
+                    </div>
+                    <div className="col-span-2 place-content-center text-center">
+                      <span className="font-semibold text-green-600 text-sm">
+                        ${(p.price * p.quantity).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="col-span-1 place-content-center">
+                      <Button
+                        className="text-red-500 hover:bg-red-50 hover:text-red-700"
+                        onClick={() => removeProduct(p.watchId)}
+                        size="icon"
+                        variant="ghost"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
-                  <div className="col-span-2 place-content-center text-center">
-                    <PriceEditPopover
-                      onPriceChange={(price) => updatePrice(p.id, price)}
-                      originalPrice={p.originalPrice}
-                      price={p.price}
-                    />
-                  </div>
-                  <div className="col-span-2 place-content-center">
-                    <Input
-                      className="w-full"
-                      min={1}
-                      onChange={(e) =>
-                        updateQuantity(
-                          p.id,
-                          Number.parseInt(e.target.value, 10) || 1
-                        )
-                      }
-                      type="number"
-                      value={p.quantity}
-                    />
-                  </div>
-                  <div className="col-span-2 place-content-center text-center">
-                    <span className="font-semibold text-green-600 text-sm">
-                      ${(p.price * p.quantity).toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="col-span-1 place-content-center">
-                    <Button
-                      className="text-red-500 hover:bg-red-50 hover:text-red-700"
-                      onClick={() => removeProduct(p.id)}
-                      size="icon"
-                      variant="ghost"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>

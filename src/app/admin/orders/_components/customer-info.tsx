@@ -27,7 +27,7 @@ interface ExtendedCustomerInfo extends CustomerInfo {
 
 interface CustomerInfoProps {
   customerInfo: ExtendedCustomerInfo;
-  setCustomerInfo: (info: ExtendedCustomerInfo) => void;
+  setCustomerInfo: (info: any) => void;
 }
 
 export default function CustomerInfoComp({

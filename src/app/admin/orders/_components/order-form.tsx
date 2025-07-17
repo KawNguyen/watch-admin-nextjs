@@ -16,7 +16,6 @@ type OrderFormValues = z.infer<typeof orderSchema>;
 
 interface OrderFormProps {
   mode: "create" | "edit";
-
   onSubmit: (data: OrderFormValues) => void;
   onCancel?: () => void;
   isLoading?: boolean;
@@ -39,8 +38,11 @@ export default function OrderForm({
     phone: "",
     street: "",
     province: "",
+    provinceName: "",
     district: "",
+    districtName: "",
     ward: "",
+    wardName: "",
   });
   const [discountPct] = useState(0);
 
@@ -48,28 +50,39 @@ export default function OrderForm({
     selected: Omit<Product, "quantity" | "originalPrice">[]
   ) => {
     const withQty = selected.map((p) => ({
-      ...p,
+      watchId: p.id, // Changed from watchId: p.id to ensure correct mapping
       quantity: 1,
-      originalPrice: p.price,
+      price: p.price, // Changed from originalPrice to price
     }));
     setSelectedProducts(withQty);
     setIsSearchOpen(false);
   };
 
   const subtotal = selectedProducts.reduce(
-    (sum: number, p: Product) => sum + p.price * p.quantity,
+    (sum: number, p: any) => sum + p.price * p.quantity, // Changed from p.price to match new structure
     0
   );
 
   const discountValue = (subtotal * discountPct) / 100;
   const totalPrice = subtotal - discountValue;
+  // If you want to keep the original schema, update handleFormSubmit like this:
 
   const handleFormSubmit = () => {
     const formData: OrderFormValues = {
       paymentMethod,
       totalPrice,
+      originalPrice: totalPrice,
       orderItems: selectedProducts,
-      walkinInformation: customerInfo,
+      walkinInformation: {
+        firstName: customerInfo.firstName,
+        lastName: customerInfo.lastName,
+        email: customerInfo.email,
+        phone: customerInfo.phone,
+        street: customerInfo.street,
+        provinceName: customerInfo.provinceName,
+        districtName: customerInfo.districtName,
+        wardName: customerInfo.wardName,
+      },
     };
 
     onSubmit(formData);

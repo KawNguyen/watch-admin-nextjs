@@ -6,7 +6,7 @@ export const orderSchema = z.object({
   shippingNotes: z.string().optional(),
   paymentMethod: z.string().min(1, "Payment is required"),
   totalPrice: z.number().min(1),
-  orginalPrice: z.number().optional(),
+  originalPrice: z.number().optional(),
   orderItems: z.array(
     z.object({
       watchId: z.string().min(1, "Watch ID is required"),
@@ -20,8 +20,8 @@ export const orderSchema = z.object({
     email: z.string().email().optional(),
     phone: z.string().min(1, "Phone is required"),
     street: z.string().min(1, "Street address is required"),
-    province: z.string().min(1, "Province is required"),
-    district: z.string().min(1, "District is required"),
-    ward: z.string().min(1, "Ward is required"),
+    provinceName: z.string().optional(),
+    districtName: z.string().optional(),
+    wardName: z.string().optional(),
   }),
 });
