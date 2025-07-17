@@ -4,6 +4,7 @@ import {
   GalleryVerticalEndIcon,
   MegaphoneIcon,
   MessageSquareTextIcon,
+  MessageSquareWarning,
   Newspaper,
   ScrollTextIcon,
   UsersIcon,
