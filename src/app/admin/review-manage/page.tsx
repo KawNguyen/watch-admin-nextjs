@@ -17,12 +17,13 @@
 //   );
 // };
 
-import React from 'react';
+import React from "react";
 // export default ReviewPage;
-import { ReviewManagement } from '@/components/ReviewManagement/ReviewManagement';
+// import { ReviewManagement } from '@/components/ReviewManagement/ReviewManagement';
 
 const ReviewPage = () => {
-  return <ReviewManagement />;
+  // return <ReviewManagement />;
+  return <div>a</div>;
 };
 
 export default ReviewPage;

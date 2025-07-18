@@ -1,44 +1,44 @@
-import 'react-photo-view/dist/react-photo-view.css';
+import "react-photo-view/dist/react-photo-view.css";
 
-import { useMutation } from '@tanstack/react-query';
-import type { ColumnDef } from '@tanstack/react-table';
-import { Loader2, Trash2 } from 'lucide-react';
-import Image from 'next/image';
-import { useState } from 'react';
-import { PhotoView } from 'react-photo-view';
-import { toast } from 'sonner';
-import { queryClient } from '@/components/provider/provider';
-import { AlertDialogFooter } from '@/components/ui/alert-dialog';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { useMutation } from "@tanstack/react-query";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Loader2, Trash2 } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { PhotoView } from "react-photo-view";
+import { toast } from "sonner";
+import { queryClient } from "@/components/provider/provider";
+import { AlertDialogFooter } from "@/components/ui/alert-dialog";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { watchApi } from '@/services/watch';
-import type { Watch } from '@/types/watch';
-import WatchForm from './watch-form';
+} from "@/components/ui/dialog";
+import { watchApi } from "@/services/watch";
+import type { Watch } from "@/types/watch";
+import WatchForm from "./watch-form";
 
 const ActionCell = ({ row }: { row: any }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const mutationDelete = useMutation({
     mutationFn: (watchId: string) => watchApi.delete(watchId),
     onSuccess: () => {
-      toast.success('Watch deleted successfully');
-      queryClient.invalidateQueries({ queryKey: ['watches'] });
+      toast.success("Watch deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["watches"] });
     },
     onError: () => {
-      toast.error('Failed to delete watch');
+      toast.error("Failed to delete watch");
     },
   });
   const handleDelete = () => {
     mutationDelete.mutate(row.original.id);
     setIsDialogOpen(false);
   };
-
+  // const test=`${}`;
   return (
     <div className="flex items-center gap-2">
       <WatchForm mode="view" watchData={row.original} />
@@ -80,13 +80,13 @@ const ActionCell = ({ row }: { row: any }) => {
 };
 export const columns: ColumnDef<Watch>[] = [
   {
-    id: 'select',
+    id: "select",
     header: ({ table }: { table: any }) => (
       <Checkbox
         aria-label="Select all"
         checked={
           table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
+          (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
       />
@@ -102,7 +102,7 @@ export const columns: ColumnDef<Watch>[] = [
     enableHiding: false,
   },
   {
-    header: 'Image',
+    header: "Image",
     cell: ({ row }: { row: any }) => {
       return (
         <PhotoView
@@ -118,12 +118,12 @@ export const columns: ColumnDef<Watch>[] = [
                 fill
                 onError={(e) => {
                   (e.target as HTMLImageElement).src =
-                    'https://placehold.co/300x300.png';
+                    "https://placehold.co/300x300.png";
                 }}
                 sizes="10vw"
                 src={
                   row.original?.images[0]?.absolute_url ||
-                  'https://placehold.co/300x300.png'
+                  "https://placehold.co/300x300.png"
                 }
               />
             </AspectRatio>
@@ -133,24 +133,24 @@ export const columns: ColumnDef<Watch>[] = [
     },
   },
   {
-    accessorKey: 'name',
-    header: 'Name',
+    accessorKey: "name",
+    header: "Name",
   },
   {
-    accessorKey: 'gender',
-    header: 'Gender',
+    accessorKey: "gender",
+    header: "Gender",
   },
   {
-    accessorKey: 'brand.name',
-    header: 'Brand',
+    accessorKey: "brand.name",
+    header: "Brand",
   },
   {
-    accessorKey: 'price',
-    header: 'Price',
+    accessorKey: "price",
+    header: "Price",
   },
   {
-    accessorKey: 'actions',
-    header: 'Actions',
+    accessorKey: "actions",
+    header: "Actions",
     cell: ({ row }: { row: any }) => <ActionCell row={row} />,
   },
 ];
