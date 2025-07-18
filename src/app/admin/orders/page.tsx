@@ -43,6 +43,7 @@ interface Order {
   addressId: string | null;
   couponId: string | null;
   walkinInformation: string | null;
+  deliveryAddress: string | null;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
@@ -86,6 +87,22 @@ const OrderPage = () => {
     if (!walkinInfo) return null;
     try {
       return JSON.parse(walkinInfo);
+    } catch {
+      return null;
+    }
+  };
+
+  const parseDeliveryAddress = (
+    address: string | null
+  ): {
+    street: string;
+    provinceName: string;
+    districtName: string;
+    wardName: string;
+  } | null => {
+    if (!address) return null;
+    try {
+      return JSON.parse(address);
     } catch {
       return null;
     }
@@ -140,7 +157,7 @@ const OrderPage = () => {
   };
 
   const handleStatusUpdated = () => {
-    fetchOrders(); 
+    fetchOrders();
   };
 
   if (loading) {
@@ -240,6 +257,10 @@ const OrderPage = () => {
                   order.walkinInformation
                 );
 
+                const parsedAddress = parseDeliveryAddress(
+                  order.deliveryAddress
+                );
+
                 return (
                   <tr key={order.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -268,14 +289,15 @@ const OrderPage = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {walkinInfo ? (
+                        {parsedAddress ? (
                           <div>
-                            <div>{walkinInfo.street}</div>
+                            <div>{parsedAddress.street}</div>
                             <div className="text-gray-500">
-                              {walkinInfo.wardName}, {walkinInfo.districtName}
+                              {parsedAddress.wardName},{" "}
+                              {parsedAddress.districtName}
                             </div>
                             <div className="text-gray-500">
-                              {walkinInfo.provinceName}
+                              {parsedAddress.provinceName}
                             </div>
                           </div>
                         ) : (

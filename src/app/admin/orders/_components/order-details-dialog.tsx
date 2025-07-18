@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Eye, Package, User, MapPin, CreditCard, Clock } from "lucide-react";
+import { Package, User, MapPin, CreditCard, Clock } from "lucide-react";
 import { orderApi } from "@/services/create-order";
 import { toast } from "sonner";
 
@@ -76,16 +76,16 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [open, setOpen] = useState(false);
 
-  const fetchOrderDetail = async () => {
-    try {
-      const response = await orderApi.getOrderById(orderId);
-      setOrder(response.data.item);
-    } catch (err) {
-      toast.error("Failed to fetch");
-    }
-  };
-
   useEffect(() => {
+    const fetchOrderDetail = async () => {
+      try {
+        const response = await orderApi.getOrderById(orderId);
+        setOrder(response.data.item);
+      } catch {
+        toast.error("Failed to fetch");
+      }
+    };
+
     if (open) {
       fetchOrderDetail();
     }

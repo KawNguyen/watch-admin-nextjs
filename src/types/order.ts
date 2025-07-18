@@ -17,6 +17,16 @@ export interface CustomerInfo {
   lastName: string;
   email: string;
   phone: string;
+  // street: string;
+  // province: string;
+  // district: string;
+  // ward: string;
+  // provinceName?: string;
+  // districtName?: string;
+  // wardName?: string;
+}
+
+export interface DeliveryAddress {
   street: string;
   province: string;
   district: string;
@@ -25,6 +35,7 @@ export interface CustomerInfo {
   districtName?: string;
   wardName?: string;
 }
+
 export interface OrderItem {
   watchId: string;
   quantity: number;

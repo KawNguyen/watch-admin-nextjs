@@ -168,7 +168,7 @@ export default function TrackingHistory() {
             January 16, 2024 between 2:00 PM - 5:00 PM
           </p>
           <p className="mt-1 text-blue-600 text-sm">
-            We'll send you updates via SMS and email when your package is out
+            We&#39;ll send you updates via SMS and email when your package is out
             for delivery.
           </p>
         </div>

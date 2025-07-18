@@ -20,6 +20,10 @@ import { useProvinces } from "@/queries/use-address";
 import { userInfoSchema } from "@/schema/user-info";
 
 interface ExtendedCustomerInfo extends CustomerInfo {
+  street: string;
+  province: string;
+  district: string;
+  ward: string;
   provinceName?: string;
   districtName?: string;
   wardName?: string;
@@ -37,8 +41,7 @@ export default function CustomerInfoComp({
   const { data: provinces = [] } = useProvinces();
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
 
-  // Move useForm to parent component
-  const form = useForm<CustomerInfo>({
+  const form = useForm<ExtendedCustomerInfo>({
     resolver: zodResolver(userInfoSchema),
     defaultValues: customerInfo,
   });
@@ -65,7 +68,6 @@ export default function CustomerInfoComp({
       info.districtName,
       info.provinceName,
     ].filter(Boolean);
-
     return addressParts.length > 0 ? addressParts.join(", ") : "Not specified";
   };
 

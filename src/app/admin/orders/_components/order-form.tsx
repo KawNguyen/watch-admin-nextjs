@@ -78,6 +78,8 @@ export default function OrderForm({
         lastName: customerInfo.lastName,
         email: customerInfo.email,
         phone: customerInfo.phone,
+      },
+      deliveryAddress: {
         street: customerInfo.street,
         provinceName: customerInfo.provinceName,
         districtName: customerInfo.districtName,
@@ -91,6 +93,8 @@ export default function OrderForm({
   const isFormValid =
     selectedProducts.length > 0 &&
     customerInfo.firstName &&
+    customerInfo.lastName &&
+    customerInfo.email &&
     customerInfo.phone &&
     customerInfo.street &&
     customerInfo.province &&

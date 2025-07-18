@@ -26,15 +26,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { CustomerInfo } from "@/types/order";
+interface ExtendedCustomerInfo extends CustomerInfo {
+  street: string;
+  province: string;
+  district: string;
+  ward: string;
+  provinceName?: string;
+  districtName?: string;
+  wardName?: string;
+}
 import { useDistricts, useWards } from "@/queries/use-address";
 import type { District, Province, Ward } from "@/types/address";
 
 interface CustomerEditModalProps {
-  form: UseFormReturn<CustomerInfo>;
+  form: UseFormReturn<ExtendedCustomerInfo>;
   provinces: Province[];
   isOpen: boolean;
   onClose: () => void;
-  onSave: (info: CustomerInfo) => void;
+  onSave: (info: ExtendedCustomerInfo) => void;
 }
 
 function CustomerEditModal({
@@ -49,7 +58,7 @@ function CustomerEditModal({
   const { data: districts = [] } = useDistricts(provinceCode);
   const { data: wards = [] } = useWards(districtCode);
 
-  const handleSubmit = async (data: CustomerInfo) => {
+  const handleSubmit = async (data: ExtendedCustomerInfo) => {
     const provinceName =
       provinces?.find((p) => p.code.toString() === data.province)?.name || "";
     const districtName =
