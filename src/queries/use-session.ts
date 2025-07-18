@@ -13,7 +13,7 @@ export const useSession = () => {
 export const useMe = () => {
   return useQuery({
     queryKey: ['me'],
-    queryFn: () => authAPI.getMe(),
+    queryFn: () => authAPI.getMe().then((res) => res.data.item),
     refetchOnWindowFocus: false,
     staleTime: 24 * 60 * 1000,
   });

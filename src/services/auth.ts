@@ -10,7 +10,7 @@ export const authAPI = {
   },
 
   logout: async () => {
-    const res = await instanceAxios.post('/auth/sign-out');
+    const res = await instanceAxios.post('/auth/logout');
     return res.data;
   },
 

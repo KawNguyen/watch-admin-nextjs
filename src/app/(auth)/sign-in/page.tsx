@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useMutation } from '@tanstack/react-query';
-import { Eye, EyeOff, Shield } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import type React from 'react';
-import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
+import { useMutation } from "@tanstack/react-query";
+import { Eye, EyeOff, Shield } from "lucide-react";
+import { useRouter } from "next/navigation";
+import type React from "react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -14,29 +14,29 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { authAPI } from '@/services/auth';
+} from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { authAPI } from "@/services/auth";
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const router = useRouter();
 
   const mutateSignIn = useMutation({
     mutationFn: (data: { email: string; password: string }) =>
       authAPI.login(data.email, data.password),
     onSuccess: () => {
-      toast.success('Sign in successfully');
-      router.push('/admin/dashboard');
+      toast.success("Sign in successfully");
+      router.push("/admin/dashboard");
     },
     onError: (error: any) => {
       console.error(error);
-      toast.error('Sign in failed', {
-        description: error?.message || 'An unexpected error occurred',
+      toast.error("Sign in failed", {
+        description: error?.message || "An unexpected error occurred",
       });
     },
   });
@@ -84,7 +84,7 @@ export default function SignIn() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 value={password}
               />
               <Button
@@ -100,7 +100,7 @@ export default function SignIn() {
                   <Eye className="h-4 w-4 text-muted-foreground" />
                 )}
                 <span className="sr-only">
-                  {showPassword ? 'Hide password' : 'Show password'}
+                  {showPassword ? "Hide password" : "Show password"}
                 </span>
               </Button>
             </div>
@@ -123,7 +123,7 @@ export default function SignIn() {
             disabled={mutateSignIn.isPending}
             type="submit"
           >
-            {mutateSignIn.isPending ? 'Signing in...' : 'Sign In'}
+            {mutateSignIn.isPending ? "Signing in..." : "Sign In"}
           </Button>
         </CardFooter>
       </form>
