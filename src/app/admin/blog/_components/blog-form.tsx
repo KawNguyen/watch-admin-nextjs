@@ -77,8 +77,8 @@ export function BlogFormDialog({
 
   // Memoized user data to prevent unnecessary recalculations
   const userInfo = useMemo(() => {
-    if (isLoadingUser || !userData?.data?.item) return null;
-    const user = userData.data.item;
+    if (isLoadingUser || !userData) return null;
+    const user = userData;
     return {
       id: user.id,
       fullName: formatAuthorName(user.firstName, user.lastName),

@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { BlogPost } from "@/types/blog";
 import { BlogFormDialog } from "./_components/blog-form";
 import { DeleteConfirmDialog } from "./_components/blog-delete";
@@ -48,11 +47,9 @@ export default function BlogManagement() {
 
   const queryClient = useQueryClient();
 
-  // Fetch blogs with useQuery
   const {
     data: blogs = [],
     isLoading,
-    error,
     isError,
   } = useQuery({
     queryKey: QUERY_KEYS.blogs,
@@ -60,17 +57,15 @@ export default function BlogManagement() {
       const data = await blogApi.getAllBlogs();
       return formatBlogData(data);
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+    staleTime: 5 * 60 * 1000, 
+    gcTime: 10 * 60 * 1000, 
   });
 
-  // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (slug: string) => {
       await blogApi.deleteBlog(slug);
     },
     onSuccess: () => {
-      // Invalidate and refetch blogs
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.blogs });
       setIsDeleteOpen(false);
       setDeletingBlog(null);
