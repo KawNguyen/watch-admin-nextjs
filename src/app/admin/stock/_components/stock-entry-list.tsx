@@ -12,9 +12,9 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Collapsible,
@@ -44,7 +44,6 @@ export default function StockEntryList() {
     new Set()
   );
 
-  // Fetch stock entries using React Query
   const { data: stockEntries, isLoading } = useQuery({
     queryKey: ["stock-entries"],
     queryFn: StockAPI.getAllStockEntries,
@@ -60,7 +59,6 @@ export default function StockEntryList() {
     setExpandedEntries(newExpanded);
   };
 
-  // Filter entries based on search
   const filteredEntries =
     stockEntries?.data?.items?.filter((entry: any) => {
       const searchLower = searchTerm.toLowerCase();
@@ -135,7 +133,6 @@ export default function StockEntryList() {
 
   return (
     <div className="container mx-auto space-y-6 p-6">
-      {/* Header */}
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="font-bold text-3xl">Stock Entries</h1>
@@ -288,13 +285,13 @@ export default function StockEntryList() {
                                   <div className="relative h-12 w-12 overflow-hidden rounded-md bg-muted">
                                     {item.watch.images.length > 0 ? (
                                       <Image
-                                        alt={item.watch.name}
-                                        className="object-cover"
-                                        fill
                                         src={
                                           item.watch.images[0].absolute_url ||
                                           "/placeholder.svg"
                                         }
+                                        alt={item.watch.name}
+                                        className="object-cover"
+                                        fill
                                       />
                                     ) : (
                                       <div className="flex h-full w-full items-center justify-center">

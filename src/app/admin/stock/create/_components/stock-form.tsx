@@ -1,17 +1,17 @@
 // app/(admin)/stock/StockForm.tsx
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import { CornerDownLeft, Search } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import type { z } from 'zod';
-import { queryClient } from '@/components/provider/provider';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { CornerDownLeft, Search } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import type { z } from "zod";
+import { queryClient } from "@/components/provider/provider";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -19,22 +19,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { useMe } from '@/queries/use-session';
-import { useWatches } from '@/queries/use-watches';
-import { StockSchema } from '@/schema/stock-entry';
-import { StockAPI } from '@/services/stock-entry';
-import { StockEntryTable } from './stock-entry-table';
-import { StockProductSelection } from './stock-product-selection';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useMe } from "@/queries/use-session";
+import { useWatches } from "@/queries/use-watches";
+import { StockSchema } from "@/schema/stock-entry";
+import { StockAPI } from "@/services/stock-entry";
+import { StockEntryTable } from "./stock-entry-table";
+import { StockProductSelection } from "./stock-product-selection";
 
 type StockFormValues = z.infer<typeof StockSchema>;
 
 export default function StockForm() {
   const { data: products = [] } = useWatches();
   const { data: user } = useMe();
-  const id = `${user?.data?.item.id}`;
+  const id = `${user?.id}`;
 
   const mutation = useMutation({
     mutationFn: async (data: StockFormValues) => {
@@ -44,8 +44,8 @@ export default function StockForm() {
   const form = useForm<StockFormValues>({
     resolver: zodResolver(StockSchema),
     defaultValues: {
-      createdBy: id || '',
-      notes: '',
+      createdBy: id || "",
+      notes: "",
       stockItems: [],
     },
   });
@@ -54,11 +54,11 @@ export default function StockForm() {
 
   const { fields, append, remove, update } = useFieldArray({
     control,
-    name: 'stockItems',
+    name: "stockItems",
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [productSearchQuery, setProductSearchQuery] = useState('');
+  const [productSearchQuery, setProductSearchQuery] = useState("");
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
 
   const handleProductToggle = (id: number) => {
@@ -96,19 +96,19 @@ export default function StockForm() {
 
     setSelectedProductIds([]);
     setIsModalOpen(false);
-    setProductSearchQuery('');
+    setProductSearchQuery("");
   };
 
   const onSubmit = async (data: StockFormValues) => {
     mutation.mutate(data, {
       onSuccess: () => {
         form.reset();
-        queryClient.invalidateQueries({ queryKey: ['stockEntries'] });
-        toast.success('Stock entry created successfully!');
+        queryClient.invalidateQueries({ queryKey: ["stockEntries"] });
+        toast.success("Stock entry created successfully!");
         setIsModalOpen(false);
       },
       onError: (error: any) => {
-        toast.error('Error creating stock entry:' + error.message);
+        toast.error("Error creating stock entry:" + error.message);
       },
     });
   };
