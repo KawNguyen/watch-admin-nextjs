@@ -282,8 +282,20 @@ const OrderPage = () => {
                               {walkinInfo.phone}
                             </div>
                           </div>
+                        ) : order.user ? (
+                          <div>
+                            <div className="font-medium">
+                              {order.user.firstName} {order.user.lastName}
+                            </div>
+                            <div className="text-gray-500">
+                              {order.user.email}
+                            </div>
+                            <div className="text-gray-500">
+                              {order.user.phone}
+                            </div>
+                          </div>
                         ) : (
-                          <span className="text-gray-500">Not found</span>
+                          <span className="text-gray-500">Not provided</span>
                         )}
                       </div>
                     </td>

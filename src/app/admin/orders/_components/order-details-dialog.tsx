@@ -55,12 +55,12 @@ interface OrderDetail {
   addressId: string | null;
   couponId: string | null;
   walkinInformation: string | null;
+  deliveryAddress: string | null;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
   user: any;
   orderItems: OrderItem[];
-  address: any;
   coupon: any;
 }
 
@@ -97,6 +97,22 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
     if (!walkinInfo) return null;
     try {
       return JSON.parse(walkinInfo);
+    } catch {
+      return null;
+    }
+  };
+
+  const parseDeliveryAddress = (
+    address: string | null
+  ): {
+    street: string;
+    provinceName: string;
+    districtName: string;
+    wardName: string;
+  } | null => {
+    if (!address) return null;
+    try {
+      return JSON.parse(address);
     } catch {
       return null;
     }
@@ -200,15 +216,20 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
                 <h3 className="text-lg font-semibold">Shipping Address</h3>
               </div>
               {(() => {
-                const walkinInfo = parseWalkinInformation(
-                  order.walkinInformation
+                const parsedAddress = parseDeliveryAddress(
+                  order.deliveryAddress
                 );
-                return walkinInfo ? (
+                return parsedAddress ? (
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <div className="space-y-1">
-                      <div className=" w-full">
-                        {walkinInfo.street}, {walkinInfo.wardName},{" "}
-                        {walkinInfo.districtName}, {walkinInfo.provinceName}
+                      <div>
+                        <div>{parsedAddress.street}</div>
+                        <div className="text-gray-500">
+                          {parsedAddress.wardName}, {parsedAddress.districtName}
+                        </div>
+                        <div className="text-gray-500">
+                          {parsedAddress.provinceName}
+                        </div>
                       </div>
                     </div>
                   </div>
