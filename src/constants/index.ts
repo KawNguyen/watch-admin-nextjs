@@ -9,6 +9,7 @@ import {
   ScrollTextIcon,
   UsersIcon,
   WarehouseIcon,
+  Archive,
   WatchIcon,
 } from "lucide-react";
 
@@ -147,14 +148,26 @@ export const data = {
       ],
     },
     {
-      title: 'Manage Support',
-      url: '#',
+      title: "Support",
+      url: "#",
       icon: MessageSquareWarning,
       isActive: true,
       items: [
         {
-          title: 'List',
-          url: '/admin/support',
+          title: "List",
+          url: "/admin/support",
+        },
+      ],
+    },
+    {
+      title: "Inventory",
+      url: "#",
+      icon: Archive,
+      isActive: true,
+      items: [
+        {
+          title: "List",
+          url: "/admin/inventory",
         },
       ],
     },

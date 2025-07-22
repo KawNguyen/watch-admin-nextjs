@@ -1,4 +1,3 @@
-// app/(admin)/stock/StockForm.tsx
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,13 +27,15 @@ import { StockSchema } from "@/schema/stock-entry";
 import { StockAPI } from "@/services/stock-entry";
 import { StockEntryTable } from "./stock-entry-table";
 import { StockProductSelection } from "./stock-product-selection";
+import { useRouter } from "next/navigation";
 
 type StockFormValues = z.infer<typeof StockSchema>;
 
 export default function StockForm() {
   const { data: products = [] } = useWatches();
   const { data: user } = useMe();
-  const id = `${user?.id}`;
+  const fullName = `${user?.lastName}${user?.firstName}`;
+  const router = useRouter();
 
   const mutation = useMutation({
     mutationFn: async (data: StockFormValues) => {
@@ -44,7 +45,7 @@ export default function StockForm() {
   const form = useForm<StockFormValues>({
     resolver: zodResolver(StockSchema),
     defaultValues: {
-      createdBy: id || "",
+      createdBy: user?.id || fullName,
       notes: "",
       stockItems: [],
     },
@@ -102,13 +103,14 @@ export default function StockForm() {
   const onSubmit = async (data: StockFormValues) => {
     mutation.mutate(data, {
       onSuccess: () => {
-        form.reset();
         queryClient.invalidateQueries({ queryKey: ["stockEntries"] });
+        form.reset();
         toast.success("Stock entry created successfully!");
         setIsModalOpen(false);
+        router.push("/admin/stock");
       },
       onError: (error: any) => {
-        toast.error("Error creating stock entry:" + error.message);
+        toast.error("Error creating stock entry: " + error.message);
       },
     });
   };
