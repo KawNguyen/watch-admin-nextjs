@@ -1,12 +1,12 @@
-'use client';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import { Eye, Loader2, Pencil, Plus } from 'lucide-react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import type { z } from 'zod';
-import { queryClient } from '@/components/provider/provider';
-import { Button } from '@/components/ui/button';
+"use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { Eye, Loader2, Pencil, Plus } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import type { z } from "zod";
+import { queryClient } from "@/components/provider/provider";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,8 +14,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
@@ -24,12 +24,13 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { movementSchema } from '@/schema/movement';
-import { movementApi } from '@/services/movement';
+} from "@/components/ui/sheet";
+import { movementSchema } from "@/schema/movement";
+import { movementApi } from "@/services/movement";
+import { toast } from "sonner";
 
 interface MovementFormProps {
-  mode: 'create' | 'edit' | 'view';
+  mode: "create" | "edit" | "view";
   movementData?: any;
 }
 type MovementFormValues = z.infer<typeof movementSchema>;
@@ -38,8 +39,8 @@ export default function MovementForm({
   movementData,
 }: MovementFormProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const isEditMode = mode === 'edit';
-  const isViewMode = mode === 'view';
+  const isEditMode = mode === "edit";
+  const isViewMode = mode === "view";
   const mutation = useMutation({
     mutationFn: isEditMode
       ? (data: MovementFormValues) =>
@@ -50,18 +51,28 @@ export default function MovementForm({
   const form = useForm<MovementFormValues>({
     resolver: zodResolver(movementSchema),
     defaultValues: {
-      name: isEditMode ? movementData.name : '',
+      name: isEditMode ? movementData.name : "",
     },
   });
   const onSubmit = async (data: MovementFormValues) => {
     mutation.mutate(data, {
       onSuccess: () => {
         form.reset();
-        queryClient.invalidateQueries({ queryKey: ['movements'] });
+        queryClient.invalidateQueries({ queryKey: ["movements"] });
+        toast.success(
+          isEditMode
+            ? "Movement updated successfully"
+            : "Movement created successfully"
+        );
         setIsOpen(false);
       },
       onError: (error: any) => {
-        console.error('Error creating movement :', error);
+        console.log(error);
+        toast.error(
+          isEditMode
+            ? `${error.response.data.message}`
+            : `${error.response.data.message}`
+        );
       },
     });
   };
@@ -87,17 +98,17 @@ export default function MovementForm({
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? 'Edit Movement'
+              ? "Edit Movement"
               : isViewMode
-                ? 'View Movement'
-                : 'Create Movement'}
+              ? "View Movement"
+              : "Create Movement"}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
-              ? 'Edit the details of the movement.'
+              ? "Edit the details of the movement."
               : isViewMode
-                ? 'View the details of the movement.'
-                : 'Fill in the details to create a new movement.'}
+              ? "View the details of the movement."
+              : "Fill in the details to create a new movement."}
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
@@ -114,6 +125,7 @@ export default function MovementForm({
                     <Input
                       placeholder="Name"
                       {...field}
+                      value={movementData?.name || field.value}
                       disabled={isViewMode}
                     />
                   </FormControl>

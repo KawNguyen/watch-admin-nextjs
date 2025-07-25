@@ -88,6 +88,18 @@ export const data = {
       ],
     },
     {
+      title: "Inventory",
+      url: "#",
+      icon: Archive,
+      isActive: true,
+      items: [
+        {
+          title: "List",
+          url: "/admin/inventory",
+        },
+      ],
+    },
+    {
       title: "Orders",
       url: "#",
       icon: ScrollTextIcon,
@@ -96,18 +108,6 @@ export const data = {
         {
           title: "List",
           url: "/admin/orders",
-        },
-      ],
-    },
-    {
-      title: "Reviews",
-      url: "#",
-      icon: MessageSquareTextIcon,
-      isActive: true,
-      items: [
-        {
-          title: "List",
-          url: "/admin/review-manage",
         },
       ],
     },
@@ -148,6 +148,18 @@ export const data = {
       ],
     },
     {
+      title: "Reviews",
+      url: "#",
+      icon: MessageSquareTextIcon,
+      isActive: true,
+      items: [
+        {
+          title: "List",
+          url: "/admin/review-manage",
+        },
+      ],
+    },
+    {
       title: "Support",
       url: "#",
       icon: MessageSquareWarning,
@@ -156,18 +168,6 @@ export const data = {
         {
           title: "List",
           url: "/admin/support",
-        },
-      ],
-    },
-    {
-      title: "Inventory",
-      url: "#",
-      icon: Archive,
-      isActive: true,
-      items: [
-        {
-          title: "List",
-          url: "/admin/inventory",
         },
       ],
     },

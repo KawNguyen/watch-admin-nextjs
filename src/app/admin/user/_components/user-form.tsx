@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import { Eye, Loader2, Pencil, Plus } from 'lucide-react';
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import type { z } from 'zod';
-import { queryClient } from '@/components/provider/provider';
-import { Button } from '@/components/ui/button';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { Eye, Loader2, Pencil, Plus } from "lucide-react";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import type { z } from "zod";
+import { queryClient } from "@/components/provider/provider";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -15,8 +15,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
@@ -25,14 +25,16 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { userSchema } from '@/schema/user';
-import { userApi } from '@/services/user';
-import { UserGender } from '@/types';
-import { UserRole } from '@/types/user';
+} from "@/components/ui/sheet";
+import { userSchema } from "@/schema/user";
+import { userApi } from "@/services/user";
+import { UserGender } from "@/types";
+import { UserRole } from "@/types/user";
+import { toast } from "sonner";
+import { Label } from "@/components/ui/label";
 
 interface UserFormProps {
-  mode: 'create' | 'edit' | 'view';
+  mode: "edit" | "view";
   userId?: string;
   userData?: any;
 }
@@ -41,20 +43,16 @@ type UserFormValues = z.infer<typeof userSchema>;
 export default function UserForm({ mode, userData }: UserFormProps) {
   const [isOpen, setIsOpen] = useState(false);
   const mutation = useMutation({
-    mutationFn: userApi.createUser,
+    mutationFn: (data: UserFormValues) => userApi.updateUser(userData.id, data),
   });
-  const isEditMode = mode === 'edit';
-  const isViewMode = mode === 'view';
+  const isEditMode = mode === "edit";
+  const isViewMode = mode === "view";
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      email: isEditMode && userData ? userData.email : '',
-      role: isEditMode && userData ? userData.role : UserRole.CUSTOMER,
-      phone: isEditMode && userData ? userData.phone : '',
-      gender: isEditMode && userData ? userData.gender : UserGender.MALE,
-      firstname: isEditMode && userData ? userData.firstName : '',
-      lastname: isEditMode && userData ? userData.lastName : '',
-      avatar: isEditMode && userData ? userData.avatar : '',
+      phone: isEditMode && userData ? userData.phone : "",
+      firstName: isEditMode && userData ? userData.firstName : "",
+      lastName: isEditMode && userData ? userData.lastName : "",
     },
   });
 
@@ -62,11 +60,11 @@ export default function UserForm({ mode, userData }: UserFormProps) {
     mutation.mutate(data, {
       onSuccess: () => {
         form.reset();
-        queryClient.invalidateQueries({ queryKey: ['users'] });
+        queryClient.invalidateQueries({ queryKey: ["users"] });
         setIsOpen(false);
       },
       onError: (error: any) => {
-        console.error('Error creating watch:', error);
+        toast.error("Failed to update user: " + error.message);
       },
     });
   };
@@ -77,55 +75,34 @@ export default function UserForm({ mode, userData }: UserFormProps) {
           <Button size="icon" variant="ghost">
             <Pencil />
           </Button>
-        ) : isViewMode ? (
-          <Button size="icon" variant="ghost">
-            <Eye />
-          </Button>
         ) : (
-          <Button>
-            <Plus />
-            Create
-          </Button>
+          isViewMode && (
+            <Button size="icon" variant="ghost">
+              <Eye />
+            </Button>
+          )
         )}
       </SheetTrigger>
       <SheetContent className="hide-scrollbar sm:max-w-lg">
         <SheetHeader>
-          <SheetTitle>
-            {isEditMode
-              ? 'Edit Watch'
-              : isViewMode
-                ? 'View Watch'
-                : 'Create Watch'}
+          <SheetTitle className="mb-4">
+            {isEditMode ? "Edit user" : "View user"}
           </SheetTitle>
-          <SheetDescription>
-            {isEditMode
-              ? 'Edit the details of the watch.'
-              : isViewMode
-                ? 'View the details of the watch.'
-                : 'Fill in the details to create a new watch.'}
-          </SheetDescription>
         </SheetHeader>
         <Form {...form}>
           <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Email <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="abc@gmail.com"
-                      {...field}
-                      disabled={isViewMode}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div>
+              <Label>
+                Email <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                placeholder="abc@gmail.com"
+                value={userData.email}
+                className=""
+                disabled={isViewMode || isEditMode}
+              />
+            </div>
+
             <FormField
               control={form.control}
               name="phone"
@@ -138,7 +115,7 @@ export default function UserForm({ mode, userData }: UserFormProps) {
                     <Input
                       placeholder="0123456789"
                       {...field}
-                      disabled={isViewMode}
+                      value={userData.phone}
                     />
                   </FormControl>
                   <FormMessage />
@@ -147,7 +124,7 @@ export default function UserForm({ mode, userData }: UserFormProps) {
             />
             <FormField
               control={form.control}
-              name="firstname"
+              name="firstName"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
@@ -157,7 +134,7 @@ export default function UserForm({ mode, userData }: UserFormProps) {
                     <Input
                       placeholder="John"
                       {...field}
-                      disabled={isViewMode}
+                      value={userData.firstName}
                     />
                   </FormControl>
                   <FormMessage />
@@ -166,7 +143,7 @@ export default function UserForm({ mode, userData }: UserFormProps) {
             />
             <FormField
               control={form.control}
-              name="lastname"
+              name="lastName"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
@@ -176,23 +153,8 @@ export default function UserForm({ mode, userData }: UserFormProps) {
                     <Input
                       placeholder="John"
                       {...field}
-                      disabled={isViewMode}
+                      value={userData.lastName}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="avatar"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Avatar <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="..." {...field} disabled={isViewMode} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -203,16 +165,13 @@ export default function UserForm({ mode, userData }: UserFormProps) {
                 <Button disabled={mutation.isPending} type="submit">
                   {mutation.isPending ? (
                     <Loader2 className="animate-spin" />
-                  ) : isEditMode ? (
-                    <>
-                      <Pencil />
-                      Update
-                    </>
                   ) : (
-                    <>
-                      <Plus />
-                      Create
-                    </>
+                    isEditMode && (
+                      <>
+                        <Pencil />
+                        Update
+                      </>
+                    )
                   )}
                 </Button>
               )}

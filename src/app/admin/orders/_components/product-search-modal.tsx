@@ -36,7 +36,6 @@ export default function ProductSearchModal({
   const [tempSelectedProducts, setTempSelectedProducts] =
     useState<Product[]>(selectedProducts);
 
-  // Reset temp selection when modal opens
   useEffect(() => {
     if (isOpen) {
       setTempSelectedProducts(selectedProducts);
@@ -92,7 +91,6 @@ export default function ProductSearchModal({
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Search Controls */}
           <div className="flex gap-4">
             <Input
               className="w-full"
@@ -102,7 +100,6 @@ export default function ProductSearchModal({
             />
           </div>
 
-          {/* Product List */}
           <div className="hide-scrollbar max-h-96 overflow-y-auto rounded-lg border">
             {filteredProducts.length === 0 ? (
               <div className="p-8 text-center text-muted-foreground">
@@ -155,8 +152,9 @@ export default function ProductSearchModal({
                             Stock
                           </div>
                           <div className="font-medium">
-                            {product.currentStock > 0 ? (
-                              product.currentStock
+                            {product.inventory.quantity >
+                            product.inventory.lowStockThreshold ? (
+                              <span>{product.inventory.quantity}</span>
                             ) : (
                               <Badge variant="destructive">Out of stock</Badge>
                             )}
@@ -171,7 +169,6 @@ export default function ProductSearchModal({
             )}
           </div>
 
-          {/* Action Buttons */}
           <div className="flex items-center justify-between pt-4">
             <span className="text-gray-500">
               {tempSelectedProducts.length} product(s) selected

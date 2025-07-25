@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
+import { formatMoney } from "@/lib";
 
 interface PriceEditPopoverProps {
   price: number;
@@ -34,7 +35,6 @@ export default function PriceEditPopover({
   const [discountType, setDiscountType] = useState<DiscountType>("percentage");
   const [discountValue, setDiscountValue] = useState("");
 
-  // Calculate current discount for display
   const currentDiscount = originalPrice - price;
   const currentDiscountPercentage =
     originalPrice > 0 ? (currentDiscount / originalPrice) * 100 : 0;
@@ -46,10 +46,10 @@ export default function PriceEditPopover({
     let newPrice: number;
 
     if (discountType === "percentage") {
-      if (value > 100) return; // Prevent over 100% discount
+      if (value > 100) return;
       newPrice = originalPrice * (1 - value / 100);
     } else {
-      if (value > originalPrice) return; // Prevent discount larger than original price
+      if (value > originalPrice) return;
       newPrice = originalPrice - value;
     }
 
@@ -66,7 +66,6 @@ export default function PriceEditPopover({
 
   const handleOpenChange = (open: boolean) => {
     if (open) {
-      // Pre-populate with current discount when opening
       if (currentDiscount > 0) {
         setDiscountValue(
           discountType === "percentage"
@@ -82,7 +81,6 @@ export default function PriceEditPopover({
 
   const handleDiscountTypeChange = (newType: DiscountType) => {
     setDiscountType(newType);
-    // Convert current discount to new type
     if (currentDiscount > 0) {
       setDiscountValue(
         newType === "percentage"
@@ -103,10 +101,10 @@ export default function PriceEditPopover({
           {isPriceChanged ? (
             <div className="flex flex-col">
               <span className="text-gray-400 text-xs line-through">
-                ${originalPrice.toFixed(2)}
+                {formatMoney(originalPrice)}
               </span>
               <span className="font-medium text-black hover:underline">
-                ${price.toFixed(2)}
+                {formatMoney(price)}
               </span>
               <span className="text-green-600 text-xs">
                 {currentDiscountPercentage.toFixed(1)}% off
@@ -114,7 +112,7 @@ export default function PriceEditPopover({
             </div>
           ) : (
             <span className="font-medium text-black hover:underline">
-              ${price.toFixed(2)}
+              {formatMoney(price)}
             </span>
           )}
         </div>
@@ -124,7 +122,7 @@ export default function PriceEditPopover({
           <h4 className="font-semibold">Edit Price</h4>
 
           <div className="text-muted-foreground text-sm">
-            Original price: ${originalPrice.toFixed(2)}
+            Original price: {formatMoney(originalPrice)}
           </div>
 
           <div className="space-y-2">
@@ -159,7 +157,7 @@ export default function PriceEditPopover({
                     variant="outline"
                     className="rounded-l-none border-l-0 px-3 bg-transparent"
                   >
-                    {discountType === "percentage" ? "%" : "$"}
+                    {discountType === "percentage" ? "%" : "VND"}
                     <ChevronDown className="h-4 w-4 ml-1" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -173,7 +171,7 @@ export default function PriceEditPopover({
                   <DropdownMenuItem
                     onClick={() => handleDiscountTypeChange("cash")}
                   >
-                    <span className="mr-2">$</span>
+                    <span className="mr-2">VND</span>
                     Cash Amount
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -186,28 +184,27 @@ export default function PriceEditPopover({
               <div className="text-sm space-y-1">
                 <div className="flex justify-between">
                   <span>Original Price:</span>
-                  <span>${originalPrice.toFixed(2)}</span>
+                  <span>{formatMoney(originalPrice)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Discount:</span>
                   <span className="text-red-600">
                     {discountType === "percentage"
                       ? `-${discountValue}%`
-                      : `-$${discountValue}`}
+                      : `-${formatMoney(Number.parseFloat(discountValue))}`}
                   </span>
                 </div>
                 <div className="flex justify-between font-medium border-t pt-1">
                   <span>New Price:</span>
                   <span>
-                    $
                     {discountType === "percentage"
-                      ? (
+                      ? formatMoney(
                           originalPrice *
-                          (1 - Number.parseFloat(discountValue) / 100)
-                        ).toFixed(2)
-                      : (
+                            (1 - Number.parseFloat(discountValue) / 100)
+                        )
+                      : formatMoney(
                           originalPrice - Number.parseFloat(discountValue)
-                        ).toFixed(2)}
+                        )}
                   </span>
                 </div>
               </div>

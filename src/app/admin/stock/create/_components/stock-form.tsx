@@ -91,7 +91,7 @@ export default function StockForm() {
       append({
         watchId: String(product.id),
         quantity: 1,
-        costPrice: 0,
+        costPrice: 1000,
       });
     });
 
@@ -183,7 +183,12 @@ export default function StockForm() {
           </Card>
 
           <div className="mt-6 flex justify-end">
-            <Button type="submit">Import Stock Entry</Button>
+            <Button
+              disabled={selectedProductIds.length === 0 && fields.length === 0}
+              type="submit"
+            >
+              Import Stock Entry
+            </Button>
           </div>
         </form>
       </Form>

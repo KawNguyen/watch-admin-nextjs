@@ -40,5 +40,5 @@ export default function InventoryDataTable() {
     );
   }
 
-  return <DataTable columns={columns} data={inventory} searchKey="name" />;
+  return <DataTable columns={columns} data={inventory} searchKey="watchId" />;
 }

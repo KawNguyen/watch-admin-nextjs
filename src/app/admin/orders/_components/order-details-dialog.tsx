@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { Package, User, MapPin, CreditCard, Clock } from "lucide-react";
 import { orderApi } from "@/services/create-order";
 import { toast } from "sonner";
+import { formatMoney } from "@/lib";
 
 interface WalkinInformation {
   firstName: string;
@@ -53,8 +54,8 @@ interface OrderDetail {
   cancellationReason: string | null;
   userId: string | null;
   addressId: string | null;
-  couponId: string | null;
   walkinInformation: string | null;
+  couponId: string | null;
   deliveryAddress: string | null;
   createdAt: string;
   updatedAt: string;
@@ -91,17 +92,6 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
     }
   }, [open, orderId]);
 
-  const parseWalkinInformation = (
-    walkinInfo: string | null
-  ): WalkinInformation | null => {
-    if (!walkinInfo) return null;
-    try {
-      return JSON.parse(walkinInfo);
-    } catch {
-      return null;
-    }
-  };
-
   const parseDeliveryAddress = (
     address: string | null
   ): {
@@ -118,6 +108,16 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
     }
   };
 
+  const parseWalkinInformation = (
+    walkinInfo: string | null
+  ): WalkinInformation | null => {
+    if (!walkinInfo) return null;
+    try {
+      return JSON.parse(walkinInfo);
+    } catch {
+      return null;
+    }
+  };
   const getStatusColor = (status: string) => {
     switch (status) {
       case "PENDING":
@@ -154,24 +154,30 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
               <div className="col-span-1 space-y-2">
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">Status</span>
+                  <h3 className="text-lg font-semibold">Status</h3>
                 </div>
                 <Badge className={getStatusColor(order.status)}>
                   {order.status}
                 </Badge>
               </div>
-              <Separator orientation="vertical" className="ml-8" />
-              <div className="col-span-2 space-y-2">
+              <Separator orientation="vertical" className="ml-10" />
+              <div className="col-span-3 space-y-2">
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">Payment Method</span>
+                  <h3 className=" w-full   text-lg font-semibold">
+                    Payment Method
+                  </h3>
                 </div>
-                <span className="font-medium ">
-                  {order.paymentMethod === "COD" ? "COD" : "MOMO"}
+                <span className="flex place-content-center font-medium ">
+                  {order.paymentMethod === "COD" ? (
+                    <Badge variant="outline">Cash on Delivery</Badge>
+                  ) : (
+                    <Badge variant="momo">MOMO</Badge>
+                  )}
                 </span>
               </div>
-              <Separator orientation="vertical" className="ml-8" />
-              <div className="col-span-7 space-y-3">
+              <Separator orientation="vertical" className="ml-2" />
+              <div className="col-span-6 space-y-3">
                 <div className="flex items-center gap-2">
                   <User className="h-5 w-5 text-gray-500" />
                   <h3 className="text-lg font-semibold">
@@ -220,18 +226,11 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
                   order.deliveryAddress
                 );
                 return parsedAddress ? (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="space-y-1">
-                      <div>
-                        <div>{parsedAddress.street}</div>
-                        <div className="text-gray-500">
-                          {parsedAddress.wardName}, {parsedAddress.districtName}
-                        </div>
-                        <div className="text-gray-500">
-                          {parsedAddress.provinceName}
-                        </div>
-                      </div>
-                    </div>
+                  <div className="p-4">
+                    <Badge className="text-md font-semibold">
+                      {parsedAddress.street}, {parsedAddress.wardName},{" "}
+                      {parsedAddress.districtName}, {parsedAddress.provinceName}
+                    </Badge>
                   </div>
                 ) : (
                   <div className="text-gray-500">No address information</div>
@@ -249,13 +248,11 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
                     key={item.id}
                     className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
                   >
-                    <div className="flex-1">
-                      <div className="font-medium">
-                        {item.watch?.name || `Watch ID: ${item.watchId}`}
-                      </div>
+                    <div className="flex-1 space-y-1">
+                      <div className="font-medium">{item.watch?.name}</div>
                       {item.watch && (
                         <div className="text-sm text-gray-600">
-                          {item.watch.brand} - {item.watch.model}
+                          {item.watch.model}
                         </div>
                       )}
                       <div className="text-sm text-gray-600">
@@ -263,7 +260,9 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-medium">{item.price} USD</div>
+                      <div className="font-medium">
+                        {formatMoney(item.price)}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -279,13 +278,13 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Original Price:</span>
                     <span className="text-gray-600 line-through">
-                      {(order.originalPrice, "en-US")} USD
+                      {formatMoney(order.originalPrice)}
                     </span>
                   </div>
                 )}
                 <div className="flex justify-between items-center font-semibold text-lg">
                   <span>Total Price:</span>
-                  <span>{order.totalPrice} USD</span>
+                  <span>{formatMoney(order.totalPrice)}</span>
                 </div>
               </div>
             </div>

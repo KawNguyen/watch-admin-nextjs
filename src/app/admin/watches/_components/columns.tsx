@@ -1,6 +1,6 @@
 import "react-photo-view/dist/react-photo-view.css";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Loader2, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -19,8 +19,30 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { watchApi } from "@/services/watch";
-import type { Watch } from "@/types/watch";
+import { WatchStatus, type Watch } from "@/types/watch";
 import WatchForm from "./watch-form";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const adjustStatus = (status: string) => {
+  const { DRAFTED, PUBLISHED, ARCHIVED } = WatchStatus;
+  switch (status) {
+    case PUBLISHED:
+      return "success";
+    case DRAFTED:
+      return "secondary";
+    case ARCHIVED:
+      return "archived";
+    default:
+      return "outline";
+  }
+};
 
 const ActionCell = ({ row }: { row: any }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -38,7 +60,6 @@ const ActionCell = ({ row }: { row: any }) => {
     mutationDelete.mutate(row.original.id);
     setIsDialogOpen(false);
   };
-  // const test=`${}`;
   return (
     <div className="flex items-center gap-2">
       <WatchForm mode="view" watchData={row.original} />
@@ -147,6 +168,74 @@ export const columns: ColumnDef<Watch>[] = [
   {
     accessorKey: "price",
     header: "Price",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }: { row: any }) => {
+      const queryClient = useQueryClient();
+      const queryKey = ["watches"];
+      const currentStatus = row.original.status;
+      const watchId = row.original.id;
+
+      const mutation = useMutation({
+        mutationFn: (data: { watchId: string; status: string }) =>
+          watchApi.updateStatus(data.watchId, data.status),
+
+        onMutate: async (updatedWatch) => {
+          await queryClient.cancelQueries({ queryKey });
+          const previousWatches = queryClient.getQueryData(queryKey);
+          queryClient.setQueryData(queryKey, (oldData: any[]) =>
+            oldData.map((watch) =>
+              watch.id === updatedWatch.watchId
+                ? { ...watch, status: updatedWatch.status }
+                : watch
+            )
+          );
+          return { previousWatches };
+        },
+
+        onError: (err, updatedWatch, context) => {
+          toast.error("Failed to update watch status");
+          if (context?.previousWatches) {
+            queryClient.setQueryData(queryKey, context.previousWatches);
+          }
+        },
+
+        onSuccess: () => {
+          toast.success("Watch status updated successfully");
+        },
+      });
+
+      return (
+        <div>
+          <Select
+            value={currentStatus}
+            onValueChange={(value) => {
+              mutation.mutate({
+                watchId: watchId,
+                status: value.toUpperCase(),
+              });
+            }}
+          >
+            <SelectTrigger className="w-[150px] border-none focus:ring-0 shadow-none">
+              <SelectValue>
+                <Badge variant={adjustStatus(currentStatus)}>
+                  {currentStatus}
+                </Badge>
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent className="w-[150px]">
+              {Object.values(WatchStatus).map((status, idx) => (
+                <SelectItem key={idx} value={status}>
+                  {status}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "actions",

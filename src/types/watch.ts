@@ -4,7 +4,8 @@ export interface Watch {
   code: string;
   name: string;
   description: string;
-  gender: 'MEN' | 'WOMEN' | 'UNISEX';
+  status: WatchStatus;
+  gender: "MEN" | "WOMEN" | "UNISEX";
   brandId: string;
   materialId: string;
   bandMaterialId: string;
@@ -22,4 +23,10 @@ export interface Watch {
   movement: any;
   banner: any[];
   poster: any[];
+}
+
+export enum WatchStatus {
+  PUBLISHED = "PUBLISHED",
+  DRAFTED = "DRAFTED",
+  ARCHIVED = "ARCHIVED",
 }

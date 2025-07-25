@@ -1,13 +1,14 @@
-import { CircleDollarSign, Wallet } from 'lucide-react';
-import Image from 'next/image';
-import { Dispatch, SetStateAction } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { CircleDollarSign, Wallet } from "lucide-react";
+import Image from "next/image";
+import { Dispatch, SetStateAction } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { formatMoney } from "@/lib";
 
 interface ShowSelectedListProps {
   paymentMethod: string;
-  setPaymentMethod: Dispatch<SetStateAction<'MOMO' | 'COD'>>;
+  setPaymentMethod: Dispatch<SetStateAction<"MOMO" | "COD">>;
   totalPrice: number;
   subtotal: number;
   discountPct: number;
@@ -29,14 +30,14 @@ const OrderSummary = ({
       <CardContent>
         <RadioGroup
           className="grid grid-cols-1 gap-4"
-          onValueChange={(v) => setPaymentMethod(v as 'COD' | 'MOMO')}
+          onValueChange={(v) => setPaymentMethod(v as "COD" | "MOMO")}
           value={paymentMethod}
         >
           <Label
             className={`flex cursor-pointer items-center gap-3 rounded-lg border p-4 ${
-              paymentMethod === 'COD'
-                ? 'border-black ring-2'
-                : 'hover:border-gray-300'
+              paymentMethod === "COD"
+                ? "border-black ring-2"
+                : "hover:border-gray-300"
             }`}
             htmlFor="cod"
           >
@@ -47,9 +48,9 @@ const OrderSummary = ({
 
           <Label
             className={`flex cursor-pointer items-center gap-3 rounded-lg border p-4 ${
-              paymentMethod === 'MOMO'
-                ? 'border-black ring-2'
-                : 'hover:border-gray-300'
+              paymentMethod === "MOMO"
+                ? "border-black ring-2"
+                : "hover:border-gray-300"
             }`}
             htmlFor="momo"
           >
@@ -59,7 +60,7 @@ const OrderSummary = ({
           </Label>
         </RadioGroup>
 
-        {paymentMethod === 'MOMO' && totalPrice > 0 && (
+        {paymentMethod === "MOMO" && totalPrice > 0 && (
           <div className="mt-6 flex flex-col items-center gap-4 rounded-lg border bg-blue-50 p-4">
             <Image
               src="/qr/qr.png"
@@ -71,7 +72,7 @@ const OrderSummary = ({
             <p className="text-center font-semibold">
               Scan to pay &nbsp;
               <span className="font-bold text-green-700 text-lg">
-                ${totalPrice.toFixed(2)}
+                {formatMoney(totalPrice)}
               </span>
             </p>
           </div>
@@ -84,21 +85,21 @@ const OrderSummary = ({
         <div className="space-y-1">
           <div className="flex justify-between">
             <span>Subtotal:</span>
-            <span>${subtotal.toFixed(2)}</span>
+            <span>{formatMoney(subtotal)}</span>
           </div>
           <div className="flex justify-between">
             <span>Shipping:</span>
-            <span className="">Free</span>
+            <span>Free</span>
           </div>
           {discountPct > 0 && (
             <div className="flex justify-between text-green-600">
               <span>Discount&nbsp;({discountPct}%):</span>
-              <span>- ${discountValue.toFixed(2)}</span>
+              <span>- {discountValue.toFixed(2)}</span>
             </div>
           )}
           <div className="flex justify-between border-t pt-2 font-bold text-lg">
             <span>Total:</span>
-            <span className="text-green-700">${totalPrice.toFixed(2)}</span>
+            <span className="text-black">{formatMoney(totalPrice)}</span>
           </div>
         </div>
       </CardContent>

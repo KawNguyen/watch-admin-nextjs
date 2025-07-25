@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { DataTable } from '@/components/data-table/data-table';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useWatches } from '@/queries/use-watches';
-import { columns } from './columns';
+import { DataTable } from "@/components/data-table/data-table";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useWatches } from "@/queries/use-watches";
+import { columns } from "./columns";
 
 export default function WatchesDataTable() {
   const { data: watches, isFetching } = useWatches();
@@ -39,5 +39,5 @@ export default function WatchesDataTable() {
     );
   }
 
-  return <DataTable columns={columns} data={watches} searchKey="name" />;
+  return <DataTable columns={columns} data={watches || []} searchKey="name" />;
 }

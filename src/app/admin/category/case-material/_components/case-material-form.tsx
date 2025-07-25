@@ -1,12 +1,12 @@
-'use client';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import { Eye, Loader2, Pencil, Plus } from 'lucide-react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import type { z } from 'zod';
-import { queryClient } from '@/components/provider/provider';
-import { Button } from '@/components/ui/button';
+"use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { Eye, Loader2, Pencil, Plus } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import type { z } from "zod";
+import { queryClient } from "@/components/provider/provider";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,8 +14,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
@@ -24,12 +24,13 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { caseMaterialSchema } from '@/schema/case-material';
-import { materialApi } from '@/services/material';
+} from "@/components/ui/sheet";
+import { caseMaterialSchema } from "@/schema/case-material";
+import { materialApi } from "@/services/material";
+import { toast } from "sonner";
 
 interface CaseMaterialFormProps {
-  mode: 'create' | 'edit' | 'view';
+  mode: "create" | "edit" | "view";
   caseMaterialData?: any;
 }
 type CaseMaterialFormValues = z.infer<typeof caseMaterialSchema>;
@@ -38,8 +39,8 @@ export default function CaseMaterialForm({
   caseMaterialData,
 }: CaseMaterialFormProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const isEditMode = mode === 'edit';
-  const isViewMode = mode === 'view';
+  const isEditMode = mode === "edit";
+  const isViewMode = mode === "view";
   const mutation = useMutation({
     mutationFn: isEditMode
       ? (data: CaseMaterialFormValues) =>
@@ -50,18 +51,23 @@ export default function CaseMaterialForm({
   const form = useForm<CaseMaterialFormValues>({
     resolver: zodResolver(caseMaterialSchema),
     defaultValues: {
-      name: isEditMode ? caseMaterialData.name : '',
+      name: isEditMode ? caseMaterialData.name : "",
     },
   });
   const onSubmit = async (data: CaseMaterialFormValues) => {
     mutation.mutate(data, {
       onSuccess: () => {
         form.reset();
-        queryClient.invalidateQueries({ queryKey: ['materials'] });
+        queryClient.invalidateQueries({ queryKey: ["materials"] });
         setIsOpen(false);
+        toast.success(
+          isEditMode
+            ? "Material updated successfully!"
+            : "Material created successfully!"
+        );
       },
       onError: (error: any) => {
-        console.error('Error creating material:', error);
+        toast.error(error?.response?.data?.message);
       },
     });
   };
@@ -87,17 +93,17 @@ export default function CaseMaterialForm({
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? 'Edit case material'
+              ? "Edit case material"
               : isViewMode
-                ? 'View case material'
-                : 'Create case material'}
+              ? "View case material"
+              : "Create case material"}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
-              ? 'Edit the details of the case material.'
+              ? "Edit the details of the case material."
               : isViewMode
-                ? 'View the details of the case material.'
-                : 'Fill in the details to create a new case material.'}
+              ? "View the details of the case material."
+              : "Fill in the details to create a new case material."}
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
@@ -114,6 +120,7 @@ export default function CaseMaterialForm({
                     <Input
                       placeholder="Name"
                       {...field}
+                      value={caseMaterialData?.name || field.value}
                       disabled={isViewMode}
                     />
                   </FormControl>

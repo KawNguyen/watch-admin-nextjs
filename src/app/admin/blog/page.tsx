@@ -18,12 +18,10 @@ import { DeleteConfirmDialog } from "./_components/blog-delete";
 import { blogApi } from "@/services/blog";
 import { BlogDetailDialog } from "./_components/blog-details";
 
-// Query keys for better organization
 const QUERY_KEYS = {
   blogs: ["blogs"] as const,
 } as const;
 
-// Helper function to format blog data
 const formatBlogData = (data: any[]): BlogPost[] => {
   return data.map((item: any) => ({
     ...item,
@@ -31,7 +29,6 @@ const formatBlogData = (data: any[]): BlogPost[] => {
   }));
 };
 
-// Helper function to strip HTML tags
 const stripHtmlTags = (html: string): string => {
   return html.replace(/<[^>]+>/g, "");
 };
@@ -75,7 +72,6 @@ export default function BlogManagement() {
     },
   });
 
-  // Memoized filtered blogs for performance
   const filteredBlogs = useMemo(() => {
     if (!searchTerm) return blogs;
 
@@ -87,7 +83,6 @@ export default function BlogManagement() {
     );
   }, [blogs, searchTerm]);
 
-  // Event handlers
   const handleConfirmDelete = async () => {
     if (!deletingBlog) return;
     deleteMutation.mutate(deletingBlog.slug);
@@ -248,7 +243,6 @@ export default function BlogManagement() {
         </div>
       )}
 
-      {/* Dialogs */}
       <BlogDetailDialog
         blog={selectedBlog}
         open={isDetailOpen}

@@ -40,5 +40,5 @@ export default function UsersDataTable() {
     );
   }
 
-  return <DataTable columns={columns} data={users} searchKey="name" />;
+  return <DataTable columns={columns} data={users} searchKey="email" />;
 }

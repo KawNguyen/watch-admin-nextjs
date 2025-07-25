@@ -4,10 +4,16 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
-import { Eye, Edit } from "lucide-react";
+import { Eye, Edit, Copy } from "lucide-react";
 import { orderApi } from "@/services/create-order";
 import OrderDetailDialog from "./_components/order-details-dialog";
 import OrderStatusUpdateDialog from "./_components/order-status-update-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import TrackingHistory from "./_components/tracking-history";
 
 interface WalkinInformation {
   firstName: string;
@@ -63,6 +69,7 @@ const OrderPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const fetchOrders = async () => {
     try {
@@ -156,6 +163,19 @@ const OrderPage = () => {
     }
   };
 
+  const handleCopy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(text);
+
+      setTimeout(() => {
+        setCopiedId(null);
+      }, 2000);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleStatusUpdated = () => {
     fetchOrders();
   };
@@ -205,7 +225,6 @@ const OrderPage = () => {
 
   return (
     <div className="container mx-auto space-y-6">
-      {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Order Management</h1>
         <Link
@@ -216,7 +235,6 @@ const OrderPage = () => {
         </Link>
       </div>
 
-      {/* Orders Table */}
       <div className="container mx-auto bg-white shadow overflow-hidden sm:rounded-md">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -264,9 +282,20 @@ const OrderPage = () => {
                 return (
                   <tr key={order.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {order.id.slice(0, 8)}...
-                      </div>
+                      <Tooltip open={copiedId === order.id}>
+                        <TooltipTrigger>
+                          <div
+                            onClick={() => handleCopy(order.id)}
+                            className="flex items-center gap-2 group hover:cursor-pointer"
+                          >
+                            <Copy className="size-4 text-muted-foreground flex-shrink-0" />
+                            <p className="font-mono line-clamp-1">
+                              {order.id.slice(0, 8)}...
+                            </p>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>Copied!</TooltipContent>
+                      </Tooltip>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">

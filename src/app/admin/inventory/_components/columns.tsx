@@ -1,7 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Inventory } from "@/types/inventory";
-import { Badge } from "@/components/ui/badge";
 
 export const columns: ColumnDef<Inventory>[] = [
   {
@@ -39,12 +38,13 @@ export const columns: ColumnDef<Inventory>[] = [
     header: "Quantity",
     cell: ({ row }) => {
       const quantity = row.original.quantity;
+      const lowStockThreshold = row.original.lowStockThreshold;
       return (
         <div>
-          {quantity < 10 ? (
-            <Badge variant="destructive">{quantity}</Badge>
+          {quantity > lowStockThreshold ? (
+            <span className="text-green-500 font-bold">{quantity}</span>
           ) : (
-            <Badge variant="success">{quantity}</Badge>
+            <span className="text-red-500 font-bold">{quantity}</span>
           )}
         </div>
       );

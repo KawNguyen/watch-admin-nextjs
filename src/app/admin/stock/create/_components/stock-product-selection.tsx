@@ -1,18 +1,18 @@
-// components/ProductSelectionModal.tsx
-'use client';
+"use client";
 
-import { Search } from 'lucide-react';
-import Image from 'next/image';
-import { useMemo } from 'react';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Search } from "lucide-react";
+import Image from "next/image";
+import { useMemo } from "react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
 interface StockProductSelectionProps {
   open: boolean;
@@ -74,7 +74,7 @@ export function StockProductSelection({
                 onClick={onSelectAll}
               />
               <div className="flex-1 font-medium text-sm">
-                Select All ({selectedIds.length} of {filteredProducts.length}{' '}
+                Select All ({selectedIds.length} of {filteredProducts.length}{" "}
                 selected)
               </div>
             </div>
@@ -90,13 +90,13 @@ export function StockProductSelection({
                     className="col-span-1 h-5 w-5 items-center self-center justify-self-start"
                     onChange={() => onToggle(product.id)}
                   />
-                  <div className="col-span-9 flex items-center gap-4">
+                  <div className="col-span-8 flex items-center gap-4">
                     <Image
                       alt={product.name}
                       className="rounded-md object-cover"
                       height={80}
                       src={
-                        product.images[0]?.absolute_url || '/placeholder.png'
+                        product.images[0]?.absolute_url || "/placeholder.png"
                       }
                       width={80}
                     />
@@ -107,14 +107,27 @@ export function StockProductSelection({
                       </div>
                     </div>
                   </div>
-                  <div className="col-span-2 flex items-center justify-end gap-10">
+                  <div className="col-span-2 flex items-center justify-end gap-x-32">
                     <div className="flex flex-col items-center space-y-2 ">
                       <span>Brand</span>
-                      <span>{product.brand?.name}</span>
+                      <span>
+                        <Badge variant="default">{product.brand?.name}</Badge>
+                      </span>
                     </div>
                     <div className="flex flex-col items-center space-y-2 ">
                       <span>Stock</span>
-                      <span> {product.currentStock}</span>
+                      <span>
+                        {product.inventory.quantity >
+                        product.inventory.lowStockThreshold ? (
+                          <Badge variant="success">
+                            {product.inventory.quantity}
+                          </Badge>
+                        ) : (
+                          <Badge variant="destructive">
+                            {product.inventory.quantity}
+                          </Badge>
+                        )}
+                      </span>
                     </div>
                   </div>
                 </div>

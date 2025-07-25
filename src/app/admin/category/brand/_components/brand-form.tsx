@@ -241,6 +241,7 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
                     <Input
                       placeholder="Brand name"
                       {...field}
+                      value={brandData?.name || field.value}
                       disabled={isViewMode}
                     />
                   </FormControl>
@@ -249,7 +250,6 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
               )}
             />
 
-            {/* <div className="grid grid-cols-3 gap-4"> */}
             <FormField
               control={form.control}
               name="country"
@@ -262,6 +262,7 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
                     <Input
                       placeholder="Brand country"
                       {...field}
+                      value={brandData?.country || field.value}
                       disabled={isViewMode}
                     />
                   </FormControl>

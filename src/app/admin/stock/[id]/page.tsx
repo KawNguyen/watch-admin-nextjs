@@ -19,6 +19,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useState } from "react";
+import { formatMoney } from "@/lib";
 
 interface StockItem {
   id: string;
@@ -31,23 +32,6 @@ interface StockItem {
   deletedAt: string | null;
 }
 
-interface StockEntry {
-  id: string;
-  entryCode: string;
-  totalPrice: number;
-  createdBy: string;
-  notes: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  user: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-  };
-  stockItems: StockItem[];
-}
 interface DetailStockPageProps {
   params: {
     id: string;
@@ -67,12 +51,6 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
     });
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(amount);
-  };
 
   const handleCopy = async (text: string) => {
     try {
@@ -116,7 +94,7 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
                 <div>
                   <p className="text-sm text-muted-foreground">Total Price</p>
                   <p className="font-semibold text-lg">
-                    {formatCurrency(data?.data?.item.totalPrice)}
+                    {formatMoney(data?.data?.item.totalPrice)}
                   </p>
                 </div>
               </div>
@@ -193,7 +171,7 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
                       <div>
                         <p className="text-muted-foreground">Cost Price</p>
                         <p className="font-semibold">
-                          {formatCurrency(item.costPrice)}
+                          {formatMoney(item.costPrice)}
                         </p>
                       </div>
                       <div>
@@ -203,7 +181,7 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
                       <div>
                         <p className="text-muted-foreground">Total Value</p>
                         <p className="font-semibold">
-                          {formatCurrency(item.quantity * item.costPrice)}
+                          {formatMoney(item.quantity * item.costPrice)}
                         </p>
                       </div>
                     </div>
@@ -248,7 +226,7 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
                 </div>
                 <div className="text-center p-4 bg-muted rounded-lg">
                   <p className="text-2xl font-bold">
-                    {formatCurrency(data?.data.item.totalPrice || 0)}
+                    {formatMoney(data?.data.item.totalPrice || 0)}
                   </p>
                   <p className="text-sm text-muted-foreground">Total Value</p>
                 </div>

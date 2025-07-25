@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useIsMutating, useMutation } from '@tanstack/react-query';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useIsMutating, useMutation } from "@tanstack/react-query";
 import {
   CloudUpload,
   Cog,
@@ -14,15 +14,15 @@ import {
   Plus,
   Shield,
   X,
-} from 'lucide-react';
-import Image from 'next/image';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import type { z } from 'zod';
-import { queryClient } from '@/components/provider/provider';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { Button } from '@/components/ui/button';
+} from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import type { z } from "zod";
+import { queryClient } from "@/components/provider/provider";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Button } from "@/components/ui/button";
 import {
   FileUpload,
   FileUploadDropzone,
@@ -32,7 +32,7 @@ import {
   FileUploadItemPreview,
   FileUploadList,
   FileUploadTrigger,
-} from '@/components/ui/file-upload';
+} from "@/components/ui/file-upload";
 import {
   Form,
   FormControl,
@@ -41,15 +41,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   Sheet,
   SheetContent,
@@ -58,23 +58,24 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { Textarea } from '@/components/ui/textarea';
-import { useBandMaterials } from '@/queries/use-bandMaterial';
-import { useBrands } from '@/queries/use-brand';
-import { useMaterials } from '@/queries/use-material';
-import { useMovements } from '@/queries/use-movement';
-import { watchSchema } from '@/schema/watch';
-import { cloudinaryApi } from '@/services/cloudinary';
-import { watchApi } from '@/services/watch';
-import { Gender } from '@/types';
-import type { BandMaterial } from '@/types/band-material';
-import type { Brand } from '@/types/brand';
-import type { Material } from '@/types/material';
-import type { Movement } from '@/types/movement';
+} from "@/components/ui/sheet";
+import { Textarea } from "@/components/ui/textarea";
+import { useBandMaterials } from "@/queries/use-bandMaterial";
+import { useBrands } from "@/queries/use-brand";
+import { useMaterials } from "@/queries/use-material";
+import { useMovements } from "@/queries/use-movement";
+import { watchSchema } from "@/schema/watch";
+import { cloudinaryApi } from "@/services/cloudinary";
+import { watchApi } from "@/services/watch";
+import { Gender } from "@/types";
+import type { BandMaterial } from "@/types/band-material";
+import type { Brand } from "@/types/brand";
+import type { Material } from "@/types/material";
+import type { Movement } from "@/types/movement";
+import { WatchStatus } from "@/types/watch";
 
 interface WatchFormProps {
-  mode: 'create' | 'edit' | 'view';
+  mode: "create" | "edit" | "view";
   watchId?: string;
   watchData?: any;
 }
@@ -91,8 +92,8 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
   const WIDTH_IMAGE = 500,
     HEIGHT_IMAGE = 500;
 
-  const isEditMode = mode === 'edit';
-  const isViewMode = mode === 'view';
+  const isEditMode = mode === "edit";
+  const isViewMode = mode === "view";
 
   const mutation = useMutation({
     mutationFn: (data: any) =>
@@ -116,18 +117,20 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
   const form = useForm<WatchFormValues>({
     resolver: zodResolver(watchSchema),
     defaultValues: {
-      name: isEditMode && watchData ? watchData.name : '',
-      description: '',
+      name: isEditMode && watchData ? watchData.name : "",
+      description: "",
       gender: isEditMode && watchData ? watchData.gender : Gender.MEN,
+      status:
+        isEditMode && watchData ? watchData.status : WatchStatus.PUBLISHED,
       diameter: isEditMode && watchData ? watchData.diameter : 0,
       waterResistance: isEditMode && watchData ? watchData.waterResistance : 0,
       warranty: isEditMode && watchData ? watchData.warranty : 0,
       price: isEditMode && watchData ? watchData.price : 0,
-      brandId: isEditMode && watchData ? watchData.brandId : '',
-      materialId: isEditMode && watchData ? watchData.materialId : '',
-      bandMaterialId: isEditMode && watchData ? watchData.bandMaterialId : '',
-      movementId: isEditMode && watchData ? watchData.movementId : '',
-      videoUrl: isEditMode && watchData ? watchData.videoUrl : '',
+      brandId: isEditMode && watchData ? watchData.brandId : "",
+      materialId: isEditMode && watchData ? watchData.materialId : "",
+      bandMaterialId: isEditMode && watchData ? watchData.bandMaterialId : "",
+      movementId: isEditMode && watchData ? watchData.movementId : "",
+      videoUrl: isEditMode && watchData ? watchData.videoUrl : "",
       files: [],
     },
   });
@@ -135,7 +138,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
   const handleUpload = async (files: File[]) => {
     const formData = new FormData();
     files.forEach((file) => {
-      formData.append('files', file);
+      formData.append("files", file);
     });
 
     try {
@@ -152,7 +155,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
 
       return uploadedImages;
     } catch (error) {
-      console.error('Error uploading files:', error);
+      console.error("Error uploading files:", error);
     }
   };
 
@@ -170,13 +173,13 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
         onSuccess: () => {
           form.reset();
           toast.success(
-            `${isEditMode ? 'Edit successfully' : 'Created successfully'}`
+            `${isEditMode ? "Edit successfully" : "Created successfully"}`
           );
-          queryClient.invalidateQueries({ queryKey: ['watches'] });
+          queryClient.invalidateQueries({ queryKey: ["watches"] });
           setIsOpen(false);
         },
-        onError: (error) => {
-          console.error('Error creating watch:', error);
+        onError: (error: any) => {
+          toast.error(`${error.response.data.message}`);
         },
       }
     );
@@ -200,21 +203,21 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
           </Button>
         )}
       </SheetTrigger>
-      <SheetContent className="hide-scrollbar sm:max-w-xl">
+      <SheetContent className="hide-scrollbar sm:max-w-2xl">
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? 'Edit Watch'
+              ? "Edit Watch"
               : isViewMode
-                ? 'View Watch'
-                : 'Create Watch'}
+              ? "View Watch"
+              : "Create Watch"}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
-              ? 'Edit the details of the watch.'
+              ? "Edit the details of the watch."
               : isViewMode
-                ? 'View the details of the watch.'
-                : 'Fill in the details to create a new watch.'}
+              ? "View the details of the watch."
+              : "Fill in the details to create a new watch."}
           </SheetDescription>
         </SheetHeader>
 
@@ -234,7 +237,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                       maxSize={5 * 1024 * 1024}
                       multiple
                       onFileReject={(_, message) => {
-                        form.setError('files', {
+                        form.setError("files", {
                           message,
                         });
                       }}
@@ -313,6 +316,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                         <Input
                           placeholder="Watch name"
                           {...field}
+                          value={watchData?.name || field.value}
                           disabled={isViewMode}
                         />
                       </FormControl>
@@ -320,7 +324,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                     </FormItem>
                   )}
                 />
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
                     name="gender"
@@ -331,8 +335,8 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                         </FormLabel>
                         <Select
                           defaultValue={field.value}
-                          disabled={isViewMode}
                           onValueChange={field.onChange}
+                          disabled={isViewMode}
                         >
                           <FormControl>
                             <SelectTrigger>
@@ -353,6 +357,36 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                   />
                   <FormField
                     control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Status <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <Select
+                          defaultValue={field.value}
+                          onValueChange={field.onChange}
+                          disabled={isViewMode}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select status" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {Object.values(WatchStatus).map((status, idx) => (
+                              <SelectItem key={idx} value={status}>
+                                {status}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
                     name="brandId"
                     render={({ field }) => (
                       <FormItem>
@@ -362,6 +396,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                         <Select
                           defaultValue={field.value}
                           disabled={isViewMode}
+                          value={watchData?.brandId || field.value}
                           onValueChange={field.onChange}
                         >
                           <FormControl>
@@ -507,6 +542,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                             placeholder="Diameter"
                             type="number"
                             {...field}
+                            value={watchData?.diameter || field.value}
                             disabled={isViewMode}
                           />
                         </FormControl>
@@ -527,6 +563,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                             placeholder="Water resistance"
                             type="number"
                             {...field}
+                            value={watchData?.waterResistance || field.value}
                             disabled={isViewMode}
                           />
                         </FormControl>
@@ -548,6 +585,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                             placeholder="Warranty"
                             type="number"
                             {...field}
+                            value={watchData?.warranty || field.value}
                             disabled={isViewMode}
                           />
                         </FormControl>
@@ -569,6 +607,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                             placeholder="Price"
                             type="number"
                             {...field}
+                            value={watchData?.price || field.value}
                             disabled={isViewMode}
                           />
                         </FormControl>
@@ -590,6 +629,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                           <Input
                             placeholder="Watch's video url"
                             {...field}
+                            value={watchData?.videoUrl || field.value}
                             disabled={isViewMode}
                           />
                         </FormControl>
@@ -607,6 +647,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                           <Textarea
                             placeholder="Watch description"
                             {...field}
+                            value={watchData?.description || field.value}
                             disabled={isViewMode}
                             rows={3}
                           />

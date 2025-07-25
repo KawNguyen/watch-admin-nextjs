@@ -147,7 +147,6 @@ const OrderStatusUpdateDialog: React.FC<OrderStatusUpdateDialogProps> = ({
             </div>
           </div>
 
-          {/* New Status Selection */}
           <div className="space-y-2">
             <Label htmlFor="status">New Status</Label>
             <Select value={selectedStatus} onValueChange={setSelectedStatus}>
@@ -170,44 +169,6 @@ const OrderStatusUpdateDialog: React.FC<OrderStatusUpdateDialogProps> = ({
             </Select>
           </div>
 
-          {/* Status Preview */}
-          {selectedStatus !== currentStatus && (
-            <div className="space-y-2">
-              <Label>Status will change to:</Label>
-              <div className="flex items-center gap-2">
-                <span
-                  className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    getSelectedStatusInfo()?.color
-                  }`}
-                >
-                  {getSelectedStatusInfo()?.label}
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* Notes */}
-          <div className="space-y-2">
-            <Label htmlFor="notes">
-              {selectedStatus === "CANCELED"
-                ? "Cancellation Reason"
-                : "Notes (Optional)"}
-            </Label>
-            <Textarea
-              id="notes"
-              placeholder={
-                selectedStatus === "CANCELED"
-                  ? "Please provide reason for cancellation..."
-                  : "Add any additional notes..."
-              }
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={3}
-              className="resize-none"
-            />
-          </div>
-
-          {/* Warning for canceled status */}
           {selectedStatus === "CANCELED" && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-sm text-red-700">

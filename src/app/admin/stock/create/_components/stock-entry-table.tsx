@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { Minus, Plus, X } from 'lucide-react';
+import { Minus, Plus, X } from "lucide-react";
 import type {
   Control,
   FieldArrayWithId,
   UseFormRegister,
   UseFormWatch,
-} from 'react-hook-form';
-import type { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+} from "react-hook-form";
+import type { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -17,8 +17,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import type { StockSchema } from '@/schema/stock-entry';
+} from "@/components/ui/table";
+import type { StockSchema } from "@/schema/stock-entry";
 
 type StockFormValues = z.infer<typeof StockSchema>;
 
@@ -26,7 +26,7 @@ interface Props {
   control: Control<StockFormValues>;
   register: UseFormRegister<StockFormValues>;
   products: any[];
-  fields: FieldArrayWithId<StockFormValues, 'stockItems', 'id'>[];
+  fields: FieldArrayWithId<StockFormValues, "stockItems", "id">[];
   update: (index: number, value: any) => void;
   remove: (index: number) => void;
   watch: UseFormWatch<StockFormValues>;
@@ -104,18 +104,17 @@ export const StockEntryTable = ({
                 </div>
               </TableCell>
               <TableCell>
-                <div className="flex items-center gap-1">
-                  <span className="text-sm">$</span>
+                <div className="relative flex items-center gap-1">
                   <Input
                     type="number"
                     {...register(`stockItems.${index}.costPrice`, {
                       valueAsNumber: true,
                     })}
-                    className="w-24"
-                    min="0"
-                    placeholder="0.00"
-                    step="0.01"
+                    className="w-20 text-center"
                   />
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm">
+                    đ
+                  </span>
                 </div>
               </TableCell>
               <TableCell>

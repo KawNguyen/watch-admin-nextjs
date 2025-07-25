@@ -4,35 +4,21 @@ import { useQuery } from "@tanstack/react-query";
 import {
   ChevronDown,
   ChevronRight,
-  DollarSign,
   FileText,
   Package,
   Search,
-  User,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useMe } from "@/queries/use-session";
 import { StockAPI } from "@/services/stock-entry";
+import { formatDate, formatMoney } from "@/lib";
 
 export default function StockEntryList() {
   const { data: user } = useMe();
@@ -54,7 +40,7 @@ export default function StockEntryList() {
         entry.user?.firstName?.toLowerCase().includes(searchLower) ||
         entry.notes?.toLowerCase().includes(searchLower) ||
         entry.stockItems.some((item: any) =>
-          item.watch.name.toLowerCase().includes(searchLower)
+          item.watch?.entryCode.toLowerCase().includes(searchLower)
         )
       );
     }) || [];
@@ -65,16 +51,6 @@ export default function StockEntryList() {
     (sum: number, entry: any) => sum + entry.totalPrice,
     0
   );
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   if (isLoading) {
     return (
@@ -139,7 +115,7 @@ export default function StockEntryList() {
             <Input
               className="pl-10"
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by entry code, creator, notes, or item name..."
+              placeholder="Search by entry code (STE...)"
               value={searchTerm}
             />
           </div>
@@ -150,7 +126,6 @@ export default function StockEntryList() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="font-medium text-sm">Total Entries</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="font-bold text-2xl">{totalEntries}</div>
@@ -161,10 +136,9 @@ export default function StockEntryList() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="font-medium text-sm">Total Value</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="font-bold text-2xl">${totalValue}</div>
+            <div className="font-bold text-2xl">{formatMoney(totalValue)}</div>
             <p className="text-muted-foreground text-xs">Inventory value</p>
           </CardContent>
         </Card>

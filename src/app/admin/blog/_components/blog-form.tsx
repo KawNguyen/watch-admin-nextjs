@@ -36,7 +36,6 @@ import { blogApi } from "@/services/blog";
 import { Loader2, Pencil, Plus } from "lucide-react";
 import { BlogPost } from "@/types/blog";
 
-// Query keys constant
 const QUERY_KEYS = {
   blogs: ["blogs"] as const,
 } as const;
@@ -50,7 +49,6 @@ interface BlogFormDialogProps {
 
 type BlogFormValues = z.infer<typeof blogFormSchema>;
 
-// Helper function to get form default values
 const getDefaultValues = (userId?: string): BlogFormValues => ({
   title: "",
   thumbnail: "",
@@ -59,7 +57,6 @@ const getDefaultValues = (userId?: string): BlogFormValues => ({
   userId: userId || "",
 });
 
-// Helper function to format author name
 const formatAuthorName = (firstName?: string, lastName?: string): string => {
   if (!firstName && !lastName) return "Unknown Author";
   return `${firstName || ""} ${lastName || ""}`.trim();
@@ -75,7 +72,6 @@ export function BlogFormDialog({
   const queryClient = useQueryClient();
   const isEditMode = mode === "edit";
 
-  // Memoized user data to prevent unnecessary recalculations
   const userInfo = useMemo(() => {
     if (isLoadingUser || !userData) return null;
     const user = userData;
@@ -85,7 +81,6 @@ export function BlogFormDialog({
     };
   }, [userData, isLoadingUser]);
 
-  // Create/Update mutation
   const mutation = useMutation({
     mutationFn: async (data: BlogFormValues) => {
       if (isEditMode && blog) {
@@ -102,21 +97,17 @@ export function BlogFormDialog({
       onOpenChange(false);
       form.reset();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Blog operation failed:", error);
-      toast.error(
-        isEditMode ? "Failed to update blog" : "Failed to create blog"
-      );
+      toast.error(error.response?.data?.message);
     },
   });
 
-  // Form setup
   const form = useForm<BlogFormValues>({
     resolver: zodResolver(blogFormSchema),
     defaultValues: getDefaultValues(userInfo?.id),
   });
 
-  // Reset form when dialog opens/closes or blog data changes
   useEffect(() => {
     if (open) {
       if (isEditMode && blog) {
@@ -133,7 +124,6 @@ export function BlogFormDialog({
     }
   }, [open, blog, userInfo?.id, form, isEditMode]);
 
-  // Form submission handler
   const onSubmit = async (data: BlogFormValues) => {
     if (!userInfo?.id) {
       toast.error("User information not available");
@@ -168,14 +158,15 @@ export function BlogFormDialog({
           >
             <ScrollArea className="flex-1 pr-4">
               <div className="space-y-6 pb-4">
-                {/* Title and Author Row */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                   <FormField
                     control={form.control}
                     name="title"
                     render={({ field }) => (
                       <FormItem className="lg:col-span-10">
-                        <FormLabel>Title *</FormLabel>
+                        <FormLabel>
+                          Title <span className="text-red-500">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter blog title"
@@ -188,7 +179,7 @@ export function BlogFormDialog({
                     )}
                   />
 
-                  <div className="lg:col-span-2">
+                  <div className="col-span-2 space-y-2">
                     <Label>Created By</Label>
                     {isLoadingUser ? (
                       <Skeleton className="h-9 w-full" />
@@ -202,7 +193,6 @@ export function BlogFormDialog({
                   </div>
                 </div>
 
-                {/* Thumbnail and Published Row */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                   <FormField
                     control={form.control}
@@ -248,7 +238,6 @@ export function BlogFormDialog({
                   />
                 </div>
 
-                {/* Content Editor */}
                 <FormField
                   control={form.control}
                   name="content"
@@ -270,7 +259,6 @@ export function BlogFormDialog({
               </div>
             </ScrollArea>
 
-            {/* Footer Actions */}
             <DialogFooter className="flex-shrink-0 mt-6 gap-2">
               <Button
                 type="button"

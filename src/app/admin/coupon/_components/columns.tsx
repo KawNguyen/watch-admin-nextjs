@@ -16,15 +16,16 @@ import {
 import { couponApi } from '@/services/coupon';
 import type { Coupon } from '@/types/coupon';
 import CouponForm from './coupon-form';
+import { Switch } from '@/components/ui/switch';
 export const columns: ColumnDef<Coupon>[] = [
   {
-    id: 'select',
+    id: "select",
     header: ({ table }) => (
       <Checkbox
         aria-label="Select all"
         checked={
           table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
+          (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
       />
@@ -40,43 +41,58 @@ export const columns: ColumnDef<Coupon>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'code',
-    header: 'Code',
+    accessorKey: "code",
+    header: "Code",
   },
   {
-    accessorKey: 'discountType',
-    header: 'Discount Type',
+    accessorKey: "discountType",
+    header: "Discount Type",
   },
   {
-    accessorKey: 'discountValue',
-    header: 'Discount Value',
+    accessorKey: "discountValue",
+    header: "Discount Value",
   },
 
   {
-    accessorKey: 'isActive',
-    header: 'Active',
-    cell: ({ row }) => (
-      <Checkbox
-        aria-label="Active status"
-        checked={row.original.isActive}
-        disabled
-      />
-    ),
+    accessorKey: "isActive",
+    header: "Active",
+    cell: ({ row }) => {
+      const isActive = row.original.isActive;
+      return isActive == true ? (
+        <Switch
+          checked={isActive}
+          className="h-5 w-9"
+          onCheckedChange={(value) => {
+            row.original.isActive = value;
+            queryClient.invalidateQueries({ queryKey: ["coupons"] });
+          }}
+        />
+      ) : (
+        <Switch
+          checked={isActive}
+          className="h-5 w-9"
+          onCheckedChange={(value) => {
+            row.original.isActive = value;
+            queryClient.invalidateQueries({ queryKey: ["coupons"] });
+          }}
+        />
+      );
+    },
   },
   {
-    accessorKey: 'actions',
-    header: 'Actions',
+    accessorKey: "actions",
+    header: "Actions",
     cell: ({ row }: { row: any }) => {
       const [isDialogOpen, setIsDialogOpen] = useState(false);
 
       const mutationDelete = useMutation({
         mutationFn: (couponId: string) => couponApi.deleteCoupon(couponId),
         onSuccess: () => {
-          toast.success('Coupon deleted successfully');
-          queryClient.invalidateQueries({ queryKey: ['coupons'] });
+          toast.success("Coupon deleted successfully");
+          queryClient.invalidateQueries({ queryKey: ["coupons"] });
         },
         onError: () => {
-          toast.error('Failed to delete coupon');
+          toast.error("Failed to delete coupon");
         },
       });
       const handleDelete = () => {

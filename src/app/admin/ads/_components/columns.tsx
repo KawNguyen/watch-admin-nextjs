@@ -1,32 +1,34 @@
-import { useMutation } from '@tanstack/react-query';
-import type { ColumnDef } from '@tanstack/react-table';
-import { Loader2, Trash2 } from 'lucide-react';
-import Image from 'next/image';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { queryClient } from '@/components/provider/provider';
-import { AlertDialogFooter } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
+import { useMutation } from "@tanstack/react-query";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Loader2, Trash2 } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { toast } from "sonner";
+import { queryClient } from "@/components/provider/provider";
+import { AlertDialogFooter } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { advertisementApi } from '@/services/ads';
-import type { Advertisment } from '@/types/advertisement';
-import AdvertisementForm from './ads-form';
+} from "@/components/ui/dialog";
+import { advertisementApi } from "@/services/ads";
+import type { Advertisment } from "@/types/advertisement";
+import AdvertisementForm from "./ads-form";
+import { formatDate } from "@/lib";
+import { Switch } from "@/components/ui/switch";
 
 const ActionCell = ({ row }: { row: any }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const mutationDelete = useMutation({
     mutationFn: (adsId: string) => advertisementApi.deleteAds(adsId),
     onSuccess: () => {
-      toast.success('Advertisement deleted successfully');
-      queryClient.invalidateQueries({ queryKey: ['advertisements'] });
+      toast.success("Advertisement deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["advertisements"] });
     },
     onError: () => {
-      toast.error('Failed to delete advertisement');
+      toast.error("Failed to delete advertisement");
     },
   });
   const handleDelete = () => {
@@ -76,15 +78,15 @@ const ActionCell = ({ row }: { row: any }) => {
 
 export const columns: ColumnDef<Advertisment>[] = [
   {
-    accessorKey: 'imageUrl',
-    header: 'Image',
+    accessorKey: "imageUrl",
+    header: "Image",
     cell: ({ row }) => {
       const imageUrl = row.original.imageUrl;
       return (
         <div className="relative h-16 w-16">
           {imageUrl ? (
             <Image
-              alt={row.getValue('title')}
+              alt={row.getValue("title")}
               className="rounded-md object-cover"
               fill
               priority
@@ -102,28 +104,58 @@ export const columns: ColumnDef<Advertisment>[] = [
     },
   },
   {
-    accessorKey: 'title',
-    header: 'Title',
+    accessorKey: "title",
+    header: "Title",
   },
   {
-    accessorKey: 'link',
-    header: 'Link',
+    accessorKey: "link",
+    header: "Link",
   },
   {
-    accessorKey: 'isActive',
-    header: 'Active',
+    accessorKey: "isActive",
+    header: "Active",
+    cell: ({ row }) => {
+      const isActive = row.original.isActive;
+      return isActive == true ? (
+        <Switch
+          checked={isActive}
+          className="h-5 w-9"
+          onCheckedChange={(value) => {
+            row.original.isActive = value;
+            queryClient.invalidateQueries({ queryKey: ["advertisements"] });
+          }}
+        />
+      ) : (
+        <Switch
+          checked={isActive}
+          className="h-5 w-9"
+          onCheckedChange={(value) => {
+            row.original.isActive = value;
+            queryClient.invalidateQueries({ queryKey: ["advertisements"] });
+          }}
+        />
+      );
+    },
   },
   {
-    accessorKey: 'startDate',
-    header: 'From',
+    accessorKey: "startDate",
+    header: "From",
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("startDate"));
+      return formatDate(date);
+    },
   },
   {
-    accessorKey: 'endDate',
-    header: 'To',
+    accessorKey: "endDate",
+    header: "End",
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("endDate"));
+      return formatDate(date);
+    },
   },
   {
-    accessorKey: 'actions',
-    header: 'Actions',
+    accessorKey: "actions",
+    header: "Actions",
     cell: ({ row }) => <ActionCell row={row} />,
   },
 ];

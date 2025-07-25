@@ -1,12 +1,12 @@
-'use client';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import { Eye, Loader2, Pencil, Plus } from 'lucide-react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import type { z } from 'zod';
-import { queryClient } from '@/components/provider/provider';
-import { Button } from '@/components/ui/button';
+"use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { Eye, Loader2, Pencil, Plus } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import type { z } from "zod";
+import { queryClient } from "@/components/provider/provider";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,8 +14,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
@@ -24,13 +24,14 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import type { bandMaterialSchema } from '@/schema/band-materials';
-import { caseMaterialSchema } from '@/schema/case-material';
-import { bandmaterialApi } from '@/services/band-material';
+} from "@/components/ui/sheet";
+import type { bandMaterialSchema } from "@/schema/band-materials";
+import { caseMaterialSchema } from "@/schema/case-material";
+import { bandmaterialApi } from "@/services/band-material";
+import { toast } from "sonner";
 
 interface BandMaterialFormProps {
-  mode: 'create' | 'edit' | 'view';
+  mode: "create" | "edit" | "view";
   bandMaterialData?: any;
 }
 type BandMaterialFormValues = z.infer<typeof bandMaterialSchema>;
@@ -39,8 +40,8 @@ export default function BandMaterialForm({
   bandMaterialData,
 }: BandMaterialFormProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const isEditMode = mode === 'edit';
-  const isViewMode = mode === 'view';
+  const isEditMode = mode === "edit";
+  const isViewMode = mode === "view";
   const mutation = useMutation({
     mutationFn: isEditMode
       ? (data: BandMaterialFormValues) =>
@@ -51,18 +52,27 @@ export default function BandMaterialForm({
   const form = useForm<BandMaterialFormValues>({
     resolver: zodResolver(caseMaterialSchema),
     defaultValues: {
-      name: isEditMode ? bandMaterialData.name : '',
+      name: isEditMode ? bandMaterialData.name : "",
     },
   });
   const onSubmit = async (data: BandMaterialFormValues) => {
     mutation.mutate(data, {
       onSuccess: () => {
         form.reset();
-        queryClient.invalidateQueries({ queryKey: ['bandMaterials'] });
+        queryClient.invalidateQueries({ queryKey: ["bandMaterials"] });
         setIsOpen(false);
+        toast.success(
+          isEditMode
+            ? "Band material updated successfully."
+            : "Band material created successfully."
+        );
       },
       onError: (error: any) => {
-        console.error('Error creating band material:', error);
+        toast.error(
+          isEditMode
+            ? `${error.response.data.message}`
+            : `${error.response.data.message}`
+        );
       },
     });
   };
@@ -88,17 +98,17 @@ export default function BandMaterialForm({
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? 'Edit Band Material'
+              ? "Edit Band Material"
               : isViewMode
-                ? 'View Band Material'
-                : 'Create Band Material'}
+              ? "View Band Material"
+              : "Create Band Material"}
           </SheetTitle>
           <SheetDescription>
             {isEditMode
-              ? 'Edit the details of the band material.'
+              ? "Edit the details of the band material."
               : isViewMode
-                ? 'View the details of the band material.'
-                : 'Fill in the details to create a new band material.'}
+              ? "View the details of the band material."
+              : "Fill in the details to create a new band material."}
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
@@ -115,6 +125,7 @@ export default function BandMaterialForm({
                     <Input
                       placeholder="Name"
                       {...field}
+                      value={bandMaterialData?.name || field.value}
                       disabled={isViewMode}
                     />
                   </FormControl>

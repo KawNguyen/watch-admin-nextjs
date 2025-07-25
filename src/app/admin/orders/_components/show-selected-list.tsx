@@ -16,9 +16,10 @@ import { useWatches } from "@/queries/use-watches";
 import type { Product } from "@/types/order";
 import PriceEditPopover from "./price-edit-popover";
 import ProductSearchModal from "./product-search-modal";
+import { formatMoney } from "@/lib";
 
 interface ShowSelectedListProps {
-  selectedProducts: any[]; // Changed to any[] to match the new structure
+  selectedProducts: any[];
   setSelectedProducts: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
@@ -46,16 +47,15 @@ const ShowSelectedList = ({
 
   const handleProductSelect = (selected: Product[]) => {
     const withQty = selected.map((p) => ({
-      watchId: p.id, // Map to watchId
+      watchId: p.id,
       quantity: 1,
-      price: p.price, // Use price directly
+      price: p.price,
     }));
 
     setSelectedProducts(withQty);
     setIsSearchOpen(false);
   };
 
-  // Helper function to get product details by watchId
   const getProductDetails = (watchId: string) => {
     return products.find((p: any) => p.id === watchId);
   };
@@ -146,7 +146,7 @@ const ShowSelectedList = ({
                     </div>
                     <div className="col-span-2 place-content-center text-center">
                       <span className="font-semibold text-green-600 text-sm">
-                        ${(p.price * p.quantity).toFixed(2)}
+                        {formatMoney(p.price * p.quantity)}
                       </span>
                     </div>
                     <div className="col-span-1 place-content-center">
