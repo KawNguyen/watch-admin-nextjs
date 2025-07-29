@@ -13,7 +13,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import TrackingHistory from "./_components/tracking-history";
 
 interface WalkinInformation {
   firstName: string;
@@ -348,11 +347,17 @@ const OrderPage = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
-                        {order.totalPrice.toLocaleString("vi-VN")} USD
+                        {order.totalPrice.toLocaleString("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        })}
                       </div>
                       {order.originalPrice !== order.totalPrice && (
                         <div className="text-xs text-gray-500 line-through">
-                          {order.originalPrice.toLocaleString("vi-VN")} USD
+                          {order.originalPrice.toLocaleString("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          })}
                         </div>
                       )}
                     </td>

@@ -51,7 +51,7 @@ export default function BlogManagement() {
   } = useQuery({
     queryKey: QUERY_KEYS.blogs,
     queryFn: async () => {
-      const data = await blogApi.getAllBlogs();
+      const data = await blogApi.getAllBlogs().then((res) => res.data.items);
       return formatBlogData(data);
     },
     staleTime: 5 * 60 * 1000, 
