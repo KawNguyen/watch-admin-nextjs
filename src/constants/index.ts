@@ -11,6 +11,7 @@ import {
   WarehouseIcon,
   Archive,
   WatchIcon,
+  LayoutDashboard,
 } from "lucide-react";
 
 export const data = {
@@ -27,6 +28,18 @@ export const data = {
     },
   ],
   navMain: [
+    {
+      title: "Dashboard",
+      url: "#",
+      icon: LayoutDashboard,
+      isActive: true,
+      items: [
+        {
+          title: "List",
+          url: "/admin/dashboard",
+        },
+      ],
+    },
     {
       title: "User",
       url: "#",

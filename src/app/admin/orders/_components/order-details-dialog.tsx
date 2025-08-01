@@ -184,6 +184,7 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
                     Customer Information
                   </h3>
                 </div>
+
                 {(() => {
                   const walkinInfo = parseWalkinInformation(
                     order.walkinInformation

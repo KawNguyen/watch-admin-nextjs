@@ -302,7 +302,7 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                       </FormLabel>
                       <FormControl>
                         <Switch
-                          checked={adsData.isActive || field.value}
+                          checked={adsData?.isActive || field.value}
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>

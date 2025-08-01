@@ -49,7 +49,7 @@ const ORDER_STATUSES = [
   {
     value: "DELIVERED",
     label: "Delivered",
-    color: "bg-purple-100 text-purple-800",
+    color: "bg-green-100 text-purple-800",
   },
   {
     value: "COMPLETED",

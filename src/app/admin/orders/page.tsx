@@ -53,7 +53,7 @@ interface Order {
   updatedAt: string;
   deletedAt: string | null;
   user: any;
-  orderItems: OrderItem[];
+  _count: { orderItems: number };
   address: any;
   coupon: any;
 }
@@ -280,7 +280,7 @@ const OrderPage = () => {
 
                 return (
                   <tr key={order.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-1">
                       <Tooltip open={copiedId === order.id}>
                         <TooltipTrigger>
                           <div
@@ -296,7 +296,7 @@ const OrderPage = () => {
                         <TooltipContent>Copied!</TooltipContent>
                       </Tooltip>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-2 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
                         {walkinInfo ? (
                           <div>
@@ -382,7 +382,7 @@ const OrderPage = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center">
                       <div className="text-sm font-medium text-gray-900">
-                        {order.orderItems.length}
+                        {order._count.orderItems}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
