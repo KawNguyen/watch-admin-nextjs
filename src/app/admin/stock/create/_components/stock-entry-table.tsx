@@ -1,6 +1,7 @@
 "use client";
 
-import { Minus, Plus, X } from "lucide-react";
+import { Minus, Plus, X, Edit } from "lucide-react";
+import { useState } from "react";
 import type {
   Control,
   FieldArrayWithId,
@@ -18,7 +19,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import type { StockSchema } from "@/schema/stock-entry";
+import { formatMoney } from "@/lib";
 
 type StockFormValues = z.infer<typeof StockSchema>;
 
@@ -40,16 +47,47 @@ export const StockEntryTable = ({
   remove,
   watch,
 }: Props) => {
+  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>(
+    {}
+  );
+  const [tempPrices, setTempPrices] = useState<{ [key: number]: string }>({});
+
+  const handlePopoverOpen = (index: number, currentPrice: number) => {
+    setOpenPopovers((prev) => ({ ...prev, [index]: true }));
+    setTempPrices((prev) => ({ ...prev, [index]: currentPrice.toString() }));
+  };
+
+  const handlePopoverClose = (index: number) => {
+    setOpenPopovers((prev) => ({ ...prev, [index]: false }));
+  };
+
+  const handlePriceUpdate = (index: number) => {
+    const newPrice = parseFloat(tempPrices[index]) || 0;
+    update(index, {
+      ...fields[index],
+      costPrice: newPrice,
+    });
+    handlePopoverClose(index);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "Enter") {
+      handlePriceUpdate(index);
+    } else if (e.key === "Escape") {
+      handlePopoverClose(index);
+    }
+  };
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Product</TableHead>
+          <TableHead>Sản Phẩm</TableHead>
           <TableHead>Code</TableHead>
-          <TableHead>Quantity</TableHead>
-          <TableHead>Cost Price</TableHead>
-          <TableHead>Total</TableHead>
-          <TableHead />
+          <TableHead>Số Lượng</TableHead>
+          <TableHead>Giá Gốc</TableHead>
+          <TableHead>Tổng</TableHead>
+          <TableHead></TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -61,6 +99,7 @@ export const StockEntryTable = ({
           const quantity = watch(`stockItems.${index}.quantity`) || 0;
           const costPrice = watch(`stockItems.${index}.costPrice`) || 0;
           const total = quantity * costPrice;
+
           return (
             <TableRow key={field.id}>
               <TableCell>{product.name}</TableCell>
@@ -104,21 +143,74 @@ export const StockEntryTable = ({
                 </div>
               </TableCell>
               <TableCell>
-                <div className="relative flex items-center gap-1">
-                  <Input
-                    type="number"
-                    {...register(`stockItems.${index}.costPrice`, {
-                      valueAsNumber: true,
-                    })}
-                    className="w-20 text-center"
-                  />
-                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm">
-                    đ
-                  </span>
-                </div>
+                <Popover
+                  open={openPopovers[index] || false}
+                  onOpenChange={(open) => {
+                    if (open) {
+                      handlePopoverOpen(index, costPrice);
+                    } else {
+                      handlePopoverClose(index);
+                    }
+                  }}
+                >
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="h-auto p-2 justify-start font-normal hover:bg-muted"
+                      type="button"
+                    >
+                      <span className="mr-2">{formatMoney(costPrice)}</span>
+                      <Edit className="h-3 w-3 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-48" align="start">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Giá Gốc</label>
+                      <Input
+                        type="number"
+                        value={tempPrices[index] || ""}
+                        onChange={(e) =>
+                          setTempPrices((prev) => ({
+                            ...prev,
+                            [index]: e.target.value,
+                          }))
+                        }
+                        onKeyDown={(e) => handleKeyPress(e, index)}
+                        placeholder="Nhập giá..."
+                        className="w-full"
+                        autoFocus
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          onClick={() => handlePriceUpdate(index)}
+                          type="button"
+                        >
+                          Cập nhật
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handlePopoverClose(index)}
+                          type="button"
+                        >
+                          Hủy
+                        </Button>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+                {/* Hidden input for form registration */}
+                <Input
+                  type="number"
+                  {...register(`stockItems.${index}.costPrice`, {
+                    valueAsNumber: true,
+                  })}
+                  className="hidden"
+                />
               </TableCell>
               <TableCell>
-                <span className="font-medium">${total.toFixed(2)}</span>
+                <span className="font-medium">{formatMoney(total)}</span>
               </TableCell>
               <TableCell>
                 <Button

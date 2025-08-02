@@ -2,30 +2,29 @@ import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
-} from '@tanstack/react-query';
+} from "@tanstack/react-query";
 
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { useAdvertisement } from '@/queries/use-advertisement';
-import AdsDataTable from './_components/ads-data-table';
-import AdvertisementForm from './_components/ads-form';
+} from "@/components/ui/card";
+import { useAdvertisement } from "@/queries/use-advertisement";
+import AdsDataTable from "./_components/ads-data-table";
+import AdvertisementForm from "./_components/ads-form";
 
 export const metadata: Metadata = {
-  title: 'Admin | Adsvertisements',
-  description: 'Manage advertisements in the admin panel',
+  title: "Admin | Quảng Cáo",
 };
 
 export default async function AdsPage() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['advertisements'],
+    queryKey: ["advertisements"],
     queryFn: useAdvertisement,
   });
 
@@ -34,8 +33,8 @@ export default async function AdsPage() {
       <CardHeader>
         <div className="flex w-full items-center justify-between">
           <div>
-            <CardTitle>Advertisment</CardTitle>
-            <CardDescription>Manage advertisement</CardDescription>
+            <CardTitle>Quảng Cáo</CardTitle>
+            <CardDescription>Thêm quảng cáo thu hút khách hàng</CardDescription>
           </div>
 
           <AdvertisementForm mode="create" />

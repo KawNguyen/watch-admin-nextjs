@@ -7,6 +7,10 @@ export interface CreateBrandTypes {
 export interface BrandImage {
   absolute_url: string;
   public_id: string;
+  update?: {
+    absolute_url: string;
+    public_id: string;
+  };
 }
 
 export interface Brand {

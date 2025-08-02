@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -73,29 +72,6 @@ export function BlogDetailDialog({
                   </div>
                 </div>
               </div>
-
-              {showActions && (
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleEdit}
-                    className="flex items-center gap-1"
-                  >
-                    <Edit className="h-4 w-4" />
-                    <span className="hidden sm:inline">Edit</span>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleDelete}
-                    className="flex items-center gap-1 text-destructive hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    <span className="hidden sm:inline">Delete</span>
-                  </Button>
-                </div>
-              )}
             </div>
           </DialogHeader>
 
@@ -112,10 +88,9 @@ export function BlogDetailDialog({
                 </div>
               )}
 
-              {/* Content */}
               <div>
                 <h3 className="text-lg font-semibold mb-3 text-foreground">
-                  Content
+                  Nội Dung
                 </h3>
                 <div
                   className="prose prose-sm max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-foreground prose-code:text-foreground prose-pre:bg-muted"

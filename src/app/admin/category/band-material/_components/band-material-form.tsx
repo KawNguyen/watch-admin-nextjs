@@ -2,7 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Eye, Loader2, Pencil, Plus } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { queryClient } from "@/components/provider/provider";
@@ -19,7 +19,6 @@ import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -52,9 +51,18 @@ export default function BandMaterialForm({
   const form = useForm<BandMaterialFormValues>({
     resolver: zodResolver(caseMaterialSchema),
     defaultValues: {
-      name: isEditMode ? bandMaterialData.name : "",
+      name: "",
     },
   });
+
+  React.useEffect(() => {
+    if (isOpen && bandMaterialData) {
+      form.reset({
+        name: bandMaterialData.name || "",
+      });
+    }
+  }, [isOpen, bandMaterialData, form]);
+
   const onSubmit = async (data: BandMaterialFormValues) => {
     mutation.mutate(data, {
       onSuccess: () => {
@@ -63,8 +71,8 @@ export default function BandMaterialForm({
         setIsOpen(false);
         toast.success(
           isEditMode
-            ? "Band material updated successfully."
-            : "Band material created successfully."
+            ? "Cập nhật thành công chất liệu dây"
+            : "Tạo thành công chất liệu dây"
         );
       },
       onError: (error: any) => {
@@ -90,7 +98,7 @@ export default function BandMaterialForm({
         ) : (
           <Button>
             <Plus />
-            Create Band Material
+            Chất Liệu Dây
           </Button>
         )}
       </SheetTrigger>
@@ -98,18 +106,11 @@ export default function BandMaterialForm({
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? "Edit Band Material"
+              ? "Cập Nhật Chất Liệu Dây"
               : isViewMode
-              ? "View Band Material"
-              : "Create Band Material"}
+              ? "Xem Chi Tiết Chất Liệu Dây"
+              : "Thêm Chất Liệu Dây"}
           </SheetTitle>
-          <SheetDescription>
-            {isEditMode
-              ? "Edit the details of the band material."
-              : isViewMode
-              ? "View the details of the band material."
-              : "Fill in the details to create a new band material."}
-          </SheetDescription>
         </SheetHeader>
         <Form {...form}>
           <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
@@ -119,13 +120,12 @@ export default function BandMaterialForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Name <span className="text-red-500">*</span>
+                    Tên <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Name"
+                      placeholder="Thép"
                       {...field}
-                      value={bandMaterialData?.name || field.value}
                       disabled={isViewMode}
                     />
                   </FormControl>
@@ -141,12 +141,12 @@ export default function BandMaterialForm({
                   ) : isEditMode ? (
                     <>
                       <Pencil />
-                      Update
+                      Cập Nhật
                     </>
                   ) : (
                     <>
                       <Plus />
-                      Create
+                      Thêm
                     </>
                   )}
                 </Button>

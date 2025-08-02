@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Edit, Loader2 } from "lucide-react";
 import { orderApi } from "@/services/create-order";
 import { toast } from "sonner";
@@ -33,30 +32,30 @@ interface OrderStatusUpdateDialogProps {
 const ORDER_STATUSES = [
   {
     value: "PENDING",
-    label: "Pending",
+    label: "Chờ Duyệt",
     color: "bg-yellow-100 text-yellow-800",
   },
   {
     value: "PROCESSING",
-    label: "Processing",
+    label: "Đang Xử Lý",
     color: "bg-blue-100 text-blue-800",
   },
   {
     value: "SHIPPING",
-    label: "Shipping",
+    label: "Đang Giao Hàng",
     color: "bg-indigo-100 text-indigo-800",
   },
   {
     value: "DELIVERED",
-    label: "Delivered",
+    label: "Đã Giao Hàng",
     color: "bg-green-100 text-purple-800",
   },
   {
     value: "COMPLETED",
-    label: "Completed",
+    label: "Đã Hoàn Thành",
     color: "bg-green-100 text-green-800",
   },
-  { value: "CANCELED", label: "Canceled", color: "bg-red-100 text-red-800" },
+  { value: "CANCELED", label: "Bị Hủy", color: "bg-red-100 text-red-800" },
 ];
 
 const OrderStatusUpdateDialog: React.FC<OrderStatusUpdateDialogProps> = ({
@@ -98,7 +97,6 @@ const OrderStatusUpdateDialog: React.FC<OrderStatusUpdateDialogProps> = ({
       setOpen(false);
       setNotes("");
     } catch (error) {
-      console.error("Error updating order status:", error);
       toast.error("Failed to update order status");
     } finally {
       setLoading(false);
@@ -128,14 +126,13 @@ const OrderStatusUpdateDialog: React.FC<OrderStatusUpdateDialogProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Edit className="h-5 w-5" />
-            Update Order Status
+            Cập Nhật Trạng Thái Đơn Hàng
           </DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
-          {/* Current Status */}
           <div className="space-y-2">
-            <Label>Current Status</Label>
+            <Label>Trạng Thái Hiện Tại</Label>
             <div className="flex items-center gap-2">
               <span
                 className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -148,7 +145,7 @@ const OrderStatusUpdateDialog: React.FC<OrderStatusUpdateDialogProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="status">New Status</Label>
+            <Label htmlFor="status">Trạng Thái Mới</Label>
             <Select value={selectedStatus} onValueChange={setSelectedStatus}>
               <SelectTrigger>
                 <SelectValue placeholder="Select new status" />
@@ -168,15 +165,6 @@ const OrderStatusUpdateDialog: React.FC<OrderStatusUpdateDialogProps> = ({
               </SelectContent>
             </Select>
           </div>
-
-          {selectedStatus === "CANCELED" && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-700">
-                ⚠️ This action will cancel the order. Please provide a reason
-                above.
-              </p>
-            </div>
-          )}
         </div>
 
         <DialogFooter>
@@ -185,7 +173,7 @@ const OrderStatusUpdateDialog: React.FC<OrderStatusUpdateDialogProps> = ({
             onClick={() => handleOpenChange(false)}
             disabled={loading}
           >
-            Cancel
+            Hủy
           </Button>
           <Button
             onClick={handleStatusUpdate}
@@ -194,7 +182,7 @@ const OrderStatusUpdateDialog: React.FC<OrderStatusUpdateDialogProps> = ({
             {loading ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Updating...
+                Cập Nhật...
               </>
             ) : (
               "Update Status"

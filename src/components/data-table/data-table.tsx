@@ -71,7 +71,15 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn(searchKey)?.setFilterValue(event.target.value)
           }
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
           placeholder={`Filter ${searchKey}...`}
+=======
+          placeholder={`Lọc ${searchKey}...`}
+>>>>>>> Stashed changes
+=======
+          placeholder={`Lọc ${searchKey}...`}
+>>>>>>> Stashed changes
           value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
         />
 

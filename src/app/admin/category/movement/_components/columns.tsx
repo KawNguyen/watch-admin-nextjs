@@ -1,30 +1,30 @@
-import { useMutation } from '@tanstack/react-query';
-import type { ColumnDef } from '@tanstack/react-table';
-import { Loader2, Trash2 } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import MovementForm from '@/app/admin/category/movement/_components/movement-form';
-import { queryClient } from '@/components/provider/provider';
-import { AlertDialogFooter } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { useMutation } from "@tanstack/react-query";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Loader2, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import MovementForm from "@/app/admin/category/movement/_components/movement-form";
+import { queryClient } from "@/components/provider/provider";
+import { AlertDialogFooter } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { movementApi } from '@/services/movement';
-import type { Movement } from '@/types/movement';
+} from "@/components/ui/dialog";
+import { movementApi } from "@/services/movement";
+import type { Movement } from "@/types/movement";
 export const columns: ColumnDef<Movement>[] = [
   {
-    id: 'select',
+    id: "select",
     header: ({ table }) => (
       <Checkbox
         aria-label="Select all"
         checked={
           table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
+          (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
       />
@@ -40,25 +40,23 @@ export const columns: ColumnDef<Movement>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'name',
-    header: 'Name',
+    accessorKey: "name",
+    header: "Loại Chuyển Động",
   },
   {
-    accessorKey: 'actions',
-    header: 'Actions',
+    accessorKey: "actions",
+    header: "Chức Năng",
     cell: ({ row }: { row: any }) => {
       const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-      // Mutation for deleting the movement
       const mutationDelete = useMutation({
         mutationFn: (movementId: string) =>
           movementApi.deleteMovement(movementId),
         onSuccess: () => {
-          toast.success('Movement deleted successfully');
-          queryClient.invalidateQueries({ queryKey: ['movements'] });
+          toast.success("Xóa chuyển động thành công");
+          queryClient.invalidateQueries({ queryKey: ["movements"] });
         },
         onError: () => {
-          toast.error('Failed to delete movement');
+          toast.error("Xóa chuyển động thất bại");
         },
       });
       const handleDelete = () => {
@@ -83,10 +81,10 @@ export const columns: ColumnDef<Movement>[] = [
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <h3 className="font-semibold text-lg">Confirm Deletion</h3>
+                <h3 className="font-semibold text-lg">Xác Nhận Xóa</h3>
               </DialogHeader>
               <p>
-                Are you sure you want to delete
+                Bạn có chắc chắn xóa chuyển động này
                 <span className=" mx-2 text-red-500 underline">
                   {row.original.name}
                 </span>
@@ -97,10 +95,10 @@ export const columns: ColumnDef<Movement>[] = [
                   onClick={() => setIsDialogOpen(false)}
                   variant="secondary"
                 >
-                  Cancel
+                  Hủy
                 </Button>
                 <Button onClick={handleDelete} variant="destructive">
-                  Confirm Delete
+                  Xóa
                 </Button>
               </AlertDialogFooter>
             </DialogContent>

@@ -1,33 +1,33 @@
-import { useMutation } from '@tanstack/react-query';
-import type { ColumnDef } from '@tanstack/react-table';
-import { Loader2, Trash2 } from 'lucide-react';
-import Image from 'next/image';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import BrandForm from '@/app/admin/category/brand/_components/brand-form';
-import { queryClient } from '@/components/provider/provider';
-import { AlertDialogFooter } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { useMutation } from "@tanstack/react-query";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Loader2, Trash2 } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { toast } from "sonner";
+import BrandForm from "@/app/admin/category/brand/_components/brand-form";
+import { queryClient } from "@/components/provider/provider";
+import { AlertDialogFooter } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { brandApi } from '@/services/brand';
-import type { Brand } from '@/types/brand';
+} from "@/components/ui/dialog";
+import { brandApi } from "@/services/brand";
+import type { Brand } from "@/types/brand";
 
 const ActionCell = ({ row }: { row: any }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const mutationDelete = useMutation({
     mutationFn: (brandId: string) => brandApi.deleteBrand(brandId),
     onSuccess: () => {
-      toast.success('Brand deleted successfully');
-      queryClient.invalidateQueries({ queryKey: ['brands'] });
+      toast.success("Xóa thương hiệu thành công");
+      queryClient.invalidateQueries({ queryKey: ["brands"] });
     },
     onError: () => {
-      toast.error('Failed to delete brand');
+      toast.error("Xóa thương hiệu thất bại");
     },
   });
   const handleDelete = () => {
@@ -52,10 +52,10 @@ const ActionCell = ({ row }: { row: any }) => {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <h3 className="font-semibold text-lg">Confirm Deletion</h3>
+            <h3 className="font-semibold text-lg">Xác Nhận Xóa</h3>
           </DialogHeader>
           <p>
-            Are you sure you want to delete
+            Bạn có chắc chắn xóa thương hiệu
             <span className=" mx-2 text-red-500 underline">
               {row.original.name}
             </span>
@@ -63,10 +63,10 @@ const ActionCell = ({ row }: { row: any }) => {
           </p>
           <AlertDialogFooter>
             <Button onClick={() => setIsDialogOpen(false)} variant="secondary">
-              Cancel
+              Hủy
             </Button>
             <Button onClick={handleDelete} variant="destructive">
-              Confirm Delete
+              Xóa
             </Button>
           </AlertDialogFooter>
         </DialogContent>
@@ -77,13 +77,13 @@ const ActionCell = ({ row }: { row: any }) => {
 
 export const columns: ColumnDef<Brand>[] = [
   {
-    id: 'select',
+    id: "select",
     header: ({ table }) => (
       <Checkbox
         aria-label="Select all"
         checked={
           table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
+          (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
       />
@@ -99,8 +99,8 @@ export const columns: ColumnDef<Brand>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'image',
-    header: 'Logo',
+    accessorKey: "image",
+    header: "Logo",
     cell: ({ row }) => {
       const image = row.original.image;
 
@@ -108,12 +108,14 @@ export const columns: ColumnDef<Brand>[] = [
         <div className="relative h-16 w-16">
           {image ? (
             <Image
-              alt={row.getValue('name')}
+              alt={row.getValue("name")}
               className="rounded-md object-cover"
               fill
               priority
               sizes="(max-width: 64px) 100vw, 64px"
-              src={image.absolute_url}
+              src={
+                image.absolute_url || (image?.update?.absolute_url as string)
+              }
               unoptimized
             />
           ) : (
@@ -126,16 +128,16 @@ export const columns: ColumnDef<Brand>[] = [
     },
   },
   {
-    accessorKey: 'name',
-    header: 'Name',
+    accessorKey: "name",
+    header: "Tên",
   },
   {
-    accessorKey: 'country',
-    header: 'Country',
+    accessorKey: "country",
+    header: "Nguồn Gốc",
   },
   {
-    accessorKey: 'actions',
-    header: 'Actions',
+    accessorKey: "actions",
+    header: "Chức Năng",
 
     cell: ({ row }: { row: any }) => <ActionCell row={row} />,
   },

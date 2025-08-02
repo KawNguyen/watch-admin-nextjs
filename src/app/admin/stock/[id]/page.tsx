@@ -20,23 +20,15 @@ import {
 } from "@/components/ui/tooltip";
 import { useState } from "react";
 import { formatMoney } from "@/lib";
+import { Metadata } from "next";
 
-interface StockItem {
-  id: string;
-  quantity: number;
-  costPrice: number;
-  stockEntryId: string;
-  watchId: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-}
 
 interface DetailStockPageProps {
   params: {
     id: string;
   };
 }
+
 const DetailStockPage = ({ params }: DetailStockPageProps) => {
   const { data } = useStockEntryById(params.id);
   const [isCopied, setIsCopied] = useState(false);
@@ -50,7 +42,6 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
       minute: "2-digit",
     });
   };
-
 
   const handleCopy = async (text: string) => {
     try {
@@ -71,7 +62,7 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
         className="mb-4 flex items-center gap-1 underline"
         href="/admin/stock/"
       >
-        <CornerDownLeft className="size-5" /> Back
+        <CornerDownLeft className="size-5" /> Trở về
       </Link>
       <div className="max-w-4xl mx-auto p-6">
         <Card>
@@ -79,7 +70,7 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl font-bold flex items-center gap-2">
                 <Package className="h-6 w-6" />
-                Stock Entry
+                Chi tiết nhập hàng
               </CardTitle>
               <Badge variant="secondary" className="text-lg px-3 py-1">
                 {data?.data.item?.entryCode}
@@ -92,7 +83,7 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
               <div className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Total Price</p>
+                  <p className="text-sm text-muted-foreground">Tổng giá trị</p>
                   <p className="font-semibold text-lg">
                     {formatMoney(data?.data?.item.totalPrice)}
                   </p>
@@ -101,7 +92,9 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Created</p>
+                  <p className="text-sm text-muted-foreground">
+                    Thời gian nhập
+                  </p>
                   <p className="text-sm">
                     {formatDate(data?.data?.item.createdAt)}
                   </p>
@@ -114,7 +107,7 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
             <div>
               <h3 className="font-semibold flex items-center gap-2 mb-3">
                 <UserIcon className="h-4 w-4" />
-                Created By
+                Nhập Bởi
               </h3>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -133,7 +126,7 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
             <div>
               <h3 className="font-semibold flex items-center gap-2 mb-4">
                 <Package className="h-4 w-4" />
-                Stock Items
+                Các sản phẩm
               </h3>
               <div className="space-y-4">
                 {data?.data.item.stockItems.map((item: any, index: number) => (
@@ -142,13 +135,15 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
                     className="border rounded-lg p-4 bg-muted/30"
                   >
                     <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-semibold">Item #{index + 1}</h4>
-                      <Badge variant="secondary">Qty: {item.quantity}</Badge>
+                      <h4 className="font-semibold">Sản phẩm #{index + 1}</h4>
+                      <Badge variant="secondary">
+                        Số lượng: {item.quantity}
+                      </Badge>
                     </div>
 
-                    <div className="grid grid-cols-5 gap-4 text-sm">
+                    <div className="grid grid-cols-4 gap-4 text-sm">
                       <div>
-                        <p className="text-muted-foreground">Watch ID</p>
+                        <p className="text-muted-foreground">ID sản phẩm</p>
                         <Tooltip open={isCopied}>
                           <TooltipTrigger>
                             <div
@@ -165,21 +160,17 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
                         </Tooltip>
                       </div>
                       <div>
-                        <p className="text-muted-foreground">Item ID</p>
-                        <p className="font-mono">{item.id.slice(0, 8)}...</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">Cost Price</p>
+                        <p className="text-muted-foreground">Giá gốc</p>
                         <p className="font-semibold">
                           {formatMoney(item.costPrice)}
                         </p>
                       </div>
                       <div>
-                        <p className="text-muted-foreground">Quantity</p>
+                        <p className="text-muted-foreground">Số lượng</p>
                         <p className="font-semibold">{item.quantity}</p>
                       </div>
                       <div>
-                        <p className="text-muted-foreground">Total Value</p>
+                        <p className="text-muted-foreground">Tổng Tiền</p>
                         <p className="font-semibold">
                           {formatMoney(item.quantity * item.costPrice)}
                         </p>
@@ -191,11 +182,11 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
                 <div className="border rounded-lg p-4 bg-muted/30">
                   <h4 className="font-semibold mb-2 flex items-center gap-2">
                     <Notebook className="size-4" />
-                    Notes
+                    Ghi chú
                   </h4>
                   <p className="text-muted-foreground whitespace-pre-line">
                     {data?.data.item.notes || (
-                      <span className="text-sm">No notes provided.</span>
+                      <span className="text-sm">Không có ghi chú</span>
                     )}
                   </p>
                 </div>
@@ -205,13 +196,13 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
             <Separator />
 
             <div>
-              <h3 className="font-semibold mb-4">Summary</h3>
+              <h3 className="font-semibold mb-4">Tóm tắt</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center p-4 bg-muted rounded-lg">
                   <p className="text-2xl font-bold">
                     {data?.data.item.stockItems.length}
                   </p>
-                  <p className="text-sm text-muted-foreground">Total Items</p>
+                  <p className="text-sm text-muted-foreground">Tổng Sản Phẩm</p>
                 </div>
                 <div className="text-center p-4 bg-muted rounded-lg">
                   <p className="text-2xl font-bold">
@@ -220,15 +211,13 @@ const DetailStockPage = ({ params }: DetailStockPageProps) => {
                       0
                     )}
                   </p>
-                  <p className="text-sm text-muted-foreground">
-                    Total Quantity
-                  </p>
+                  <p className="text-sm text-muted-foreground">Tổng Số Lượng</p>
                 </div>
                 <div className="text-center p-4 bg-muted rounded-lg">
                   <p className="text-2xl font-bold">
                     {formatMoney(data?.data.item.totalPrice || 0)}
                   </p>
-                  <p className="text-sm text-muted-foreground">Total Value</p>
+                  <p className="text-sm text-muted-foreground">Tổng Giá Trị</p>
                 </div>
               </div>
             </div>

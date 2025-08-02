@@ -2,7 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Eye, Loader2, Pencil, Plus } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { queryClient } from "@/components/provider/provider";
@@ -51,9 +51,18 @@ export default function CaseMaterialForm({
   const form = useForm<CaseMaterialFormValues>({
     resolver: zodResolver(caseMaterialSchema),
     defaultValues: {
-      name: isEditMode ? caseMaterialData.name : "",
+      name: "",
     },
   });
+
+  React.useEffect(() => {
+    if (isOpen && caseMaterialData) {
+      form.reset({
+        name: caseMaterialData.name || "",
+      });
+    }
+  }, [isOpen, caseMaterialData, form]);
+
   const onSubmit = async (data: CaseMaterialFormValues) => {
     mutation.mutate(data, {
       onSuccess: () => {
@@ -62,8 +71,8 @@ export default function CaseMaterialForm({
         setIsOpen(false);
         toast.success(
           isEditMode
-            ? "Material updated successfully!"
-            : "Material created successfully!"
+            ? "Cập nhật thành công chất liệu vỏ"
+            : "Tạo thành công chất liệu vỏ"
         );
       },
       onError: (error: any) => {
@@ -85,7 +94,7 @@ export default function CaseMaterialForm({
         ) : (
           <Button>
             <Plus />
-            Create Case Material
+            Chất Liệu Vỏ
           </Button>
         )}
       </SheetTrigger>
@@ -93,18 +102,11 @@ export default function CaseMaterialForm({
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? "Edit case material"
+              ? "Cập Nhật Chất Liệu Dây"
               : isViewMode
-              ? "View case material"
-              : "Create case material"}
+              ? "Xem Chi Tiết Chất Liệu Dây"
+              : "Tạo Chất Liệu Dây"}
           </SheetTitle>
-          <SheetDescription>
-            {isEditMode
-              ? "Edit the details of the case material."
-              : isViewMode
-              ? "View the details of the case material."
-              : "Fill in the details to create a new case material."}
-          </SheetDescription>
         </SheetHeader>
         <Form {...form}>
           <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
@@ -114,13 +116,12 @@ export default function CaseMaterialForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Name <span className="text-red-500">*</span>
+                    Tên <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Name"
+                      placeholder="Thép"
                       {...field}
-                      value={caseMaterialData?.name || field.value}
                       disabled={isViewMode}
                     />
                   </FormControl>
@@ -136,12 +137,12 @@ export default function CaseMaterialForm({
                   ) : isEditMode ? (
                     <>
                       <Pencil />
-                      Update
+                      Cập Nhật
                     </>
                   ) : (
                     <>
                       <Plus />
-                      Create
+                      Thêm
                     </>
                   )}
                 </Button>

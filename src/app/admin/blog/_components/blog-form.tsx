@@ -92,13 +92,12 @@ export function BlogFormDialog({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.blogs });
       toast.success(
-        isEditMode ? "Blog updated successfully" : "Blog created successfully"
+        isEditMode ? "Blog Cập Nhật Thành Công" : "Blog Thêm Thành Công"
       );
       onOpenChange(false);
       form.reset();
     },
     onError: (error: any) => {
-      console.error("Blog operation failed:", error);
       toast.error(error.response?.data?.message);
     },
   });
@@ -165,11 +164,11 @@ export function BlogFormDialog({
                     render={({ field }) => (
                       <FormItem className="lg:col-span-10">
                         <FormLabel>
-                          Title <span className="text-red-500">*</span>
+                          Tiêu Đề <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Enter blog title"
+                            placeholder="title"
                             {...field}
                             disabled={mutation.isPending}
                           />
@@ -180,7 +179,7 @@ export function BlogFormDialog({
                   />
 
                   <div className="col-span-2 space-y-2">
-                    <Label>Created By</Label>
+                    <Label>Tác Giả</Label>
                     {isLoadingUser ? (
                       <Skeleton className="h-9 w-full" />
                     ) : (
@@ -199,7 +198,9 @@ export function BlogFormDialog({
                     name="thumbnail"
                     render={({ field }) => (
                       <FormItem className="lg:col-span-10">
-                        <FormLabel>Thumbnail URL</FormLabel>
+                        <FormLabel>
+                          Thumbnail URL <span className="text-red-500">*</span>
+                        </FormLabel>
                         {blog?.thumbnail && (
                           <img
                             src={blog?.thumbnail}
@@ -232,7 +233,7 @@ export function BlogFormDialog({
                             disabled={mutation.isPending}
                           />
                         </FormControl>
-                        <FormLabel className="!mt-0">Published</FormLabel>
+                        <FormLabel className="!mt-0">Công Khai</FormLabel>
                       </FormItem>
                     )}
                   />
@@ -243,7 +244,9 @@ export function BlogFormDialog({
                   name="content"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Content *</FormLabel>
+                      <FormLabel>
+                        Nội Dung <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <div className="border rounded-md">
                           <TextEditor
@@ -266,7 +269,7 @@ export function BlogFormDialog({
                 onClick={handleClose}
                 disabled={mutation.isPending}
               >
-                Cancel
+                Hủy
               </Button>
               <Button
                 type="submit"
@@ -278,19 +281,7 @@ export function BlogFormDialog({
                     {isEditMode ? "Updating..." : "Creating..."}
                   </>
                 ) : (
-                  <>
-                    {isEditMode ? (
-                      <>
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Update Post
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="mr-2 h-4 w-4" />
-                        Create Post
-                      </>
-                    )}
-                  </>
+                  <>{isEditMode ? <>Cập Nhật</> : <>Thêm</>}</>
                 )}
               </Button>
             </DialogFooter>

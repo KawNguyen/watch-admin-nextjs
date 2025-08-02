@@ -24,11 +24,11 @@ const ActionCell = ({ row }: { row: any }) => {
   const mutationDelete = useMutation({
     mutationFn: (adsId: string) => advertisementApi.deleteAds(adsId),
     onSuccess: () => {
-      toast.success("Advertisement deleted successfully");
+      toast.success("Xóa quảng cáo thành công");
       queryClient.invalidateQueries({ queryKey: ["advertisements"] });
     },
     onError: () => {
-      toast.error("Failed to delete advertisement");
+      toast.error("Xóa quảng cáo thất bại");
     },
   });
   const handleDelete = () => {
@@ -53,10 +53,10 @@ const ActionCell = ({ row }: { row: any }) => {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <h3 className="font-semibold text-lg">Confirm Deletion</h3>
+            <h3 className="font-semibold text-lg">Xác Nhận Xóa</h3>
           </DialogHeader>
           <p>
-            Are you sure you want to delete
+            Bạn có chắc chắn xóa
             <span className=" mx-2 text-red-500 underline">
               {row.original.title}
             </span>
@@ -64,10 +64,10 @@ const ActionCell = ({ row }: { row: any }) => {
           </p>
           <AlertDialogFooter>
             <Button onClick={() => setIsDialogOpen(false)} variant="secondary">
-              Cancel
+              Hủy
             </Button>
             <Button onClick={handleDelete} variant="destructive">
-              Confirm Delete
+              Xóa
             </Button>
           </AlertDialogFooter>
         </DialogContent>
@@ -79,7 +79,7 @@ const ActionCell = ({ row }: { row: any }) => {
 export const columns: ColumnDef<Advertisment>[] = [
   {
     accessorKey: "imageUrl",
-    header: "Image",
+    header: "Hình Ảnh",
     cell: ({ row }) => {
       const imageUrl = row.original.imageUrl;
       return (
@@ -96,7 +96,9 @@ export const columns: ColumnDef<Advertisment>[] = [
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center rounded-md bg-muted">
-              <span className="text-muted-foreground text-xs">No image</span>
+              <span className="text-muted-foreground text-xs">
+                Chưa có hình
+              </span>
             </div>
           )}
         </div>
@@ -105,15 +107,15 @@ export const columns: ColumnDef<Advertisment>[] = [
   },
   {
     accessorKey: "title",
-    header: "Title",
+    header: "Tiêu Đề",
   },
   {
     accessorKey: "link",
-    header: "Link",
+    header: "Đường Dẫn",
   },
   {
     accessorKey: "isActive",
-    header: "Active",
+    header: "Trạng Thái",
     cell: ({ row }) => {
       const isActive = row.original.isActive;
       return isActive == true ? (
@@ -139,7 +141,7 @@ export const columns: ColumnDef<Advertisment>[] = [
   },
   {
     accessorKey: "startDate",
-    header: "From",
+    header: "Từ",
     cell: ({ row }) => {
       const date = new Date(row.getValue("startDate"));
       return formatDate(date);
@@ -147,7 +149,7 @@ export const columns: ColumnDef<Advertisment>[] = [
   },
   {
     accessorKey: "endDate",
-    header: "End",
+    header: "Đến",
     cell: ({ row }) => {
       const date = new Date(row.getValue("endDate"));
       return formatDate(date);
@@ -155,7 +157,7 @@ export const columns: ColumnDef<Advertisment>[] = [
   },
   {
     accessorKey: "actions",
-    header: "Actions",
+    header: "Chức Năng  ",
     cell: ({ row }) => <ActionCell row={row} />,
   },
 ];

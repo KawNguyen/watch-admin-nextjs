@@ -17,6 +17,7 @@ import { BlogFormDialog } from "./_components/blog-form";
 import { DeleteConfirmDialog } from "./_components/blog-delete";
 import { blogApi } from "@/services/blog";
 import { BlogDetailDialog } from "./_components/blog-details";
+import { toast } from "sonner";
 
 const QUERY_KEYS = {
   blogs: ["blogs"] as const,
@@ -54,8 +55,8 @@ export default function BlogManagement() {
       const data = await blogApi.getAllBlogs().then((res) => res.data.items);
       return formatBlogData(data);
     },
-    staleTime: 5 * 60 * 1000, 
-    gcTime: 10 * 60 * 1000, 
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
   const deleteMutation = useMutation({
@@ -66,9 +67,10 @@ export default function BlogManagement() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.blogs });
       setIsDeleteOpen(false);
       setDeletingBlog(null);
+      toast.success("Xóa blog thành công");
     },
     onError: (error) => {
-      console.error("Delete failed:", error);
+      toast.error("Xóa blog thất bại");
     },
   });
 
@@ -108,66 +110,29 @@ export default function BlogManagement() {
     setIsDeleteOpen(true);
   };
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="container mx-auto p-6">
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        </div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (isError) {
-    return (
-      <div className="container mx-auto p-6">
-        <div className="text-center py-12">
-          <p className="text-destructive">
-            Failed to load blogs. Please try again later.
-          </p>
-          <Button
-            onClick={() =>
-              queryClient.invalidateQueries({ queryKey: QUERY_KEYS.blogs })
-            }
-            className="mt-4"
-          >
-            Retry
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Blog Management</h1>
-          <p className="text-muted-foreground">
-            Manage your blog posts and content
-          </p>
+          <h1 className="text-3xl font-bold">Quản Lý Blog</h1>
         </div>
         <Button onClick={handleAddNew} className="flex items-center gap-2">
           <Plus className="h-5 w-5" />
-          New Post
+          Blog
         </Button>
       </div>
 
-      {/* Search */}
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
         <Input
-          placeholder="Search blog posts..."
+          placeholder="Tìm kiếm blog."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10"
         />
       </div>
 
-      {/* Blog Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredBlogs.map((blog) => (
           <Card
@@ -232,13 +197,12 @@ export default function BlogManagement() {
         ))}
       </div>
 
-      {/* Empty State */}
       {filteredBlogs.length === 0 && (
         <div className="text-center py-12">
           <p className="text-muted-foreground">
             {searchTerm
-              ? "No blog posts found matching your search."
-              : "No blog posts found."}
+              ? "Không có blog tìm thấy theo yêu cầu."
+              : "Không có blog tìm thấy."}
           </p>
         </div>
       )}

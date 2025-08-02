@@ -6,6 +6,7 @@ import {
   ChevronRight,
   FileText,
   Package,
+  Plus,
   Search,
 } from "lucide-react";
 import Link from "next/link";
@@ -93,9 +94,9 @@ export default function StockEntryList() {
     <div className="container mx-auto space-y-6 p-6">
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="font-bold text-3xl">Stock Entries</h1>
+          <h1 className="font-bold text-3xl">Nhập Hàng</h1>
           <p className="text-muted-foreground">
-            Manage your stock entries and view detailed items
+            Nhập thêm sản phẩm và có thể xem chi tiết nhập hàng
           </p>
         </div>
         <div className="flex gap-2">
@@ -103,7 +104,8 @@ export default function StockEntryList() {
             className={buttonVariants({ variant: "default" })}
             href="/admin/stock/create"
           >
-            Create Stock Entry
+            <Plus />
+            Nhập Hàng
           </Link>
         </div>
       </div>
@@ -115,7 +117,7 @@ export default function StockEntryList() {
             <Input
               className="pl-10"
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by entry code (STE...)"
+              placeholder="Tìm chi tiết nhập hàng (STE...)"
               value={searchTerm}
             />
           </div>
@@ -125,21 +127,19 @@ export default function StockEntryList() {
       <div className="grid grid-cols-2 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="font-medium text-sm">Total Entries</CardTitle>
+            <CardTitle className="font-medium text-sm">Tổng Lần Nhập</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="font-bold text-2xl">{totalEntries}</div>
-            <p className="text-muted-foreground text-xs">Stock entries</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="font-medium text-sm">Total Value</CardTitle>
+            <CardTitle className="font-medium text-sm">Tổng Giá Trị</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="font-bold text-2xl">{formatMoney(totalValue)}</div>
-            <p className="text-muted-foreground text-xs">Inventory value</p>
           </CardContent>
         </Card>
       </div>
@@ -150,7 +150,9 @@ export default function StockEntryList() {
             <CardContent className="py-8 text-center">
               <div className="flex flex-col items-center gap-2">
                 <Package className="h-8 w-8 text-muted-foreground" />
-                <p className="text-muted-foreground">No entries found</p>
+                <p className="text-muted-foreground">
+                  Chưa có chi tiết nhập hàng
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -176,7 +178,7 @@ export default function StockEntryList() {
                         </div>
                         <div className="flex items-center gap-4">
                           <Badge variant="secondary">
-                            {entry.stockItems?.length} items
+                            {entry.stockItems?.length} sản phẩm
                           </Badge>
                           <div className="text-muted-foreground text-sm">
                             {formatDate(entry.createdAt)}

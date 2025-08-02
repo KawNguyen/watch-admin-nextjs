@@ -53,7 +53,6 @@ import {
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -173,7 +172,11 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
         onSuccess: () => {
           form.reset();
           toast.success(
-            `${isEditMode ? "Edit successfully" : "Created successfully"}`
+            `${
+              isEditMode
+                ? "Cập nhật đồng hồ thành công"
+                : "Thêm đồng hồ thành công"
+            }`
           );
           queryClient.invalidateQueries({ queryKey: ["watches"] });
           setIsOpen(false);
@@ -199,7 +202,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
         ) : (
           <Button>
             <Plus />
-            Create
+            Đồng Hồ
           </Button>
         )}
       </SheetTrigger>
@@ -207,18 +210,11 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? "Edit Watch"
+              ? "Cập Nhật Đồng Hồ"
               : isViewMode
-              ? "View Watch"
-              : "Create Watch"}
+              ? "Xem Chi Tiết Đồng Hồ"
+              : "Tạo Đồng Hồ"}
           </SheetTitle>
-          <SheetDescription>
-            {isEditMode
-              ? "Edit the details of the watch."
-              : isViewMode
-              ? "View the details of the watch."
-              : "Fill in the details to create a new watch."}
-          </SheetDescription>
         </SheetHeader>
 
         <Form {...form}>
@@ -228,7 +224,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
               name="files"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Attachments</FormLabel>
+                  <FormLabel>Tệp đính kèm</FormLabel>
                   <FormControl>
                     <FileUpload
                       accept="image/*"
@@ -246,13 +242,13 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                     >
                       <FileUploadDropzone className="flex-row flex-wrap border-dotted text-center">
                         <CloudUpload className="size-4" />
-                        Drag and drop or
+                        Kéo hay thả ảnh vào
                         <FileUploadTrigger asChild>
                           <Button className="p-0" size="sm" variant="link">
-                            choose files
+                            hoặc chọn thư mục
                           </Button>
                         </FileUploadTrigger>
-                        to upload
+                        để tải ảnh lên
                       </FileUploadDropzone>
                       <FileUploadList>
                         {field.value.map((file, index) => (
@@ -266,7 +262,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                                 variant="ghost"
                               >
                                 <X />
-                                <span className="sr-only">Delete</span>
+                                <span className="sr-only">Xóa</span>
                               </Button>
                             </FileUploadItemDelete>
                           </FileUploadItem>
@@ -275,7 +271,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                     </FileUpload>
                   </FormControl>
                   <FormDescription>
-                    Upload up to 8 images up to 5MB each.
+                    Chọn tới 8 ảnh và tối đa 5MB
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -302,7 +298,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
               <div className="grid grid-cols-1 gap-4">
                 <div className="flex items-center gap-x-2 font-bold">
                   <Info className="size-6" />
-                  <h1 className="text-xl">Basic information</h1>
+                  <h1 className="text-xl">Thông Tin Cơ Bản</h1>
                 </div>
                 <FormField
                   control={form.control}
@@ -310,13 +306,12 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Name <span className="text-red-500">*</span>
+                        Tên <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Watch name"
+                          placeholder="ABC"
                           {...field}
-                          value={watchData?.name || field.value}
                           disabled={isViewMode}
                         />
                       </FormControl>
@@ -331,7 +326,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Gender <span className="text-red-500">*</span>
+                          Giới Tính <span className="text-red-500">*</span>
                         </FormLabel>
                         <Select
                           defaultValue={field.value}
@@ -361,7 +356,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Status <span className="text-red-500">*</span>
+                          Tình Trạng <span className="text-red-500">*</span>
                         </FormLabel>
                         <Select
                           defaultValue={field.value}
@@ -370,7 +365,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select status" />
+                              <SelectValue placeholder="Chọn tình trạng" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -391,17 +386,16 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Brand <span className="text-red-500">*</span>
+                          Thương Hiệu <span className="text-red-500">*</span>
                         </FormLabel>
                         <Select
                           defaultValue={field.value}
                           disabled={isViewMode}
-                          value={watchData?.brandId || field.value}
                           onValueChange={field.onChange}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select brand" />
+                              <SelectValue placeholder="Chọn thương hiệu" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -421,7 +415,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
               <div className="grid grid-cols-1 gap-4">
                 <div className="flex items-center gap-x-2 font-bold">
                   <Cog className="size-6" />
-                  <h1 className="text-xl">Techincal Specifications</h1>
+                  <h1 className="text-xl">Thông Số Kỹ Thuật</h1>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   <FormField
@@ -430,7 +424,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Material <span className="text-red-500">*</span>
+                          Chất Liệu Vỏ <span className="text-red-500">*</span>
                         </FormLabel>
                         <Select
                           defaultValue={field.value}
@@ -439,7 +433,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Material" />
+                              <SelectValue placeholder="Chất Liệu Vỏ" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -465,7 +459,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Band Material <span className="text-red-500">*</span>
+                          Chất Liệu Dây <span className="text-red-500">*</span>
                         </FormLabel>
                         <Select
                           defaultValue={field.value}
@@ -474,7 +468,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Band Material" />
+                              <SelectValue placeholder="Chất Liệu Dây" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -500,7 +494,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Movement <span className="text-red-500">*</span>
+                          Chuyển Động <span className="text-red-500">*</span>
                         </FormLabel>
                         <Select
                           defaultValue={field.value}
@@ -509,7 +503,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Movement" />
+                              <SelectValue placeholder="Chuyển Động" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -536,13 +530,12 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                     name="diameter"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Diameter (mm)</FormLabel>
+                        <FormLabel>Chu Vi (mm)</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Diameter"
+                            placeholder="Chu Vi"
                             type="number"
                             {...field}
-                            value={watchData?.diameter || field.value}
                             disabled={isViewMode}
                           />
                         </FormControl>
@@ -556,14 +549,13 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-x-1">
-                          <Droplets className="size-4" /> Water Resistance
+                          <Droplets className="size-4" /> Chống Nước
                         </FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Water resistance"
                             type="number"
                             {...field}
-                            value={watchData?.waterResistance || field.value}
                             disabled={isViewMode}
                           />
                         </FormControl>
@@ -578,11 +570,11 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                       <FormItem>
                         <FormLabel className="flex items-center gap-x-1">
                           <Shield className="size-4" />
-                          Warranty
+                          Bảo Hành
                         </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Warranty"
+                            placeholder="Bảo Hành"
                             type="number"
                             {...field}
                             value={watchData?.warranty || field.value}
@@ -600,11 +592,11 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                       <FormItem>
                         <FormLabel className="flex items-center gap-x-1">
                           <DollarSign className="size-4" />
-                          Price <span className="text-red-500">*</span>
+                          Giá <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Price"
+                            placeholder="Giá"
                             type="number"
                             {...field}
                             value={watchData?.price || field.value}
@@ -623,13 +615,13 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Video Url <span className="text-red-500">*</span>
+                          Đường dẫn video{" "}
+                          <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Watch's video url"
+                            placeholder="video url"
                             {...field}
-                            value={watchData?.videoUrl || field.value}
                             disabled={isViewMode}
                           />
                         </FormControl>
@@ -642,10 +634,10 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel>Mô tả</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Watch description"
+                            placeholder="Mô tả"
                             {...field}
                             value={watchData?.description || field.value}
                             disabled={isViewMode}
@@ -665,17 +657,17 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                   {isMutating ? (
                     <>
                       <Loader2 className="animate-spin" />
-                      Processing...
+                      Đang Thực Hiện
                     </>
                   ) : isEditMode ? (
                     <>
                       <Pencil />
-                      Update
+                      Cập Nhật
                     </>
                   ) : (
                     <>
                       <Plus />
-                      Create
+                      Thêm
                     </>
                   )}
                 </Button>

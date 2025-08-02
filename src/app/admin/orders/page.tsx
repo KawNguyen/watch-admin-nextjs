@@ -25,17 +25,6 @@ interface WalkinInformation {
   wardName: string;
 }
 
-interface OrderItem {
-  id: string;
-  quantity: number;
-  price: number;
-  orderId: string;
-  watchId: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-}
-
 interface Order {
   id: string;
   totalPrice: number;
@@ -76,8 +65,7 @@ const OrderPage = () => {
       const response: OrderResponse = await orderApi.getAllOrder();
       setOrders(response.data.items);
     } catch (err) {
-      setError("Failed to fetch orders");
-      console.error("Error fetching orders:", err);
+      setError("Lấy dữ liệu hóa đơn thất bại");
     } finally {
       setLoading(false);
     }
@@ -146,17 +134,17 @@ const OrderPage = () => {
   const getStatusText = (status: string) => {
     switch (status) {
       case "PENDING":
-        return "PENDING";
+        return "Chờ Duyệt";
       case "PROCESSING":
-        return "PROCESSING";
+        return "Đang Xử Lý";
       case "SHIPPING":
-        return "SHIPPING";
+        return "Đang Giao Hàng";
       case "DELIVERED":
-        return "DELIVERED";
+        return "Đã Giao Hàng";
       case "COMPLETED":
-        return "COMPLETED";
+        return "Đã Hoàn Thành";
       case "CANCELED":
-        return "CANCELED";
+        return "Bị Hủy";
       default:
         return status;
     }
@@ -183,12 +171,12 @@ const OrderPage = () => {
     return (
       <div className="container mx-auto space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">Order Management</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Quản Lý Hóa Đơn</h1>
           <Link
             className={buttonVariants({ variant: "default" })}
             href="/admin/orders/create-order"
           >
-            Create Order
+            Tạo Đơn Hàng
           </Link>
         </div>
         <div className="flex items-center justify-center py-12">
@@ -202,19 +190,19 @@ const OrderPage = () => {
     return (
       <div className="container mx-auto space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">Order Management</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Quản Lý Hóa Đơn</h1>
           <Link
             className={buttonVariants({ variant: "default" })}
             href="/admin/orders/create-order"
           >
-            Create Order
+            Tạo Đơn Hàng
           </Link>
         </div>
         <div className="text-red-600 text-center py-8">
           {error}
           <div className="mt-4">
             <Button onClick={fetchOrders} variant="outline">
-              Retry
+              Thử Lại
             </Button>
           </div>
         </div>
@@ -225,12 +213,12 @@ const OrderPage = () => {
   return (
     <div className="container mx-auto space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Order Management</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Quản Lý Hóa Đơn</h1>
         <Link
           className={buttonVariants({ variant: "default" })}
           href="/admin/orders/create-order"
         >
-          Create Order
+          Tạo Đơn Hàng
         </Link>
       </div>
 
@@ -240,31 +228,31 @@ const OrderPage = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Order ID
+                  Mã Hóa Đơn
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Customer
+                  Khách Hàng
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Address
+                  Địa Chỉ
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total
+                  Tổng Tiền
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
+                  Trạng Thái
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Method
+                  Phương Thức
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Created At
+                  Ngày Lập
+                </th>
+                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Số Lượng
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Quantity
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
+                  Chức Năng
                 </th>
               </tr>
             </thead>
@@ -293,7 +281,7 @@ const OrderPage = () => {
                             </p>
                           </div>
                         </TooltipTrigger>
-                        <TooltipContent>Copied!</TooltipContent>
+                        <TooltipContent>Sao chép!</TooltipContent>
                       </Tooltip>
                     </td>
                     <td className="px-2 py-4 whitespace-nowrap">
@@ -323,7 +311,7 @@ const OrderPage = () => {
                             </div>
                           </div>
                         ) : (
-                          <span className="text-gray-500">Not provided</span>
+                          <span className="text-gray-500">Chưa cung cấp</span>
                         )}
                       </div>
                     </td>
@@ -341,7 +329,7 @@ const OrderPage = () => {
                             </div>
                           </div>
                         ) : (
-                          <span className="text-gray-500">Not found</span>
+                          <span className="text-gray-500">Không Tìm Thấy</span>
                         )}
                       </div>
                     </td>
@@ -394,7 +382,7 @@ const OrderPage = () => {
                             className="flex items-center gap-1"
                           >
                             <Eye className="h-4 w-4" />
-                            View
+                            Xem
                           </Button>
                         </OrderDetailDialog>
 
@@ -409,7 +397,7 @@ const OrderPage = () => {
                             className="flex items-center gap-1"
                           >
                             <Edit className="h-4 w-4" />
-                            Edit
+                            Cập Nhật
                           </Button>
                         </OrderStatusUpdateDialog>
                       </div>

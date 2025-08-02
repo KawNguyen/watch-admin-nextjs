@@ -45,30 +45,30 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "firstName",
-    header: "First Name",
+    header: "Tên",
   },
   {
     accessorKey: "lastName",
-    header: "Last Name",
+    header: "Họ",
   },
   {
     accessorKey: "phone",
-    header: "Phone",
+    header: "Số Điện Thoại",
   },
   {
     accessorKey: "actions",
-    header: "Actions",
+    header: "Chức Năng",
     cell: ({ row }: { row: any }) => {
       const [isDialogOpen, setIsDialogOpen] = useState(false);
 
       const mutationDelete = useMutation({
         mutationFn: (userId: string) => userApi.deleteUser(userId),
         onSuccess: () => {
-          toast.success("User deleted successfully");
+          toast.success("Xóa tài khoản thành công");
           queryClient.invalidateQueries({ queryKey: ["users"] });
         },
         onError: () => {
-          toast.error("Failed to delete user");
+          toast.error("Xóa tài khoản thất bại");
         },
       });
       const handleDelete = () => {
@@ -92,10 +92,10 @@ export const columns: ColumnDef<User>[] = [
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <h3 className="font-semibold text-lg">Confirm Deletion</h3>
+                <h3 className="font-semibold text-lg">Xác nhận xóa</h3>
               </DialogHeader>
               <p>
-                Are you sure you want to delete
+                Bạn có muốn xóa tài khoản
                 <span className=" mx-2 text-red-500 underline">
                   {row.original.email}
                 </span>
@@ -106,10 +106,10 @@ export const columns: ColumnDef<User>[] = [
                   onClick={() => setIsDialogOpen(false)}
                   variant="secondary"
                 >
-                  Cancel
+                  Hủy
                 </Button>
                 <Button onClick={handleDelete} variant="destructive">
-                  Confirm Delete
+                  Xóa
                 </Button>
               </AlertDialogFooter>
             </DialogContent>

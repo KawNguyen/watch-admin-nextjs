@@ -2,31 +2,30 @@ import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
-} from '@tanstack/react-query';
+} from "@tanstack/react-query";
 
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import BandMaterialsDataTable from './_components/band-material-data-table';
-import BandMaterialForm from './_components/band-material-form';
+} from "@/components/ui/card";
+import BandMaterialsDataTable from "./_components/band-material-data-table";
+import BandMaterialForm from "./_components/band-material-form";
 
 export const metadata: Metadata = {
-  title: 'Admin | Watches',
-  description: 'Manage watches in the admin panel',
+  title: "Admin | Chất Liệu Dây",
 };
 
 export default async function BandMaterialsPage() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['bandMaterials'],
+    queryKey: ["bandMaterials"],
     queryFn: () =>
-      import('@/queries/use-bandMaterial').then((mod) =>
+      import("@/queries/use-bandMaterial").then((mod) =>
         mod.useBandMaterials()
       ),
   });
@@ -36,10 +35,8 @@ export default async function BandMaterialsPage() {
       <CardHeader>
         <div className="flex w-full items-center justify-between">
           <div>
-            <CardTitle>Band Material</CardTitle>
-            <CardDescription>Manage band material</CardDescription>
+            <CardTitle>Chất Liệu Dây</CardTitle>
           </div>
-
           <BandMaterialForm mode="create" />
         </div>
       </CardHeader>

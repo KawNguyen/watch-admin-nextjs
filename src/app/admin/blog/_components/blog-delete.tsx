@@ -36,19 +36,20 @@ export function DeleteConfirmDialog({
               <AlertTriangle className="h-6 w-6 text-red-600" />
             </div>
             <div>
-              <DialogTitle>Delete Blog Post</DialogTitle>
+              <DialogTitle>Xác Nhận Xóa</DialogTitle>
               <DialogDescription>
-                Are you sure you want to delete <span className="text-red-500">{blog.title}</span> ?
+                Bạn có muốn xóa bài{" "}
+                <span className="text-red-500">{blog.title}</span> ?
               </DialogDescription>
             </div>
           </div>
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            Hủy
           </Button>
           <Button variant="destructive" onClick={onConfirm}>
-            Delete Post
+            Xóa
           </Button>
         </DialogFooter>
       </DialogContent>

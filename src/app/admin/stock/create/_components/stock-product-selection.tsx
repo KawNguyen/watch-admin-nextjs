@@ -49,7 +49,7 @@ export function StockProductSelection({
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="max-h-[80vh] max-w-6xl">
         <DialogHeader>
-          <DialogTitle>Select Products</DialogTitle>
+          <DialogTitle>Chọn Sản Phẩm</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -58,7 +58,7 @@ export function StockProductSelection({
             <Input
               className="pl-10"
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search products..."
+              placeholder="Tìm theo tên..."
               value={searchQuery}
             />
           </div>
@@ -74,8 +74,8 @@ export function StockProductSelection({
                 onClick={onSelectAll}
               />
               <div className="flex-1 font-medium text-sm">
-                Select All ({selectedIds.length} of {filteredProducts.length}{" "}
-                selected)
+                Chọn hết ({selectedIds.length} trong {filteredProducts.length}{" "}
+                được chọn)
               </div>
             </div>
             <div className="max-h-96 divide-y divide-border overflow-y-auto">
@@ -90,7 +90,7 @@ export function StockProductSelection({
                     className="col-span-1 h-5 w-5 items-center self-center justify-self-start"
                     onChange={() => onToggle(product.id)}
                   />
-                  <div className="col-span-8 flex items-center gap-4">
+                  <div className="col-span-6 flex items-center gap-4">
                     <Image
                       alt={product.name}
                       className="rounded-md object-cover"
@@ -107,15 +107,15 @@ export function StockProductSelection({
                       </div>
                     </div>
                   </div>
-                  <div className="col-span-2 flex items-center justify-end gap-x-32">
+                  <div className="col-span-5 flex items-center justify-end gap-x-32">
                     <div className="flex flex-col items-center space-y-2 ">
-                      <span>Brand</span>
+                      <span className="text-wrap">Thương Hiệu</span>
                       <span>
                         <Badge variant="default">{product.brand?.name}</Badge>
                       </span>
                     </div>
                     <div className="flex flex-col items-center space-y-2 ">
-                      <span>Stock</span>
+                      <span>Số Lượng</span>
                       <span>
                         {product.inventory.quantity >
                         product.inventory.lowStockThreshold ? (
@@ -137,14 +137,14 @@ export function StockProductSelection({
 
           <div className="flex items-center justify-between border-t pt-4">
             <div className="text-muted-foreground text-sm">
-              {selectedIds.length} selected
+              {selectedIds.length} được chọn
             </div>
             <div className="flex gap-2">
               <Button onClick={() => onOpenChange(false)} variant="outline">
-                Cancel
+                Hủy
               </Button>
               <Button disabled={selectedIds.length === 0} onClick={onApply}>
-                Apply
+                Chọn
               </Button>
             </div>
           </div>

@@ -2,30 +2,29 @@ import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
-} from '@tanstack/react-query';
+} from "@tanstack/react-query";
 
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { useBrands } from '@/queries/use-brand';
-import BrandsDataTable from './_components/brand-data-table';
-import BrandForm from './_components/brand-form';
+} from "@/components/ui/card";
+import { useBrands } from "@/queries/use-brand";
+import BrandsDataTable from "./_components/brand-data-table";
+import BrandForm from "./_components/brand-form";
 
 export const metadata: Metadata = {
-  title: 'Admin | Brands',
-  description: 'Manage brands in the admin panel',
+  title: "Admin | Thương Hiệu",
 };
 
 export default async function BrandsPage() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['brands'],
+    queryKey: ["brands"],
     queryFn: useBrands,
   });
 
@@ -34,10 +33,8 @@ export default async function BrandsPage() {
       <CardHeader>
         <div className="flex w-full items-center justify-between">
           <div>
-            <CardTitle>Brands</CardTitle>
-            <CardDescription>Manage brands</CardDescription>
+            <CardTitle>Thương Hiệu</CardTitle>
           </div>
-
           <BrandForm mode="create" />
         </div>
       </CardHeader>
