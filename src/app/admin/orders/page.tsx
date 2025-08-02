@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import { Eye, Edit, Copy } from "lucide-react";
-import { orderApi } from "@/services/create-order";
 import OrderDetailDialog from "./_components/order-details-dialog";
 import OrderStatusUpdateDialog from "./_components/order-status-update-dialog";
 import {
@@ -13,6 +12,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useOrders } from "@/queries/use-order";
 
 interface WalkinInformation {
   firstName: string;
@@ -47,33 +47,9 @@ interface Order {
   coupon: any;
 }
 
-interface OrderResponse {
-  data: {
-    items: Order[];
-  };
-}
-
 const OrderPage = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-
-  const fetchOrders = async () => {
-    try {
-      setLoading(true);
-      const response: OrderResponse = await orderApi.getAllOrder();
-      setOrders(response.data.items);
-    } catch (err) {
-      setError("Lấy dữ liệu hóa đơn thất bại");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+  const { data: orders = [], isLoading, refetch, error } = useOrders();
 
   const parseWalkinInformation = (
     walkinInfo: string | null
@@ -163,11 +139,11 @@ const OrderPage = () => {
     }
   };
 
-  const handleStatusUpdated = () => {
-    fetchOrders();
-  };
+  // const handleStatusUpdated = () => {
+  //   fetchOrders();
+  // };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="container mx-auto space-y-6">
         <div className="flex justify-between items-center">
@@ -199,9 +175,9 @@ const OrderPage = () => {
           </Link>
         </div>
         <div className="text-red-600 text-center py-8">
-          {error}
+          {typeof error === "string" ? error : error?.message}
           <div className="mt-4">
-            <Button onClick={fetchOrders} variant="outline">
+            <Button onClick={() => refetch()} variant="outline">
               Thử Lại
             </Button>
           </div>
@@ -257,7 +233,7 @@ const OrderPage = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {orders.map((order) => {
+              {orders.map((order: Order) => {
                 const walkinInfo = parseWalkinInformation(
                   order.walkinInformation
                 );
@@ -389,7 +365,7 @@ const OrderPage = () => {
                         <OrderStatusUpdateDialog
                           orderId={order.id}
                           currentStatus={order.status}
-                          onStatusUpdated={handleStatusUpdated}
+                          onStatusUpdated={() => refetch()}
                         >
                           <Button
                             variant="outline"

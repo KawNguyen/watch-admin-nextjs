@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,17 +10,10 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import {
-  Package,
-  User,
-  MapPin,
-  CreditCard,
-  Clock,
-  SwitchCamera,
-} from "lucide-react";
-import { orderApi } from "@/services/create-order";
-import { toast } from "sonner";
+import { Package, User, CreditCard, Clock } from "lucide-react";
+
 import { formatMoney } from "@/lib";
+import { useOrder } from "@/queries/use-order";
 
 interface WalkinInformation {
   firstName: string;
@@ -51,26 +44,26 @@ interface OrderItem {
   };
 }
 
-interface OrderDetail {
-  id: string;
-  totalPrice: number;
-  status: string;
-  originalPrice: number;
-  paymentMethod: string;
-  shippingNotes: string | null;
-  cancellationReason: string | null;
-  userId: string | null;
-  addressId: string | null;
-  walkinInformation: string | null;
-  couponId: string | null;
-  deliveryAddress: string | null;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  user: any;
-  orderItems: OrderItem[];
-  coupon: any;
-}
+// interface OrderDetail {
+//   id: string;
+//   totalPrice: number;
+//   status: string;
+//   originalPrice: number;
+//   paymentMethod: string;
+//   shippingNotes: string | null;
+//   cancellationReason: string | null;
+//   userId: string | null;
+//   addressId: string | null;
+//   walkinInformation: string | null;
+//   couponId: string | null;
+//   deliveryAddress: string | null;
+//   createdAt: string;
+//   updatedAt: string;
+//   deletedAt: string | null;
+//   user: any;
+//   orderItems: OrderItem[];
+//   coupon: any;
+// }
 
 interface OrderDetailDialogProps {
   orderId: string;
@@ -81,39 +74,41 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
   orderId,
   children,
 }) => {
-  const [order, setOrder] = useState<OrderDetail | null>(null);
+  // const [order, setOrder] = useState<OrderDetail | null>(null);
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchOrderDetail = async () => {
-      try {
-        const response = await orderApi.getOrderById(orderId);
-        setOrder(response.data.item);
-      } catch {
-        toast.error("Load thất bại");
-      }
-    };
+  // useEffect(() => {
+  //   const fetchOrderDetail = async () => {
+  //     try {
+  //       const response = await orderApi.getOrderById(orderId);
+  //       setOrder(response.data.item);
+  //     } catch {
+  //       toast.error("Load thất bại");
+  //     }
+  //   };
 
-    if (open) {
-      fetchOrderDetail();
-    }
-  }, [open, orderId]);
+  //   if (open) {
+  //     fetchOrderDetail();
+  //   }
+  // }, [open, orderId]);
 
-  const parseDeliveryAddress = (
-    address: string | null
-  ): {
-    street: string;
-    provinceName: string;
-    districtName: string;
-    wardName: string;
-  } | null => {
-    if (!address) return null;
-    try {
-      return JSON.parse(address);
-    } catch {
-      return null;
-    }
-  };
+  // const parseDeliveryAddress = (
+  //   address: string | null
+  // ): {
+  //   street: string;
+  //   provinceName: string;
+  //   districtName: string;
+  //   wardName: string;
+  // } | null => {
+  //   if (!address) return null;
+  //   try {
+  //     return JSON.parse(address);
+  //   } catch {
+  //     return null;
+  //   }
+  // };
+
+  const { data: order } = useOrder(orderId);
 
   const parseWalkinInformation = (
     walkinInfo: string | null
@@ -125,6 +120,9 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
       return null;
     }
   };
+
+  const walkinInfo = parseWalkinInformation(order?.walkinInformation);
+
   const getStatus = (status: string) => {
     switch (status) {
       case "PENDING":
@@ -208,40 +206,41 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
                   </h3>
                 </div>
 
-                {(() => {
-                  const walkinInfo = parseWalkinInformation(
-                    order.walkinInformation
-                  );
-                  return walkinInfo ? (
-                    <div className="bg-gray-50 p-3 rounded-lg space-y-2">
-                      <div>
-                        <p className="text-xs text-gray-500">Tên</p>
-                        <p className="font-medium">
-                          {walkinInfo.firstName} {walkinInfo.lastName}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">Email</p>
-                        <p className="font-medium">{walkinInfo.email}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">Số Điện Thoại</p>
-                        <p className="font-medium">{walkinInfo.phone}</p>
-                      </div>
+                {order?.user || walkinInfo ? (
+                  <div className="bg-gray-50 p-3 rounded-lg space-y-2">
+                    <div>
+                      <p className="text-xs text-gray-500">Tên</p>
+                      <p className="font-medium">
+                        {walkinInfo ? (
+                          <>
+                            {walkinInfo.firstName} {walkinInfo.lastName}
+                          </>
+                        ) : (
+                          <>
+                            {order.user.firstName} {order.user.lastName}
+                          </>
+                        )}
+                      </p>
                     </div>
-                  ) : (
-                    <div className="text-gray-500 text-sm">
-                      Chưa có thông tin
+                    <div>
+                      <p className="text-xs text-gray-500">Email</p>
+                      <p className="font-medium">{walkinInfo ? walkinInfo.email : order.user?.email}</p>
                     </div>
-                  );
-                })()}
+                    <div>
+                      <p className="text-xs text-gray-500">Số Điện Thoại</p>
+                      <p className="font-medium">{walkinInfo ? walkinInfo.phone : order.user?.phone}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-gray-500 text-sm">Chưa có thông tin</div>
+                )}
               </div>
             </div>
             <Separator />
             <div className="space-y-3">
               <h3 className="text-lg font-semibold">Vật Phẩm</h3>
               <div className="space-y-2">
-                {order?.orderItems?.map((item) => (
+                {order?.orderItems?.map((item: OrderItem) => (
                   <div
                     key={item.id}
                     className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
