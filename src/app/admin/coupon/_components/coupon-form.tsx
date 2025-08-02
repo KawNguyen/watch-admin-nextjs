@@ -201,7 +201,7 @@ export default function CouponForm({ mode, couponData }: CouponFormProps) {
                         onValueChange={field.onChange}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select discount type" />
+                          <SelectValue placeholder="Lựa chọn loại giảm giá" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="PERCENT">Phần Trăm</SelectItem>

@@ -112,7 +112,6 @@ export default function BlogManagement() {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold">Quản Lý Blog</h1>
@@ -133,7 +132,7 @@ export default function BlogManagement() {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-4 gap-6">
         {filteredBlogs.map((blog) => (
           <Card
             key={blog.id}

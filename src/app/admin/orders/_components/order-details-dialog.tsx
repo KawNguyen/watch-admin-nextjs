@@ -10,10 +10,11 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Package, User, CreditCard, Clock } from "lucide-react";
+import { Package, User, CreditCard, Clock, MapPin } from "lucide-react";
 
 import { formatMoney } from "@/lib";
 import { useOrder } from "@/queries/use-order";
+import { data } from "@/constants";
 
 interface WalkinInformation {
   firstName: string;
@@ -43,27 +44,6 @@ interface OrderItem {
     model: string;
   };
 }
-
-// interface OrderDetail {
-//   id: string;
-//   totalPrice: number;
-//   status: string;
-//   originalPrice: number;
-//   paymentMethod: string;
-//   shippingNotes: string | null;
-//   cancellationReason: string | null;
-//   userId: string | null;
-//   addressId: string | null;
-//   walkinInformation: string | null;
-//   couponId: string | null;
-//   deliveryAddress: string | null;
-//   createdAt: string;
-//   updatedAt: string;
-//   deletedAt: string | null;
-//   user: any;
-//   orderItems: OrderItem[];
-//   coupon: any;
-// }
 
 interface OrderDetailDialogProps {
   orderId: string;
@@ -110,6 +90,14 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
 
   const { data: order } = useOrder(orderId);
 
+  const parseDeliveryAddress = (address: string | null) => {
+    if (!address) return null;
+    try {
+      return JSON.parse(address);
+    } catch {
+      return null;
+    }
+  };
   const parseWalkinInformation = (
     walkinInfo: string | null
   ): WalkinInformation | null => {
@@ -224,11 +212,15 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Email</p>
-                      <p className="font-medium">{walkinInfo ? walkinInfo.email : order.user?.email}</p>
+                      <p className="font-medium">
+                        {walkinInfo ? walkinInfo.email : order.user?.email}
+                      </p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Số Điện Thoại</p>
-                      <p className="font-medium">{walkinInfo ? walkinInfo.phone : order.user?.phone}</p>
+                      <p className="font-medium">
+                        {walkinInfo ? walkinInfo.phone : order.user?.phone}
+                      </p>
                     </div>
                   </div>
                 ) : (
@@ -236,6 +228,41 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
                 )}
               </div>
             </div>
+            <Separator />
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-gray-500" />
+                <h3 className="text-lg font-semibold">Địa Chỉ Giao Hàng</h3>
+              </div>
+
+              {(() => {
+                const walkin = parseWalkinInformation(order.walkinInformation);
+                const delivery = parseDeliveryAddress(order.deliveryAddress);
+
+                if (walkin && walkin.street) {
+                  return (
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      {walkin.street}, {walkin.wardName}, {walkin.districtName},{" "}
+                      {walkin.provinceName}
+                    </div>
+                  );
+                }
+
+                if (delivery) {
+                  return (
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      {delivery.street}, {delivery.wardName},{" "}
+                      {delivery.districtName}, {delivery.provinceName}
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="text-gray-500">Chưa có thông tin địa chỉ</div>
+                );
+              })()}
+            </div>
+
             <Separator />
             <div className="space-y-3">
               <h3 className="text-lg font-semibold">Vật Phẩm</h3>

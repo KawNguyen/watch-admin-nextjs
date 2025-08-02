@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { brandApi } from "@/services/brand";
 import type { Brand } from "@/types/brand";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const ActionCell = ({ row }: { row: any }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -105,7 +106,7 @@ export const columns: ColumnDef<Brand>[] = [
       const image = row.original.image;
 
       return (
-        <div className="relative h-16 w-16">
+        <div className="relative h-[60px] w-[120px]">
           {image ? (
             <Image
               alt={row.getValue("name")}
