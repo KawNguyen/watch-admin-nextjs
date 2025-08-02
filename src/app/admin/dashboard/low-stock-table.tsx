@@ -44,18 +44,10 @@ export default function LowStockTable({ data }: Props) {
                     <div className="grid grid-cols-12 items-center gap-2">
                       <div className="col-span-2">
                         <Image
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
                           src={
                             p.watch.images[0]?.absolute_url ||
                             "https://placehold.co/500x500/png"
                           }
-=======
-                          src={p.watch?.images[0]?.absolute_url}
->>>>>>> Stashed changes
-=======
-                          src={p.watch?.images[0]?.absolute_url}
->>>>>>> Stashed changes
                           alt={p.watch.name}
                           width={500}
                           height={500}
