@@ -35,25 +35,29 @@ interface DatePickerWithRangeProps
   extends React.HTMLAttributes<HTMLDivElement> {
   onDateChange?: (date: DateRange | undefined, type: DateRangeType) => void;
   defaultType?: DateRangeType;
+  date: DateRange | undefined;
+  setDate: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
 }
 
 export function DatePickerWithRange({
   className,
   onDateChange,
   defaultType = "custom",
+  date,
+  setDate,
   ...props
 }: DatePickerWithRangeProps) {
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: subDays(new Date(), 7),
-    to: subDays(new Date(), 1),
-  });
-  const [rangeType, setRangeType] = useState<DateRangeType>(defaultType);
+  // Temporary date state for internal selection before applying
+  const [tempDate, setTempDate] = useState<DateRange | undefined>(date);
+  const [tempRangeType, setTempRangeType] =
+    useState<DateRangeType>(defaultType);
   const [selectedMonth, setSelectedMonth] = useState<number>(
     new Date().getMonth()
   );
   const [selectedYear, setSelectedYear] = useState<number>(
     new Date().getFullYear()
   );
+  const [isOpen, setIsOpen] = useState(false);
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 10 }, (_, i) => currentYear - 5 + i);
@@ -76,7 +80,25 @@ export function DatePickerWithRange({
   );
 
   /**
-   * Handles preset date selection (7 days, 28 days)
+   * Apply the temporary date selection to the actual date state
+   */
+  const handleApply = useCallback(() => {
+    setDate(tempDate);
+    onDateChange?.(tempDate, tempRangeType);
+    setIsOpen(false);
+  }, [tempDate, tempRangeType, setDate, onDateChange]);
+
+  /**
+   * Cancel the temporary selection and revert to original date
+   */
+  const handleCancel = useCallback(() => {
+    setTempDate(date);
+    setTempRangeType(defaultType);
+    setIsOpen(false);
+  }, [date, defaultType]);
+
+  /**
+   * Handles preset date selection (7 days, 28 days) and auto-apply
    */
   const handlePresetSelect = useCallback(
     (days: number) => {
@@ -87,14 +109,16 @@ export function DatePickerWithRange({
       };
 
       setDate(newDateRange);
-      setRangeType("custom");
+      setTempDate(newDateRange);
+      setTempRangeType("custom");
       onDateChange?.(newDateRange, "custom");
+      setIsOpen(false);
     },
-    [onDateChange]
+    [onDateChange, setDate]
   );
 
   /**
-   * Handles date selection based on the current range type
+   * Handles date selection based on the current range type (temporary)
    */
   const handleDateSelect = useCallback(
     (selectedDate: DateRange | undefined) => {
@@ -102,7 +126,7 @@ export function DatePickerWithRange({
 
       let newDateRange: DateRange | undefined;
 
-      switch (rangeType) {
+      switch (tempRangeType) {
         case "day":
           newDateRange = {
             from: selectedDate.from,
@@ -131,14 +155,13 @@ export function DatePickerWithRange({
           break;
       }
 
-      setDate(newDateRange);
-      onDateChange?.(newDateRange, rangeType);
+      setTempDate(newDateRange);
     },
-    [rangeType, onDateChange]
+    [tempRangeType]
   );
 
   /**
-   * Handles month selection for month range type
+   * Handles month selection for month range type (temporary)
    */
   const handleMonthSelect = useCallback(
     (monthIndex: number) => {
@@ -151,14 +174,13 @@ export function DatePickerWithRange({
         to: monthEnd,
       };
 
-      setDate(newDateRange);
-      onDateChange?.(newDateRange, "month");
+      setTempDate(newDateRange);
     },
-    [selectedYear, onDateChange]
+    [selectedYear]
   );
 
   /**
-   * Handles year selection for month range type
+   * Handles year selection for month range type (temporary)
    */
   const handleYearSelect = useCallback(
     (year: number) => {
@@ -171,52 +193,61 @@ export function DatePickerWithRange({
         to: monthEnd,
       };
 
-      setDate(newDateRange);
-      onDateChange?.(newDateRange, "month");
+      setTempDate(newDateRange);
     },
-    [selectedMonth, onDateChange]
+    [selectedMonth]
   );
 
   /**
-   * Handles range type change
+   * Handles range type change (temporary)
    */
-  const handleRangeTypeChange = useCallback(
-    (newType: DateRangeType) => {
-      setRangeType(newType);
+  const handleRangeTypeChange = useCallback((newType: DateRangeType) => {
+    setTempRangeType(newType);
 
-      // Auto-adjust date based on new type
-      const today = new Date();
-      let newDateRange: DateRange | undefined;
+    // Auto-adjust temp date based on new type
+    const today = new Date();
+    let newDateRange: DateRange | undefined;
 
-      switch (newType) {
-        case "day":
-          newDateRange = { from: today, to: today };
-          break;
-        case "week":
-          newDateRange = {
-            from: startOfWeek(today, { weekStartsOn: 1 }),
-            to: endOfWeek(today, { weekStartsOn: 1 }),
-          };
-          break;
-        case "month":
-          newDateRange = {
-            from: startOfMonth(today),
-            to: endOfMonth(today),
-          };
-          break;
-        case "custom":
-        default:
-          newDateRange = {
-            from: today,
-            to: addDays(today, 7),
-          };
-          break;
+    switch (newType) {
+      case "day":
+        newDateRange = { from: today, to: today };
+        break;
+      case "week":
+        newDateRange = {
+          from: startOfWeek(today, { weekStartsOn: 1 }),
+          to: endOfWeek(today, { weekStartsOn: 1 }),
+        };
+        break;
+      case "month":
+        newDateRange = {
+          from: startOfMonth(today),
+          to: endOfMonth(today),
+        };
+        break;
+      case "custom":
+      default:
+        newDateRange = {
+          from: today,
+          to: addDays(today, 7),
+        };
+        break;
+    }
+
+    setTempDate(newDateRange);
+  }, []);
+
+  /**
+   * Initialize temp state when popover opens
+   */
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      setIsOpen(open);
+      if (open) {
+        setTempDate(date);
+        setTempRangeType(defaultType);
       }
-
-      setDate(newDateRange);
-      onDateChange?.(newDateRange, newType);
     },
-    [onDateChange]
+    [date, defaultType]
   );
 
   /**
@@ -235,48 +266,44 @@ export function DatePickerWithRange({
   const getDisplayText = useCallback(() => {
     if (!date?.from) return "Chọn ngày";
 
-    switch (rangeType) {
-      case "day":
-        return `${formatDateToVietnamese(date.from)} - ${formatDateToVietnamese(
-          date.from
-        )}`;
-
-      case "week":
-        if (date.to) {
-          return `${formatDateToVietnamese(
-            date.from
-          )} - ${formatDateToVietnamese(date.to)}`;
-        }
-        return formatDateToVietnamese(date.from);
-      case "month":
-        if (date.to) {
-          return `${formatDateToVietnamese(
-            date.from
-          )} - ${formatDateToVietnamese(date.to)}`;
-        }
-        return formatDateToVietnamese(date.from);
-      case "custom":
-      default:
-        if (date.to) {
-          return `${formatDateToVietnamese(
-            date.from
-          )} - ${formatDateToVietnamese(date.to)}`;
-        }
-        return formatDateToVietnamese(date.from);
+    if (defaultType === "day") {
+      return `${formatDateToVietnamese(date.from)} - ${formatDateToVietnamese(
+        date.from
+      )}`;
     }
-  }, [date, rangeType, formatDateToVietnamese]);
+
+    if (date.to) {
+      return `${formatDateToVietnamese(date.from)} - ${formatDateToVietnamese(
+        date.to
+      )}`;
+    }
+    return formatDateToVietnamese(date.from);
+  }, [date, defaultType, formatDateToVietnamese]);
+
+  /**
+   * Check if dates have changed to enable/disable Apply button
+   */
+  const hasChanges = useMemo(() => {
+    if (!tempDate && !date) return false;
+    if (!tempDate || !date) return true;
+
+    return (
+      tempDate.from?.getTime() !== date.from?.getTime() ||
+      tempDate.to?.getTime() !== date.to?.getTime()
+    );
+  }, [tempDate, date]);
 
   /**
    * Renders the appropriate calendar based on range type
    */
   const renderCalendarContent = useCallback(() => {
-    switch (rangeType) {
+    switch (tempRangeType) {
       case "day":
         return (
           <Calendar
             autoFocus
             mode="single"
-            selected={date?.from}
+            selected={tempDate?.from}
             onSelect={(selectedDate) => {
               if (selectedDate) {
                 handleDateSelect({
@@ -285,7 +312,7 @@ export function DatePickerWithRange({
                 });
               }
             }}
-            defaultMonth={date?.from}
+            defaultMonth={tempDate?.from}
             weekStartsOn={1}
             locale={vi}
           />
@@ -293,21 +320,20 @@ export function DatePickerWithRange({
       case "week": {
         return (
           <Calendar
-            // showWeekNumber
             weekStartsOn={1}
             modifiers={{
-              selected: date,
-              range_start: date?.from,
-              range_end: date?.to,
+              selected: tempDate,
+              range_start: tempDate?.from,
+              range_end: tempDate?.to,
               range_middle: (dateM: Date) =>
-                date ? rangeIncludesDate(date, dateM) : false,
+                tempDate ? rangeIncludesDate(tempDate, dateM) : false,
             }}
             onDayClick={(day, modifiers) => {
               if (modifiers.selected) {
-                setDate(undefined); // Clear the selection if the day is already selected
+                setTempDate(undefined);
                 return;
               }
-              setDate({
+              setTempDate({
                 from: startOfWeek(day, { weekStartsOn: 1 }),
                 to: endOfWeek(day, { weekStartsOn: 1 }),
               });
@@ -324,7 +350,7 @@ export function DatePickerWithRange({
                 onValueChange={(e) => handleYearSelect(parseInt(e))}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a fruit" />
+                  <SelectValue placeholder="Chọn năm" />
                 </SelectTrigger>
                 <SelectContent>
                   {years.map((year) => (
@@ -356,8 +382,8 @@ export function DatePickerWithRange({
           <Calendar
             autoFocus
             mode="range"
-            defaultMonth={date?.from}
-            selected={date}
+            defaultMonth={tempDate?.from}
+            selected={tempDate}
             onSelect={handleDateSelect}
             numberOfMonths={2}
             weekStartsOn={1}
@@ -366,20 +392,20 @@ export function DatePickerWithRange({
         );
     }
   }, [
-    rangeType,
-    date,
-    selectedMonth,
+    tempRangeType,
+    tempDate,
     selectedYear,
     years,
     months,
     handleDateSelect,
-    handleMonthSelect,
     handleYearSelect,
+    selectedMonth,
+    handleMonthSelect,
   ]);
 
   return (
     <div className={cn("grid gap-2", className)} {...props}>
-      <Popover>
+      <Popover open={isOpen} onOpenChange={handleOpenChange}>
         <PopoverTrigger asChild>
           <Button
             id="date"
@@ -428,7 +454,9 @@ export function DatePickerWithRange({
                   ].map((mode) => (
                     <Button
                       key={mode.value}
-                      variant={rangeType === mode.value ? "default" : "ghost"}
+                      variant={
+                        tempRangeType === mode.value ? "default" : "ghost"
+                      }
                       size="sm"
                       className="h-7 flex-1 text-xs"
                       onClick={() =>
@@ -443,6 +471,16 @@ export function DatePickerWithRange({
 
               {/* Calendar content */}
               <div className="p-2">{renderCalendarContent()}</div>
+
+              {/* Action buttons */}
+              <div className="flex justify-end gap-2 border-t p-3">
+                <Button variant="outline" size="sm" onClick={handleCancel}>
+                  Hủy
+                </Button>
+                <Button size="sm" onClick={handleApply} disabled={!hasChanges}>
+                  Áp dụng
+                </Button>
+              </div>
             </div>
           </div>
         </PopoverContent>

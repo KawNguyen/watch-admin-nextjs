@@ -1,16 +1,9 @@
 "use client";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
@@ -28,7 +21,7 @@ export default function WorstProductsTable({ data }: Props) {
     <Card className="max-h-96">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <TrendingDown className="h-7 w-7 text-red-500" /> Sản phẩm bán ít 
+          <TrendingDown className="h-7 w-7 text-red-500" /> Sản phẩm bán ít
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -53,7 +46,10 @@ export default function WorstProductsTable({ data }: Props) {
                     <div className="grid grid-cols-12 items-center gap-2">
                       <div className="col-span-2">
                         <Image
-                          src={p.images[0].absolute_url}
+                          src={
+                            p.images[0]?.absolute_url ||
+                            "https://placehold.co/500x500/png"
+                          }
                           alt={p.name}
                           width={500}
                           height={500}

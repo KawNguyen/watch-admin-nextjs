@@ -22,7 +22,7 @@ export default function RevenueChart({ data }: Props) {
         <CardTitle>Biểu đồ lợi nhuận</CardTitle>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={250}>
+        <ResponsiveContainer width="100%" height={400}>
           <LineChart data={data?.dailyRevenue}>
             <CartesianGrid strokeDasharray="10 10" />
             <XAxis dataKey="date" />

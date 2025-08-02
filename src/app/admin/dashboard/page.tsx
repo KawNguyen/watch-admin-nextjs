@@ -7,26 +7,31 @@ import WorstProductsTable from "./worst-products-table";
 import NoSoldProducts from "./no-sold-products-table";
 
 import { DatePickerWithRange } from "./calendar";
-import { TodayStatisticCard } from "./_components/today-statistic-card";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { format, subDays } from "date-fns";
+import RevenueChart from "./revenue-chart";
+import { StatusPieChart } from "./_components/status-cards";
 
 export default function Dashboard() {
   const [date, setDate] = useState<DateRange | undefined>({
     from: subDays(new Date(), 7),
     to: subDays(new Date(), 1),
   });
-  const { data: dashboard } = useDashboard();
 
   const fromDate = date?.from ? format(date.from, "yyyy-MM-dd") : undefined;
   const toDate = date?.to ? format(date.to, "yyyy-MM-dd") : undefined;
 
-  console.log(fromDate, toDate);
+  const { data: dashboard } = useDashboard({
+    startDate: fromDate,
+    endDate: toDate,
+  });
 
   return (
     <main className="flex flex-col gap-4 p-4">
       <DatePickerWithRange
+        date={date}
+        setDate={setDate}
         className="w-fit"
         defaultType="month"
         onDateChange={(dateRange) => {
@@ -34,13 +39,14 @@ export default function Dashboard() {
         }}
       />
 
-      <div className="grid grid-cols-3 gap-8">
-        <div className="col-span-2">
-          <DashboardTabs data={dashboard} />
-        </div>
+      <DashboardTabs data={dashboard} />
 
-        <div className="col-span-1">
-          <TodayStatisticCard />
+      <div className="grid grid-cols-12 gap-4">
+        <div className="col-span-8">
+          <RevenueChart data={dashboard} />
+        </div>
+        <div className="col-span-4">
+          <StatusPieChart data={dashboard} />
         </div>
       </div>
 

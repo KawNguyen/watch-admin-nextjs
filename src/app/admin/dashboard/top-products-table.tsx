@@ -1,20 +1,13 @@
 "use client";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { formatMoney } from "@/lib";
 import Image from "next/image";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -53,7 +46,10 @@ export default function TopProductsTable({ data }: Props) {
                     <div className="grid grid-cols-12 items-center gap-2">
                       <div className="col-span-2">
                         <Image
-                          src={p.images[0].absolute_url}
+                          src={
+                            p.images[0]?.absolute_url ||
+                            "https://placehold.co/500x500/png"
+                          }
                           alt={p.name}
                           width={500}
                           height={500}

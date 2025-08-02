@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/table";
 import { PackageX } from "lucide-react";
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
 import { formatMoney } from "@/lib";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -44,7 +43,10 @@ export default function NoSoldProducts({ data }: Props) {
                     <div className="grid grid-cols-12 items-center gap-2">
                       <div className="col-span-2">
                         <Image
-                          src={p.images[0].absolute_url}
+                          src={
+                            p.images[0]?.absolute_url ||
+                            "https://placehold.co/500x500/png"
+                          }
                           alt={p.name}
                           width={500}
                           height={500}

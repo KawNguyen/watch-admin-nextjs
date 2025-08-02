@@ -20,7 +20,7 @@ export default function RevenueCards({ data }: Props) {
         <CardContent>
           <div className="flex flex-col gap-1">
             <span className="text-2xl font-bold">
-              {formatMoney(data?.totalRevenue) || 0}
+              {formatMoney(data?.totalRevenue || 0)}
             </span>
             <span className="text-xs">Tổng số doanh thu trong kỳ</span>
           </div>
@@ -34,7 +34,7 @@ export default function RevenueCards({ data }: Props) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-col gap-1">
-            <span className="text-2xl font-bold">{data?.totalOrders}</span>
+            <span className="text-2xl font-bold">{data?.totalOrders || 0}</span>
             <span className="text-xs">Tổng số đơn hàng đã bán</span>
           </div>
 
@@ -44,7 +44,7 @@ export default function RevenueCards({ data }: Props) {
             {data?.orderStatusCounts?.map((p: any) => (
               <div key={p.status}>
                 {p.status === "COMPLETED" ? "Hoàn Thành" : "Hủy"}:{" "}
-                {p._count._all}
+                {p._count._all || 0}
               </div>
             ))}
           </div>

@@ -23,7 +23,7 @@ export function TodayStatisticCard() {
           <div className="flex flex-col gap-2">
             <span className="text-sm font-medium">Doanh thu</span>
             <span className="text-2xl font-bold">
-              {formatMoney(data?.totalRevenue) || 0}
+              {formatMoney(data?.totalRevenue || 0)}
             </span>
           </div>
 
