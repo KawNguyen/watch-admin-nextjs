@@ -98,11 +98,7 @@ function CustomerEditModal({
     <Dialog onOpenChange={onClose} open={isOpen}>
       <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle>Edit Customer Information</DialogTitle>
-          <DialogDescription>
-            Update the customer&apos;s contact and address information below.
-            All changes will be saved once you click &quot;Save&quot;.
-          </DialogDescription>
+          <DialogTitle>Cập Nhật Thông Tin Khách Hàng</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
@@ -115,9 +111,9 @@ function CustomerEditModal({
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel>Tên</FormLabel>
                     <FormControl>
-                      <Input placeholder="First Name" {...field} />
+                      <Input placeholder="Tên" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -128,9 +124,9 @@ function CustomerEditModal({
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name</FormLabel>
+                    <FormLabel>Họ</FormLabel>
                     <FormControl>
-                      <Input placeholder="Last Name" {...field} />
+                      <Input placeholder="Họ" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -144,9 +140,9 @@ function CustomerEditModal({
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone</FormLabel>
+                    <FormLabel>Số Điện Thoại</FormLabel>
                     <FormControl>
-                      <Input placeholder="Phone" {...field} />
+                      <Input placeholder="0909..." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -172,9 +168,9 @@ function CustomerEditModal({
               name="street"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Street Address</FormLabel>
+                  <FormLabel>Số Nhà</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter street address" {...field} />
+                    <Input placeholder="123" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -187,14 +183,14 @@ function CustomerEditModal({
                 name="province"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Province</FormLabel>
+                    <FormLabel>Tỉnh / Thành Phố</FormLabel>
                     <Select
                       onValueChange={handleProvinceChange}
                       value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select province" />
+                          <SelectValue placeholder="Tỉnh / Thành Phố" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -218,7 +214,7 @@ function CustomerEditModal({
                 name="district"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>District</FormLabel>
+                    <FormLabel>Quận / Huyện</FormLabel>
                     <Select
                       disabled={!form.watch("province")}
                       onValueChange={handleDistrictChange}
@@ -226,7 +222,7 @@ function CustomerEditModal({
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select district" />
+                          <SelectValue placeholder="Quận / Huyện" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -250,7 +246,7 @@ function CustomerEditModal({
                 name="ward"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Ward</FormLabel>
+                    <FormLabel>Phường / Xã</FormLabel>
                     <Select
                       disabled={!form.watch("district")}
                       onValueChange={handleWardChange}
@@ -258,7 +254,7 @@ function CustomerEditModal({
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select ward" />
+                          <SelectValue placeholder="Phường / Xã" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -280,9 +276,9 @@ function CustomerEditModal({
 
             <DialogFooter>
               <Button onClick={onClose} type="button" variant="outline">
-                Cancel
+                Hủy
               </Button>
-              <Button type="submit">Save</Button>
+              <Button type="submit">Lưu Thông Tin</Button>
             </DialogFooter>
           </form>
         </Form>

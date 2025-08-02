@@ -86,7 +86,7 @@ export default function ProductSearchModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Search className="h-5 w-5" />
-            Search Products
+            Tìm Kiếm Sản Phẩm
           </DialogTitle>
         </DialogHeader>
 
@@ -95,7 +95,7 @@ export default function ProductSearchModal({
             <Input
               className="w-full"
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search products..."
+              placeholder="Tìm theo tên..."
               value={searchTerm}
             />
           </div>
@@ -104,7 +104,7 @@ export default function ProductSearchModal({
             {filteredProducts.length === 0 ? (
               <div className="p-8 text-center text-muted-foreground">
                 <Search className="mx-auto mb-2 h-8 w-8" />
-                <p>No products found.</p>
+                <p>Không Có Sản Phẩm.</p>
               </div>
             ) : (
               <div className="space-y-2 p-4">
@@ -141,7 +141,7 @@ export default function ProductSearchModal({
                         </div>
                         <div className="flex w-28 flex-col items-center justify-center text-center">
                           <div className="text-muted-foreground text-sm">
-                            Brand
+                            Thương Hiệu
                           </div>
                           <div className="font-medium">
                             {product.brand?.name}
@@ -149,7 +149,7 @@ export default function ProductSearchModal({
                         </div>
                         <div className="flex w-24 flex-col items-center justify-center text-center">
                           <div className="text-muted-foreground text-sm">
-                            Stock
+                            Số Lượng Còn
                           </div>
                           <div className="font-medium">
                             {product.inventory.quantity >
@@ -173,7 +173,7 @@ export default function ProductSearchModal({
 
           <div className="flex items-center justify-between pt-4">
             <span className="text-gray-500">
-              {tempSelectedProducts.length} product(s) selected
+              {tempSelectedProducts.length} được chọn
             </span>
             <div className="flex gap-2">
               <Button
@@ -181,14 +181,14 @@ export default function ProductSearchModal({
                 onClick={handleCancel}
                 variant="outline"
               >
-                Cancel
+                Hủy
               </Button>
               <Button
                 className="w-32 bg-black px-6 text-white"
                 disabled={tempSelectedProducts.length === 0}
                 onClick={handleSubmit}
               >
-                Choose
+                Chọn
               </Button>
             </div>
           </div>

@@ -66,23 +66,18 @@ const ShowSelectedList = ({
         <CardHeader>
           <div className="mb-2">
             <CardTitle className="flex items-center justify-between">
-              Selected Products
+              Sản phẩm đã chọn
               {selectedProducts.length > 0 && (
                 <Badge variant="secondary">
-                  {selectedProducts.length} product
-                  {selectedProducts.length > 1 && "s"}
+                  {selectedProducts.length} sản phẩm
                 </Badge>
               )}
             </CardTitle>
-            <CardDescription>
-              Choose products to add to the order. You can adjust quantity and
-              price for each selected product.
-            </CardDescription>
           </div>
           <Input
             className="w-full"
             onClick={() => setIsSearchOpen(true)}
-            placeholder="Search Products"
+            placeholder="Tìm Sản Phẩm"
             type="text"
           />
         </CardHeader>
@@ -91,9 +86,9 @@ const ShowSelectedList = ({
           {selectedProducts.length === 0 ? (
             <div className="flex flex-col items-center py-8 text-center text-muted-foreground">
               <ShoppingCart className="mx-auto h-8 w-8 opacity-50" />
-              <span className="mb-2">No products selected yet.</span>
+              <span className="mb-2">Chưa Chọn Sản Phẩm.</span>
               <Button className="w-fit" onClick={() => setIsSearchOpen(true)}>
-                Browse Products
+                Xem Sản Phẩm
               </Button>
             </div>
           ) : (

@@ -25,7 +25,7 @@ const OrderSummary = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Payment Method</CardTitle>
+        <CardTitle>Phương Thức Thanh Toán</CardTitle>
       </CardHeader>
       <CardContent>
         <RadioGroup
@@ -43,7 +43,7 @@ const OrderSummary = ({
           >
             <RadioGroupItem id="cod" value="COD" />
             <CircleDollarSign className="h-6 w-6" />
-            <span className="font-medium">COD (Cash on Delivery)</span>
+            <span className="font-medium">COD (Thanh Toán Khi Nhận Hàng)</span>
           </Label>
 
           <Label
@@ -70,7 +70,7 @@ const OrderSummary = ({
               className="size-40"
             />
             <p className="text-center font-semibold">
-              Scan to pay &nbsp;
+              Quét mã để thanh toán:{" "}
               <span className="font-bold text-green-700 text-lg">
                 {formatMoney(totalPrice)}
               </span>
@@ -79,26 +79,26 @@ const OrderSummary = ({
         )}
       </CardContent>
       <CardHeader>
-        <CardTitle>Summary Order</CardTitle>
+        <CardTitle>Tóm Tắt Hóa Đơn</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-1">
           <div className="flex justify-between">
-            <span>Subtotal:</span>
+            <span>Tạm Tính:</span>
             <span>{formatMoney(subtotal)}</span>
           </div>
           <div className="flex justify-between">
-            <span>Shipping:</span>
-            <span>Free</span>
+            <span>Vận Chuyển:</span>
+            <span>Miễn Phí</span>
           </div>
           {discountPct > 0 && (
             <div className="flex justify-between text-green-600">
-              <span>Discount&nbsp;({discountPct}%):</span>
+              <span>Giảm Giá&nbsp;({discountPct}%):</span>
               <span>- {discountValue.toFixed(2)}</span>
             </div>
           )}
           <div className="flex justify-between border-t pt-2 font-bold text-lg">
-            <span>Total:</span>
+            <span>Tổng Cộng:</span>
             <span className="text-black">{formatMoney(totalPrice)}</span>
           </div>
         </div>

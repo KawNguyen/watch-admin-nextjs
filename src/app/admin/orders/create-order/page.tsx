@@ -18,11 +18,11 @@ export default function CreateOrderPage() {
     mutationFn: (data: OrderFormValues) => orderApi.createOrder(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
-      toast.success("Create new order successfully");
+      toast.success("Tạo đơn hàng thành công");
       router.push("/admin/orders");
     },
     onError: (err) => {
-      toast.error("Create new order failed");
+      toast.error("Tạo đơn hàng thất bại");
       console.log(err);
     },
   });

@@ -10,7 +10,14 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Package, User, MapPin, CreditCard, Clock } from "lucide-react";
+import {
+  Package,
+  User,
+  MapPin,
+  CreditCard,
+  Clock,
+  SwitchCamera,
+} from "lucide-react";
 import { orderApi } from "@/services/create-order";
 import { toast } from "sonner";
 import { formatMoney } from "@/lib";
@@ -118,6 +125,22 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
       return null;
     }
   };
+  const getStatus = (status: string) => {
+    switch (status) {
+      case "PENDING":
+        return "Chờ Duyệt";
+      case "PROCESSING":
+        return "Đang Xử Lý";
+      case "SHIPPING":
+        return "Đang Giao";
+      case "DELIVERED":
+        return "Đã Giao";
+      case "COMPLETED":
+        return "Hoàn Thành";
+      case "CANCELED":
+        return "Bị Hủy";
+    }
+  };
   const getStatusColor = (status: string) => {
     switch (status) {
       case "PENDING":
@@ -157,7 +180,7 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
                   <h3 className="text-base font-semibold">Trạng Thái</h3>
                 </div>
                 <Badge className={getStatusColor(order.status)}>
-                  {order.status}
+                  {getStatus(order.status)}
                 </Badge>
               </div>
 

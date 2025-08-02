@@ -68,12 +68,12 @@ export default function CustomerInfoComp({
       info.districtName,
       info.provinceName,
     ].filter(Boolean);
-    return addressParts.length > 0 ? addressParts.join(", ") : "Not specified";
+    return addressParts.length > 0 ? addressParts.join(", ") : "Chưa cung cấp";
   };
 
   const formatFullName = (info: ExtendedCustomerInfo): string => {
     const fullName = `${info.firstName || ""} ${info.lastName || ""}`.trim();
-    return fullName || "Not specified";
+    return fullName || "Chưa cung cấp";
   };
 
   return (
@@ -81,14 +81,11 @@ export default function CustomerInfoComp({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Customer&apos;s Info
+            Thông Tin Khách Hàng
             <Button onClick={handleOpenModal} size="icon" variant="ghost">
               <Edit className="h-4 w-4" />
             </Button>
           </CardTitle>
-          <CardDescription>
-            View and edit the customer&apos;s contact and address information.
-          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-col gap-4 text-sm">
@@ -96,7 +93,7 @@ export default function CustomerInfoComp({
               <div>
                 <div className="flex items-center gap-2 text-gray-500 mb-1">
                   <User className="size-4" />
-                  Name
+                  Tên
                 </div>
                 <p className="font-medium">{formatFullName(customerInfo)}</p>
               </div>
@@ -107,7 +104,7 @@ export default function CustomerInfoComp({
                   Email
                 </div>
                 <p className="font-medium">
-                  {customerInfo.email || "Not specified"}
+                  {customerInfo.email || "Chưa cung cấp"}
                 </p>
               </div>
             </div>
@@ -115,27 +112,27 @@ export default function CustomerInfoComp({
             <div>
               <div className="flex items-center gap-2 text-gray-500 mb-1">
                 <Phone className="size-4" />
-                Phone
+                Số Điện Thoại
               </div>
               <p className="font-medium">
-                {customerInfo.phone || "Not specified"}
+                {customerInfo.phone || "Chưa cung cấp"}
               </p>
             </div>
 
             <div>
               <div className="flex items-center gap-2 text-gray-500 mb-1">
                 <MapPin className="size-4" />
-                Address
+                Địa Chỉ
               </div>
               <p className="font-medium">{formatAddress(customerInfo)}</p>
             </div>
           </div>
 
           <div className="space-y-1">
-            <Label>Notes:</Label>
+            <Label>Ghi Chú:</Label>
             <Textarea
               className="w-full resize-none rounded-md p-2 bg-gray-50"
-              placeholder="Add notes or special instructions…"
+              placeholder="Ghi chú thông tin liên quan đến đơn hàng"
               rows={5}
             />
           </div>

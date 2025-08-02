@@ -100,22 +100,19 @@ export default function OrderForm({
     customerInfo.province &&
     customerInfo.district &&
     customerInfo.ward;
-  const submitButtonText = mode === "create" ? "Create Order" : "Update Order";
+  const submitButtonText =
+    mode === "create" ? "Tạo Đơn Hàng" : "Cập Nhật Đơn Hàng";
   const isEditMode = mode === "edit";
 
   return (
     <div className="min-h-screen">
       <div className="container">
         <div className="grid grid-cols-12 gap-6">
-          {/* ---------------- Main ---------------- */}
           <div className="col-span-8 space-y-6">
-            {/* Selected Products */}
             <ShowSelectedList
               selectedProducts={selectedProducts}
               setSelectedProducts={setSelectedProducts}
             />
-
-            {/* Summary Order */}
             <OrderSummary
               paymentMethod={paymentMethod}
               setPaymentMethod={setPaymentMethod}
@@ -124,7 +121,6 @@ export default function OrderForm({
               discountPct={discountPct}
               discountValue={discountValue}
             />
-
             <div className="mt-4 flex items-center justify-between">
               <div>
                 {isEditMode && (
@@ -148,7 +144,6 @@ export default function OrderForm({
               </Button>
             </div>
           </div>
-
           <div className="col-span-4 space-y-4">
             {isEditMode && (
               <Button
@@ -159,22 +154,18 @@ export default function OrderForm({
                 {isLoading ? "Processing..." : "Confirm Order"}
               </Button>
             )}
-
             <div>
               <CustomerInfo
                 customerInfo={customerInfo}
                 setCustomerInfo={setCustomerInfo}
               />
             </div>
-
             <div>
               <PaymemtCoupon />
             </div>
           </div>
         </div>
       </div>
-
-      {/* ------------- MODALS ------------- */}
       <ProductSearchModal
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}

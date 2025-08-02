@@ -409,8 +409,6 @@ const OrderPage = () => {
           </table>
         </div>
       </div>
-
-      {/* Empty State */}
       {orders.length === 0 && (
         <div className="text-center py-12">
           <div className="text-gray-500 text-lg">No orders found</div>
@@ -419,7 +417,7 @@ const OrderPage = () => {
               className={buttonVariants({ variant: "default" })}
               href="/admin/orders/create-order"
             >
-              Create Order
+              Tạo Đơn Hàng
             </Link>
           </div>
         </div>

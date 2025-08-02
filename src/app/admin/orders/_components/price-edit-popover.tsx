@@ -107,7 +107,7 @@ export default function PriceEditPopover({
                 {formatMoney(price)}
               </span>
               <span className="text-green-600 text-xs">
-                {currentDiscountPercentage.toFixed(1)}% off
+                Giảm {currentDiscountPercentage.toFixed(1)} %
               </span>
             </div>
           ) : (
@@ -119,17 +119,17 @@ export default function PriceEditPopover({
       </PopoverTrigger>
       <PopoverContent className="w-80">
         <div className="space-y-4">
-          <h4 className="font-semibold">Edit Price</h4>
+          <h4 className="font-semibold">Điều Chỉnh Giá </h4>
 
           <div className="text-muted-foreground text-sm">
-            Original price: {formatMoney(originalPrice)}
+            Giá Gốc: {formatMoney(originalPrice)}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="discount" className="text-sm">
               {discountType === "percentage"
-                ? "Discount Percentage"
-                : "Discount Amount"}
+                ? "Giảm theo %"
+                : "Giảm theo số tiền"}
             </Label>
             <div className="flex">
               <Input
@@ -143,8 +143,8 @@ export default function PriceEditPopover({
                 onChange={(e) => setDiscountValue(e.target.value)}
                 placeholder={
                   discountType === "percentage"
-                    ? "Enter percentage"
-                    : "Enter amount"
+                    ? "Nhập phần trăm giảm"
+                    : "Nhập giá tiền giảm"
                 }
                 step={discountType === "percentage" ? "0.1" : "0.01"}
                 type="number"
@@ -166,13 +166,13 @@ export default function PriceEditPopover({
                     onClick={() => handleDiscountTypeChange("percentage")}
                   >
                     <span className="mr-2">%</span>
-                    Percentage
+                    Phần Trăm
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleDiscountTypeChange("cash")}
                   >
                     <span className="mr-2">VND</span>
-                    Cash Amount
+                    Giá Tiền
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -183,11 +183,11 @@ export default function PriceEditPopover({
             <div className="p-3 bg-muted rounded-md">
               <div className="text-sm space-y-1">
                 <div className="flex justify-between">
-                  <span>Original Price:</span>
+                  <span>Giá Gốc:</span>
                   <span>{formatMoney(originalPrice)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Discount:</span>
+                  <span>Giảm:</span>
                   <span className="text-red-600">
                     {discountType === "percentage"
                       ? `-${discountValue}%`
@@ -195,7 +195,7 @@ export default function PriceEditPopover({
                   </span>
                 </div>
                 <div className="flex justify-between font-medium border-t pt-1">
-                  <span>New Price:</span>
+                  <span>Giá Phải Trả:</span>
                   <span>
                     {discountType === "percentage"
                       ? formatMoney(
@@ -213,10 +213,10 @@ export default function PriceEditPopover({
 
           <div className="flex justify-end gap-2">
             <Button onClick={handleCancel} size="sm" variant="outline">
-              Cancel
+              Hủy
             </Button>
             <Button onClick={handleSave} size="sm">
-              Save
+              Lưu
             </Button>
           </div>
         </div>
