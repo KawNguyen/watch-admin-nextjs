@@ -3,15 +3,12 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import UsersDataTable from "./_components/users-data-table";
-
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Admin | Quản Lý Tài Khoản",
+};
 export default async function UsersPage() {
   const queryClient = new QueryClient();
 
@@ -24,8 +21,7 @@ export default async function UsersPage() {
       <CardHeader>
         <div className="flex w-full items-center justify-between">
           <div>
-            <CardTitle>Users</CardTitle>
-            <CardDescription>Manage users</CardDescription>
+            <CardTitle>Quản Lý Tài Khoản</CardTitle>
           </div>
         </div>
       </CardHeader>

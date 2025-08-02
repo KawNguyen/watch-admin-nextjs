@@ -1,4 +1,4 @@
-import { SupportManagement } from './_components/support-management';
+import { SupportManagement } from "./_components/support-management";
 
 const SupportPage = () => {
   return (

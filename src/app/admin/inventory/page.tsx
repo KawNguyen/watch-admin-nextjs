@@ -16,8 +16,7 @@ import InventoryDataTable from "./_components/inventory-data-table";
 import { useInventory } from "@/queries/use-inventory";
 
 export const metadata: Metadata = {
-  title: "Admin | Inventory",
-  description: "Manage inventory in the admin panel",
+  title: "Admin | Kho",
 };
 
 export default async function InventoryPage() {
@@ -33,8 +32,8 @@ export default async function InventoryPage() {
       <CardHeader>
         <div className="flex w-full items-center justify-between">
           <div>
-            <CardTitle>Inventory</CardTitle>
-            <CardDescription>Manage inventory</CardDescription>
+            <CardTitle>Kho</CardTitle>
+            <CardDescription>Quản lý số lượng tồn của sản phẩm</CardDescription>
           </div>
         </div>
       </CardHeader>

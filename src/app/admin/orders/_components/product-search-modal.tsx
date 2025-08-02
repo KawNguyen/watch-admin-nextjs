@@ -156,7 +156,9 @@ export default function ProductSearchModal({
                             product.inventory.lowStockThreshold ? (
                               <span>{product.inventory.quantity}</span>
                             ) : (
-                              <Badge variant="destructive">Out of stock</Badge>
+                              <Badge variant="destructive">
+                                {product.inventory.quantity}
+                              </Badge>
                             )}
                           </div>
                         </div>

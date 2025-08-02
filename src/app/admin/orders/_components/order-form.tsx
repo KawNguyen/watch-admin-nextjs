@@ -134,7 +134,7 @@ export default function OrderForm({
                     onClick={onCancel}
                     disabled={isLoading}
                   >
-                    Cancel
+                    Hủy
                   </Button>
                 )}
               </div>

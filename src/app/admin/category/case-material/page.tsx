@@ -2,31 +2,29 @@ import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
-} from '@tanstack/react-query';
+} from "@tanstack/react-query";
 
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import CaseMaterialsDataTable from './_components/case-material-data-table';
-import CaseMaterialForm from './_components/case-material-form';
+} from "@/components/ui/card";
+import CaseMaterialsDataTable from "./_components/case-material-data-table";
+import CaseMaterialForm from "./_components/case-material-form";
 
 export const metadata: Metadata = {
-  title: 'Admin | Watches',
-  description: 'Manage watches in the admin panel',
+  title: "Admin | Chất Liệu Vỏ",
 };
 
 export default async function CaseMaterialsPage() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['materials'],
+    queryKey: ["materials"],
     queryFn: () =>
-      import('@/queries/use-material').then((mod) => mod.useMaterials()),
+      import("@/queries/use-material").then((mod) => mod.useMaterials()),
   });
 
   return (
@@ -34,10 +32,8 @@ export default async function CaseMaterialsPage() {
       <CardHeader>
         <div className="flex w-full items-center justify-between">
           <div>
-            <CardTitle>Case Material</CardTitle>
-            <CardDescription>Manage case material</CardDescription>
+            <CardTitle>Chất Liệu Vỏ</CardTitle>
           </div>
-
           <CaseMaterialForm mode="create" />
         </div>
       </CardHeader>

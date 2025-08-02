@@ -28,8 +28,6 @@ import {
 } from "@/components/ui/sheet";
 import { userSchema } from "@/schema/user";
 import { userApi } from "@/services/user";
-import { UserGender } from "@/types";
-import { UserRole } from "@/types/user";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 
@@ -50,21 +48,32 @@ export default function UserForm({ mode, userData }: UserFormProps) {
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      phone: isEditMode && userData ? userData.phone : "",
-      firstName: isEditMode && userData ? userData.firstName : "",
-      lastName: isEditMode && userData ? userData.lastName : "",
+      phone: "",
+      firstName: "",
+      lastName: "",
     },
   });
+
+  React.useEffect(() => {
+    if (isOpen && userData) {
+      form.reset({
+        phone: userData.phone || "",
+        firstName: userData.firstName || "",
+        lastName: userData.lastName || "",
+      });
+    }
+  }, [isOpen, userData, form]);
 
   const onSubmit = async (data: UserFormValues) => {
     mutation.mutate(data, {
       onSuccess: () => {
         form.reset();
         queryClient.invalidateQueries({ queryKey: ["users"] });
+        toast.success("Cập nhật thành công tài khoản");
         setIsOpen(false);
       },
       onError: (error: any) => {
-        toast.error("Failed to update user: " + error.message);
+        toast.error("Cập nhật thất bại" + error.message);
       },
     });
   };
@@ -86,7 +95,7 @@ export default function UserForm({ mode, userData }: UserFormProps) {
       <SheetContent className="hide-scrollbar sm:max-w-lg">
         <SheetHeader>
           <SheetTitle className="mb-4">
-            {isEditMode ? "Edit user" : "View user"}
+            {isEditMode ? "Cập nhật tài khoản" : "Xem chi tiết tài khoản"}
           </SheetTitle>
         </SheetHeader>
         <Form {...form}>
@@ -98,7 +107,6 @@ export default function UserForm({ mode, userData }: UserFormProps) {
               <Input
                 placeholder="abc@gmail.com"
                 value={userData.email}
-                className=""
                 disabled={isViewMode || isEditMode}
               />
             </div>
@@ -109,14 +117,10 @@ export default function UserForm({ mode, userData }: UserFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Phone <span className="text-red-500">*</span>
+                    Số điện thoại <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="0123456789"
-                      {...field}
-                      value={userData.phone}
-                    />
+                    <Input placeholder="" {...field} disabled={isViewMode} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -128,13 +132,13 @@ export default function UserForm({ mode, userData }: UserFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    First Name <span className="text-red-500">*</span>
+                    Tên <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="John"
                       {...field}
-                      value={userData.firstName}
+                      disabled={isViewMode}
                     />
                   </FormControl>
                   <FormMessage />
@@ -147,13 +151,13 @@ export default function UserForm({ mode, userData }: UserFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Last Name <span className="text-red-500">*</span>
+                    Họ <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="John"
                       {...field}
-                      value={userData.lastName}
+                      disabled={isViewMode}
                     />
                   </FormControl>
                   <FormMessage />
@@ -169,7 +173,7 @@ export default function UserForm({ mode, userData }: UserFormProps) {
                     isEditMode && (
                       <>
                         <Pencil />
-                        Update
+                        Cập nhật
                       </>
                     )
                   )}

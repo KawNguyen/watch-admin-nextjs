@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   type ColumnDef,
@@ -11,8 +11,8 @@ import {
   type SortingState,
   useReactTable,
   type VisibilityState,
-} from '@tanstack/react-table';
-import React from 'react';
+} from "@tanstack/react-table";
+import React from "react";
 import {
   Table,
   TableBody,
@@ -20,10 +20,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Input } from '../ui/input';
-import { DataTablePagination } from './data-table-pagination';
-import { DataTableViewOptions } from './data-table-view-options';
+} from "@/components/ui/table";
+import { Input } from "../ui/input";
+import { DataTablePagination } from "./data-table-pagination";
+import { DataTableViewOptions } from "./data-table-view-options";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -34,7 +34,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-  searchKey = '',
+  searchKey = "",
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -71,8 +71,16 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn(searchKey)?.setFilterValue(event.target.value)
           }
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
           placeholder={`Filter ${searchKey}...`}
-          value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}
+=======
+          placeholder={`Lọc ${searchKey}...`}
+>>>>>>> Stashed changes
+=======
+          placeholder={`Lọc ${searchKey}...`}
+>>>>>>> Stashed changes
+          value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
         />
 
         <DataTableViewOptions table={table} />
@@ -101,7 +109,7 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  data-state={row.getIsSelected() && 'selected'}
+                  data-state={row.getIsSelected() && "selected"}
                   key={row.id}
                 >
                   {row.getVisibleCells().map((cell) => (

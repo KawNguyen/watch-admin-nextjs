@@ -27,15 +27,15 @@ export const columns: ColumnDef<Inventory>[] = [
   },
   {
     accessorKey: "watchId",
-    header: "Watch Id",
+    header: "Id đồng hồ",
   },
   {
     accessorKey: "watch.name",
-    header: "Name",
+    header: "Tên",
   },
   {
     accessorKey: "quantity",
-    header: "Quantity",
+    header: "Số lượng",
     cell: ({ row }) => {
       const quantity = row.original.quantity;
       const lowStockThreshold = row.original.lowStockThreshold;

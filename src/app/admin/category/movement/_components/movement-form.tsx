@@ -2,7 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Eye, Loader2, Pencil, Plus } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { queryClient } from "@/components/provider/provider";
@@ -19,7 +19,6 @@ import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -51,9 +50,18 @@ export default function MovementForm({
   const form = useForm<MovementFormValues>({
     resolver: zodResolver(movementSchema),
     defaultValues: {
-      name: isEditMode ? movementData.name : "",
+      name: "",
     },
   });
+
+  React.useEffect(() => {
+    if (isOpen && movementData) {
+      form.reset({
+        name: movementData.name || "",
+      });
+    }
+  }, [isOpen, movementData, form]);
+
   const onSubmit = async (data: MovementFormValues) => {
     mutation.mutate(data, {
       onSuccess: () => {
@@ -61,8 +69,8 @@ export default function MovementForm({
         queryClient.invalidateQueries({ queryKey: ["movements"] });
         toast.success(
           isEditMode
-            ? "Movement updated successfully"
-            : "Movement created successfully"
+            ? "Cập nhật chuyển động thành công"
+            : "Thêm chuyển động thành công"
         );
         setIsOpen(false);
       },
@@ -90,7 +98,7 @@ export default function MovementForm({
         ) : (
           <Button>
             <Plus />
-            Create Movement
+            Chuyển Động
           </Button>
         )}
       </SheetTrigger>
@@ -98,18 +106,11 @@ export default function MovementForm({
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? "Edit Movement"
+              ? "Cập Nhật Chuyển Động"
               : isViewMode
-              ? "View Movement"
-              : "Create Movement"}
+              ? "Xem Chi Tiết Chuyển Động"
+              : "Thêm Chuyển Động"}
           </SheetTitle>
-          <SheetDescription>
-            {isEditMode
-              ? "Edit the details of the movement."
-              : isViewMode
-              ? "View the details of the movement."
-              : "Fill in the details to create a new movement."}
-          </SheetDescription>
         </SheetHeader>
         <Form {...form}>
           <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
@@ -119,13 +120,12 @@ export default function MovementForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Name <span className="text-red-500">*</span>
+                    Tên <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Name"
+                      placeholder="Automatic"
                       {...field}
-                      value={movementData?.name || field.value}
                       disabled={isViewMode}
                     />
                   </FormControl>
@@ -141,12 +141,12 @@ export default function MovementForm({
                   ) : isEditMode ? (
                     <>
                       <Pencil />
-                      Update
+                      Cập Nhật
                     </>
                   ) : (
                     <>
                       <Plus />
-                      Create
+                      Thêm
                     </>
                   )}
                 </Button>

@@ -83,7 +83,7 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
         const response = await orderApi.getOrderById(orderId);
         setOrder(response.data.item);
       } catch {
-        toast.error("Failed to fetch");
+        toast.error("Load thất bại");
       }
     };
 
@@ -144,104 +144,79 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
-            Order Details -<Badge variant="default">{orderId}</Badge>
+            Chi Tiết Hóa Đơn -<Badge variant="default">{orderId}</Badge>
           </DialogTitle>
         </DialogHeader>
 
         {order && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-12">
-              <div className="col-span-1 space-y-2">
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 bg-white rounded-xl shadow-sm border space-y-3">
                 <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-gray-500" />
-                  <h3 className="text-lg font-semibold">Status</h3>
+                  <Clock className="h-5 w-5 text-gray-500" />
+                  <h3 className="text-base font-semibold">Trạng Thái</h3>
                 </div>
                 <Badge className={getStatusColor(order.status)}>
                   {order.status}
                 </Badge>
               </div>
-              <Separator orientation="vertical" className="ml-10" />
-              <div className="col-span-3 space-y-2">
+
+              <div className="p-4 bg-white rounded-xl shadow-sm border space-y-3">
                 <div className="flex items-center gap-2">
-                  <CreditCard className="h-4 w-4 text-gray-500" />
-                  <h3 className=" w-full   text-lg font-semibold">
-                    Payment Method
+                  <CreditCard className="h-5 w-5 text-gray-500" />
+                  <h3 className="text-base font-semibold">
+                    Phương Thức Thanh Toán
                   </h3>
                 </div>
-                <span className="flex place-content-center font-medium ">
-                  {order.paymentMethod === "COD" ? (
-                    <Badge variant="outline">Cash on Delivery</Badge>
-                  ) : (
-                    <Badge variant="momo">MOMO</Badge>
-                  )}
-                </span>
+                <Badge
+                  variant={order.paymentMethod === "COD" ? "outline" : "momo"}
+                >
+                  {order.paymentMethod === "COD"
+                    ? "Thanh toán khi nhận hàng"
+                    : "MOMO"}
+                </Badge>
               </div>
-              <Separator orientation="vertical" className="ml-2" />
-              <div className="col-span-6 space-y-3">
+
+              <div className="p-4 bg-white rounded-xl shadow-sm border space-y-3">
                 <div className="flex items-center gap-2">
                   <User className="h-5 w-5 text-gray-500" />
-                  <h3 className="text-lg font-semibold">
-                    Customer Information
+                  <h3 className="text-base font-semibold">
+                    Thông Tin Khách Hàng
                   </h3>
                 </div>
+
                 {(() => {
                   const walkinInfo = parseWalkinInformation(
                     order.walkinInformation
                   );
                   return walkinInfo ? (
-                    <div className="bg-gray-50 p-4 rounded-lg space-y-2">
-                      <div className="grid grid-cols-12">
-                        <div className="col-span-3">
-                          <span className="text-sm text-gray-600">Name:</span>
-                          <div className="font-medium">
-                            {walkinInfo.firstName} {walkinInfo.lastName}
-                          </div>
-                        </div>
-                        <div className="col-span-6">
-                          <span className="text-sm text-gray-600">Email:</span>
-                          <div className="font-medium">{walkinInfo.email}</div>
-                        </div>
-                        <div className="col-span-3">
-                          <span className="text-sm text-gray-600">Phone:</span>
-                          <div className="font-medium">{walkinInfo.phone}</div>
-                        </div>
+                    <div className="bg-gray-50 p-3 rounded-lg space-y-2">
+                      <div>
+                        <p className="text-xs text-gray-500">Tên</p>
+                        <p className="font-medium">
+                          {walkinInfo.firstName} {walkinInfo.lastName}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">Email</p>
+                        <p className="font-medium">{walkinInfo.email}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">Số Điện Thoại</p>
+                        <p className="font-medium">{walkinInfo.phone}</p>
                       </div>
                     </div>
                   ) : (
-                    <div className="text-gray-500">No customer information</div>
+                    <div className="text-gray-500 text-sm">
+                      Chưa có thông tin
+                    </div>
                   );
                 })()}
               </div>
             </div>
-
             <Separator />
-
-            <div className=" space-y-3">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-gray-500" />
-                <h3 className="text-lg font-semibold">Shipping Address</h3>
-              </div>
-              {(() => {
-                const parsedAddress = parseDeliveryAddress(
-                  order.deliveryAddress
-                );
-                return parsedAddress ? (
-                  <div className="p-4">
-                    <Badge className="text-md font-semibold">
-                      {parsedAddress.street}, {parsedAddress.wardName},{" "}
-                      {parsedAddress.districtName}, {parsedAddress.provinceName}
-                    </Badge>
-                  </div>
-                ) : (
-                  <div className="text-gray-500">No address information</div>
-                );
-              })()}
-            </div>
-
-            <Separator />
-
             <div className="space-y-3">
-              <h3 className="text-lg font-semibold">Order Items</h3>
+              <h3 className="text-lg font-semibold">Vật Phẩm</h3>
               <div className="space-y-2">
                 {order?.orderItems?.map((item) => (
                   <div
@@ -256,7 +231,7 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
                         </div>
                       )}
                       <div className="text-sm text-gray-600">
-                        Quantity: {item.quantity}
+                        Số Lượng: {item.quantity}
                       </div>
                     </div>
                     <div className="text-right">
@@ -268,27 +243,25 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({
                 ))}
               </div>
             </div>
-
             <Separator />
-
             <div className="space-y-3">
-              <h3 className="text-lg font-semibold">Order Summary</h3>
+              <h3 className="text-lg font-semibold">Tóm Tắt</h3>
               <div className="bg-gray-50 p-4 rounded-lg space-y-2">
                 {order.originalPrice !== order.totalPrice && (
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Original Price:</span>
+                    <span className="text-gray-600">Giá Gốc:</span>
                     <span className="text-gray-600 line-through">
                       {formatMoney(order.originalPrice)}
                     </span>
                   </div>
                 )}
                 <div className="flex justify-between items-center font-semibold text-lg">
-                  <span>Total Price:</span>
+                  <span>Tổng Tiền:</span>
                   <span>{formatMoney(order.totalPrice)}</span>
                 </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </DialogContent>
     </Dialog>

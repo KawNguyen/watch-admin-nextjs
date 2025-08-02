@@ -11,6 +11,7 @@ import {
   WarehouseIcon,
   Archive,
   WatchIcon,
+  LayoutDashboard,
 } from "lucide-react";
 
 export const data = {
@@ -28,7 +29,19 @@ export const data = {
   ],
   navMain: [
     {
-      title: "User",
+      title: "Dashboard",
+      url: "#",
+      icon: LayoutDashboard,
+      isActive: true,
+      items: [
+        {
+          title: "List",
+          url: "/admin/dashboard",
+        },
+      ],
+    },
+    {
+      title: "Quản Lý Tài Khoản",
       url: "#",
       icon: UsersIcon,
       isActive: true,
@@ -40,31 +53,31 @@ export const data = {
       ],
     },
     {
-      title: "Category",
+      title: "Quản Lý Danh Mục",
       url: "#",
       icon: ChartBarStackedIcon,
       isActive: true,
       items: [
         {
-          title: "Brand",
+          title: "Thương Hiệu",
           url: "/admin/category/brand",
         },
         {
-          title: "Movement",
+          title: "Chuyển Động",
           url: "/admin/category/movement",
         },
         {
-          title: "Band Material",
+          title: "Chất Liệu Dây",
           url: "/admin/category/band-material",
         },
         {
-          title: "Case Material",
+          title: "Chất Liệu Vỏ",
           url: "/admin/category/case-material",
         },
       ],
     },
     {
-      title: "Watches",
+      title: "Đồng Hồ",
       url: "#",
       icon: WatchIcon,
       isActive: true,
@@ -76,7 +89,7 @@ export const data = {
       ],
     },
     {
-      title: "Stock",
+      title: "Nhập Hàng",
       url: "#",
       icon: WarehouseIcon,
       isActive: true,
@@ -88,7 +101,7 @@ export const data = {
       ],
     },
     {
-      title: "Inventory",
+      title: "Kho",
       url: "#",
       icon: Archive,
       isActive: true,
@@ -100,7 +113,7 @@ export const data = {
       ],
     },
     {
-      title: "Orders",
+      title: "Hóa Đơn",
       url: "#",
       icon: ScrollTextIcon,
       isActive: true,
@@ -112,7 +125,7 @@ export const data = {
       ],
     },
     {
-      title: "Banners & Ads",
+      title: "Quản Lý Quảng Cáo",
       url: "#",
       icon: MegaphoneIcon,
       isActive: true,
@@ -124,7 +137,7 @@ export const data = {
       ],
     },
     {
-      title: "Coupons",
+      title: "Quản Lý Mã Giảm Giá",
       url: "#",
       icon: BanknoteArrowDownIcon,
       isActive: true,
@@ -136,7 +149,7 @@ export const data = {
       ],
     },
     {
-      title: "Blogs",
+      title: "Quản Lý Bài Blogs",
       url: "#",
       icon: Newspaper,
       isActive: true,
@@ -148,7 +161,7 @@ export const data = {
       ],
     },
     {
-      title: "Reviews",
+      title: "Quản Lý Đánh Giá",
       url: "#",
       icon: MessageSquareTextIcon,
       isActive: true,
@@ -160,7 +173,7 @@ export const data = {
       ],
     },
     {
-      title: "Support",
+      title: "Quản Lý Hỗ Trợ",
       url: "#",
       icon: MessageSquareWarning,
       isActive: true,

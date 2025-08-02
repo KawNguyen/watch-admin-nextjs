@@ -1,22 +1,22 @@
-import { useMutation } from '@tanstack/react-query';
-import type { ColumnDef } from '@tanstack/react-table';
-import { Loader2, Trash2 } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { queryClient } from '@/components/provider/provider';
-import { AlertDialogFooter } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { useMutation } from "@tanstack/react-query";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Loader2, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { queryClient } from "@/components/provider/provider";
+import { AlertDialogFooter } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { couponApi } from '@/services/coupon';
-import type { Coupon } from '@/types/coupon';
-import CouponForm from './coupon-form';
-import { Switch } from '@/components/ui/switch';
+} from "@/components/ui/dialog";
+import { couponApi } from "@/services/coupon";
+import type { Coupon } from "@/types/coupon";
+import CouponForm from "./coupon-form";
+import { Switch } from "@/components/ui/switch";
 export const columns: ColumnDef<Coupon>[] = [
   {
     id: "select",
@@ -46,16 +46,16 @@ export const columns: ColumnDef<Coupon>[] = [
   },
   {
     accessorKey: "discountType",
-    header: "Discount Type",
+    header: "Loại Giảm Giá",
   },
   {
     accessorKey: "discountValue",
-    header: "Discount Value",
+    header: "Giá Trị Giảm",
   },
 
   {
     accessorKey: "isActive",
-    header: "Active",
+    header: "Trạng Thái",
     cell: ({ row }) => {
       const isActive = row.original.isActive;
       return isActive == true ? (
@@ -81,7 +81,7 @@ export const columns: ColumnDef<Coupon>[] = [
   },
   {
     accessorKey: "actions",
-    header: "Actions",
+    header: "Chức Năng",
     cell: ({ row }: { row: any }) => {
       const [isDialogOpen, setIsDialogOpen] = useState(false);
 

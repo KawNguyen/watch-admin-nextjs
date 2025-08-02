@@ -31,7 +31,6 @@ import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -40,6 +39,8 @@ import {
 import { brandSchema } from "@/schema/brand";
 import { brandApi } from "@/services/brand";
 import { cloudinaryApi } from "@/services/cloudinary";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import Image from "next/image";
 
 interface BrandFormProps {
   mode: "create" | "edit" | "view";
@@ -77,11 +78,20 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
   const form = useForm<BrandFormValues>({
     resolver: zodResolver(brandSchema),
     defaultValues: {
-      name: isEditMode && brandData ? brandData.name : "",
-      country: isEditMode && brandData ? brandData.country : "",
+      name: "",
+      country: "",
       image: [],
     },
   });
+
+  React.useEffect(() => {
+    if (isOpen && brandData) {
+      form.reset({
+        name: brandData.name || "",
+        country: brandData.country || "",
+      });
+    }
+  }, [isOpen, brandData, form]);
 
   const handleUpload = async (files: File[]) => {
     const formData = new FormData();
@@ -103,7 +113,7 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
 
       return uploadImage;
     } catch (error) {
-      console.error("Error uploading files:", error);
+      console.log("Tải ảnh bị lỗi");
     }
   };
 
@@ -122,7 +132,7 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
           form.reset();
 
           toast.success(
-            `${isEditMode ? "Edit successfully" : "Created successfully"}`
+            `${isEditMode ? "Cập nhật thương hiệu thành công" : "Thêm"}`
           );
           queryClient.invalidateQueries({ queryKey: ["brands"] });
           setIsOpen(false);
@@ -133,7 +143,6 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
       }
     );
   };
-
   return (
     <Sheet onOpenChange={setIsOpen} open={isOpen}>
       <SheetTrigger asChild>
@@ -148,7 +157,7 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
         ) : (
           <Button>
             <Plus />
-            Create Brand
+            Thương Hiệu
           </Button>
         )}
       </SheetTrigger>
@@ -156,18 +165,11 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? "Edit Brand"
+              ? "Cập Nhật Thương Hiệu"
               : isViewMode
-              ? "View Brand"
-              : "Create Brand"}
+              ? "Xem Chi Tiết Thương Hiệu"
+              : "Thêm Thương Hiệu"}
           </SheetTitle>
-          <SheetDescription>
-            {isEditMode
-              ? "Edit the details of the brand."
-              : isViewMode
-              ? "View the details of the brand."
-              : "Fill in the details to create a new brand."}
-          </SheetDescription>
         </SheetHeader>
 
         <Form {...form}>
@@ -177,7 +179,7 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
               name="image"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Attachments</FormLabel>
+                  <FormLabel>Tệp đính kèm</FormLabel>
                   <FormControl>
                     <FileUpload
                       accept="image/*"
@@ -195,16 +197,16 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
                     >
                       <FileUploadDropzone className="flex-row flex-wrap border-dotted text-center">
                         <CloudUpload className="size-4" />
-                        Drag and drop or
+                        Kéo hay thả ảnh vào
                         <FileUploadTrigger asChild>
                           <Button className="p-0" size="sm" variant="link">
-                            choose file
+                            hoặc chọn thư mục
                           </Button>
                         </FileUploadTrigger>
-                        to upload
+                        để tải ảnh lên
                       </FileUploadDropzone>
                       <FileUploadList>
-                        {field.value.map((image, index) => (
+                        {field?.value?.map((image, index) => (
                           <FileUploadItem key={index} value={image}>
                             <FileUploadItemPreview />
                             <FileUploadItemMetadata />
@@ -215,7 +217,7 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
                                 variant="ghost"
                               >
                                 <X />
-                                <span className="sr-only">Delete</span>
+                                <span className="sr-only">Xóa</span>
                               </Button>
                             </FileUploadItemDelete>
                           </FileUploadItem>
@@ -223,11 +225,30 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
                       </FileUploadList>
                     </FileUpload>
                   </FormControl>
-                  <FormDescription>Upload 1 image up to 5MB.</FormDescription>
+                  <FormDescription>
+                    Đăng 1 hình ảnh không quá 5MB.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            {brandData?.image && (
+              <div className="grid grid-cols-4 gap-4">
+                <AspectRatio className="relative" ratio={1}>
+                  <Image
+                    alt="Image"
+                    fill
+                    sizes="10vw"
+                    src={
+                      brandData.image?.update?.absolute_url ||
+                      brandData.image?.absolute_url ||
+                      ""
+                    }
+                  />
+                </AspectRatio>
+              </div>
+            )}
 
             <FormField
               control={form.control}
@@ -235,13 +256,12 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Name <span className="text-red-500">*</span>
+                    Tên <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Brand name"
+                      placeholder="Tên thương hiệu"
                       {...field}
-                      value={brandData?.name || field.value}
                       disabled={isViewMode}
                     />
                   </FormControl>
@@ -256,13 +276,12 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Country <span className="text-red-500">*</span>
+                    Nguồn gốc <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Brand country"
+                      placeholder="Viet Nam"
                       {...field}
-                      value={brandData?.country || field.value}
                       disabled={isViewMode}
                     />
                   </FormControl>
@@ -279,12 +298,12 @@ export default function BrandForm({ mode, brandData }: BrandFormProps) {
                   ) : isEditMode ? (
                     <>
                       <Pencil />
-                      Update
+                      Cập Nhật
                     </>
                   ) : (
                     <>
                       <Plus />
-                      Create
+                      Thêm
                     </>
                   )}
                 </Button>

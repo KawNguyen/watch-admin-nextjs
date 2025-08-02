@@ -49,11 +49,11 @@ const ActionCell = ({ row }: { row: any }) => {
   const mutationDelete = useMutation({
     mutationFn: (watchId: string) => watchApi.delete(watchId),
     onSuccess: () => {
-      toast.success("Watch deleted successfully");
+      toast.success("Xóa đồng hồ thành công");
       queryClient.invalidateQueries({ queryKey: ["watches"] });
     },
     onError: () => {
-      toast.error("Failed to delete watch");
+      toast.error("Xóa đồng hồ thất bại");
     },
   });
   const handleDelete = () => {
@@ -77,10 +77,10 @@ const ActionCell = ({ row }: { row: any }) => {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <h3 className="font-semibold text-lg">Confirm Deletion</h3>
+            <h3 className="font-semibold text-lg">Xác Nhận Xóa</h3>
           </DialogHeader>
           <p>
-            Are you sure you want to delete
+            Bạn có chắc chắn xóa
             <span className=" mx-2 text-red-500 underline">
               {row.original.name}
             </span>
@@ -88,10 +88,10 @@ const ActionCell = ({ row }: { row: any }) => {
           </p>
           <AlertDialogFooter>
             <Button onClick={() => setIsDialogOpen(false)} variant="secondary">
-              Cancel
+              Hủy
             </Button>
             <Button onClick={handleDelete} variant="destructive">
-              Confirm Delete
+              Xóa
             </Button>
           </AlertDialogFooter>
         </DialogContent>
@@ -123,7 +123,7 @@ export const columns: ColumnDef<Watch>[] = [
     enableHiding: false,
   },
   {
-    header: "Image",
+    header: "Hình Ảnh",
     cell: ({ row }: { row: any }) => {
       return (
         <PhotoView
@@ -155,23 +155,23 @@ export const columns: ColumnDef<Watch>[] = [
   },
   {
     accessorKey: "name",
-    header: "Name",
+    header: "Tên",
   },
   {
     accessorKey: "gender",
-    header: "Gender",
+    header: "Giới Tính",
   },
   {
     accessorKey: "brand.name",
-    header: "Brand",
+    header: "Thương Hiệu",
   },
   {
     accessorKey: "price",
-    header: "Price",
+    header: "Giá",
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: "Tình Trạng",
     cell: ({ row }: { row: any }) => {
       const queryClient = useQueryClient();
       const queryKey = ["watches"];
@@ -196,14 +196,14 @@ export const columns: ColumnDef<Watch>[] = [
         },
 
         onError: (err, updatedWatch, context) => {
-          toast.error("Failed to update watch status");
+          toast.error("Thay đổi trạng thái thất bại");
           if (context?.previousWatches) {
             queryClient.setQueryData(queryKey, context.previousWatches);
           }
         },
 
         onSuccess: () => {
-          toast.success("Watch status updated successfully");
+          toast.success("Thay đổi trạng thái thành công");
         },
       });
 
@@ -239,7 +239,7 @@ export const columns: ColumnDef<Watch>[] = [
   },
   {
     accessorKey: "actions",
-    header: "Actions",
+    header: "Chức Năng",
     cell: ({ row }: { row: any }) => <ActionCell row={row} />,
   },
 ];

@@ -11,7 +11,7 @@ import {
   Plus,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import type { z } from "zod";
@@ -46,7 +46,6 @@ import {
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -58,6 +57,9 @@ import { advertisementSchema } from "@/schema/advertisement";
 import { advertisementApi } from "@/services/ads";
 import { cloudinaryApi } from "@/services/cloudinary";
 import { Switch } from "@/components/ui/switch";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import Image from "next/image";
+import { formatDate } from "@/lib";
 
 interface AdsFormProps {
   mode: "create" | "edit" | "view";
@@ -95,16 +97,28 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
   const form = useForm<AdsFormValues>({
     resolver: zodResolver(advertisementSchema),
     defaultValues: {
-      title: isEditMode && adsData ? adsData.title : "",
-      content: isEditMode && adsData ? adsData.content : "",
+      title: "",
+      content: "",
       imageUrl: [],
-      link: isEditMode && adsData ? adsData.link : "",
-      isActive: isEditMode && adsData ? adsData.isActive : false,
-      startDate:
-        isEditMode && adsData ? new Date(adsData.startDate) : new Date(),
-      endDate: isEditMode && adsData ? new Date(adsData.endDate) : new Date(),
+      link: "",
+      isActive: false,
+      startDate: new Date(),
+      endDate: new Date(),
     },
   });
+
+  React.useEffect(() => {
+    if (isOpen && adsData) {
+      form.reset({
+        title: adsData.title || "",
+        content: adsData.content || "",
+        link: adsData.link || "",
+        isActive: adsData.isActive || "",
+        startDate: adsData.startDate || "",
+        endDate: adsData.endDate || "",
+      });
+    }
+  }, [isOpen, adsData, form]);
 
   const handleUpload = async (files: File[]) => {
     const formData = new FormData();
@@ -143,7 +157,11 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
           form.reset();
 
           toast.success(
-            `${isEditMode ? "Edit successfully" : "Created successfully"}`
+            `${
+              isEditMode
+                ? "Cập nhật quảng cáo thành công"
+                : "Thêm quảng cáo thành công"
+            }`
           );
           queryClient.invalidateQueries({ queryKey: ["advertisements"] });
           setIsOpen(false);
@@ -169,7 +187,7 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
         ) : (
           <Button>
             <Plus />
-            Create Advertisement
+            Quảng Cáo
           </Button>
         )}
       </SheetTrigger>
@@ -177,18 +195,11 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
         <SheetHeader>
           <SheetTitle>
             {isEditMode
-              ? "Edit Advertisement"
+              ? "Cập Nhật Quảng Cáo"
               : isViewMode
-              ? "View Advertisement"
-              : "Create Advertisement"}
+              ? "Xem Chi Tiết Quảng Cáo"
+              : "Thêm Quảng Cáo"}
           </SheetTitle>
-          <SheetDescription>
-            {isEditMode
-              ? "Edit the details of the advertisement."
-              : isViewMode
-              ? "View the details of the advertisement."
-              : "Fill in the details to create a new advertisement."}
-          </SheetDescription>
         </SheetHeader>
 
         <Form {...form}>
@@ -198,7 +209,7 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
               name="imageUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Attachments</FormLabel>
+                  <FormLabel>Tệp đính kèm</FormLabel>
                   <FormControl>
                     <FileUpload
                       accept="image/*"
@@ -215,16 +226,16 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                     >
                       <FileUploadDropzone className="flex-row flex-wrap border-dotted text-center">
                         <CloudUpload className="size-4" />
-                        Drag and drop or
+                        Kéo hay thả ảnh vào
                         <FileUploadTrigger asChild>
                           <Button className="p-0" size="sm" variant="link">
-                            choose file
+                            hoặc chọn thư mục
                           </Button>
                         </FileUploadTrigger>
-                        to upload
+                        để tải ảnh lên
                       </FileUploadDropzone>
                       <FileUploadList>
-                        {field.value.map((image, index) => (
+                        {field?.value?.map((image, index) => (
                           <FileUploadItem key={index} value={image}>
                             <FileUploadItemPreview />
                             <FileUploadItemMetadata />
@@ -235,7 +246,7 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                                 variant="ghost"
                               >
                                 <X />
-                                <span className="sr-only">Delete</span>
+                                <span className="sr-only">Xóa</span>
                               </Button>
                             </FileUploadItemDelete>
                           </FileUploadItem>
@@ -243,26 +254,35 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                       </FileUploadList>
                     </FileUpload>
                   </FormControl>
-                  <FormDescription>Upload 1 image up to 5MB.</FormDescription>
+                  <FormDescription>
+                    Đăng 1 hình ảnh không quá 5MB.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            {adsData?.imageUrl && (
+              <div className="grid grid-cols-4 gap-4">
+                <AspectRatio className="relative" ratio={1}>
+                  <Image
+                    alt="Image"
+                    fill
+                    sizes="10vw"
+                    src={adsData?.imageUrl || ""}
+                  />
+                </AspectRatio>
+              </div>
+            )}
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Title <span className="text-red-500">*</span>
+                    Tiêu Đề <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Advertisement title"
-                      {...field}
-                      value={adsData?.title || field.value}
-                      disabled={isViewMode}
-                    />
+                    <Input placeholder="" {...field} disabled={isViewMode} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -280,9 +300,8 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Advertisement link"
+                          placeholder="link"
                           {...field}
-                          value={adsData?.link || field.value}
                           disabled={isViewMode}
                         />
                       </FormControl>
@@ -297,12 +316,10 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                   name="isActive"
                   render={({ field }) => (
                     <FormItem className="flex flex-col space-y-0 gap-y-4">
-                      <FormLabel>
-                        Status <span className="text-red-500">*</span>
-                      </FormLabel>
+                      <FormLabel>Trạng Thái</FormLabel>
                       <FormControl>
                         <Switch
-                          checked={adsData.isActive || field.value}
+                          checked={adsData?.isActive || field.value}
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>
@@ -319,7 +336,7 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                 name="startDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Start Date</FormLabel>
+                    <FormLabel>Từ Ngày</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -331,7 +348,7 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                             variant={"outline"}
                           >
                             {field.value
-                              ? field.value.toLocaleDateString("vi-VN")
+                              ? formatDate(field.value)
                               : "Choose Date"}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
@@ -357,7 +374,7 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                 name="endDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>End Date</FormLabel>
+                    <FormLabel>Đến Ngày</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -369,7 +386,7 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                             variant={"outline"}
                           >
                             {field.value
-                              ? field.value.toLocaleDateString("vi-VN")
+                              ? formatDate(field.value)
                               : "Choose Date"}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
@@ -395,11 +412,11 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Content <span className="text-red-500">*</span>
+                    Nội Dung <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Advertisement content"
+                      placeholder="content"
                       {...field}
                       disabled={isViewMode}
                     />
@@ -416,12 +433,12 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
                   ) : isEditMode ? (
                     <>
                       <Pencil />
-                      Update
+                      Cập Nhật
                     </>
                   ) : (
                     <>
                       <Plus />
-                      Create
+                      Thêm
                     </>
                   )}
                 </Button>

@@ -42,6 +42,7 @@ export default function StockForm() {
       return StockAPI.createStockEntry(data);
     },
   });
+
   const form = useForm<StockFormValues>({
     resolver: zodResolver(StockSchema),
     defaultValues: {
@@ -105,12 +106,12 @@ export default function StockForm() {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["stockEntries"] });
         form.reset();
-        toast.success("Stock entry created successfully!");
+        toast.success("Nhập hàng thành công!");
         setIsModalOpen(false);
         router.push("/admin/stock");
       },
       onError: (error: any) => {
-        toast.error("Error creating stock entry: " + error.message);
+        toast.error("Nhập hàng thất bại: " + error.message);
       },
     });
   };
@@ -121,7 +122,7 @@ export default function StockForm() {
         className="mb-4 flex items-center gap-1 underline"
         href="/admin/stock/"
       >
-        <CornerDownLeft className="size-5" /> Back
+        <CornerDownLeft className="size-5" /> Trở về
       </Link>
 
       <Form {...form}>
@@ -131,7 +132,7 @@ export default function StockForm() {
             name="createdBy"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Created By</FormLabel>
+                <FormLabel>Người nhập hàng</FormLabel>
                 <FormControl>
                   <Input {...field} disabled />
                 </FormControl>
@@ -145,9 +146,9 @@ export default function StockForm() {
             name="notes"
             render={({ field }) => (
               <FormItem className="mt-4">
-                <FormLabel>Notes</FormLabel>
+                <FormLabel>Ghi chú</FormLabel>
                 <FormControl>
-                  <Textarea {...field} placeholder="Optional notes..." />
+                  <Textarea {...field} placeholder="..." />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -160,14 +161,14 @@ export default function StockForm() {
               <Input
                 className="pl-10"
                 onFocus={() => setIsModalOpen(true)}
-                placeholder="Search products to add..."
+                placeholder="Chọn sản phẩm để nhập thêm..."
               />
             </div>
           </div>
 
           <Card className="mt-6">
             <CardHeader>
-              <CardTitle>Stock Items</CardTitle>
+              <CardTitle>Sản phẩm đã chọn</CardTitle>
             </CardHeader>
             <CardContent>
               <StockEntryTable
@@ -187,7 +188,7 @@ export default function StockForm() {
               disabled={selectedProductIds.length === 0 && fields.length === 0}
               type="submit"
             >
-              Import Stock Entry
+              Nhập Hàng
             </Button>
           </div>
         </form>

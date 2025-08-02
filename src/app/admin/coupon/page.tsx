@@ -2,24 +2,23 @@ import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
-} from '@tanstack/react-query';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import CouponsDataTable from './_components/coupon-data-table';
-import CouponForm from './_components/coupon-form';
+} from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import CouponsDataTable from "./_components/coupon-data-table";
+import CouponForm from "./_components/coupon-form";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin | Mã Giảm Giá",
+};
 
 export default async function CouponsPage() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['coupons'],
+    queryKey: ["coupons"],
     queryFn: () =>
-      import('@/queries/use-coupon').then((mod) => mod.useCoupon()),
+      import("@/queries/use-coupon").then((mod) => mod.useCoupon()),
   });
 
   return (
@@ -27,8 +26,7 @@ export default async function CouponsPage() {
       <CardHeader>
         <div className="flex w-full items-center justify-between">
           <div>
-            <CardTitle>Coupon</CardTitle>
-            <CardDescription>Manage coupons</CardDescription>
+            <CardTitle>Mã Giảm Giá</CardTitle>
           </div>
           <CouponForm mode="create" />
         </div>

@@ -2,30 +2,23 @@ import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
-} from '@tanstack/react-query';
-import type { Metadata } from 'next';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import WatchForm from './_components/watch-form';
-import WatchesDataTable from './_components/watches-data-table';
+} from "@tanstack/react-query";
+import type { Metadata } from "next";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import WatchForm from "./_components/watch-form";
+import WatchesDataTable from "./_components/watches-data-table";
 
 export const metadata: Metadata = {
-  title: 'Admin | Watches',
-  description: 'Manage watches in the admin panel',
+  title: "Admin | Watches",
 };
 
 export default async function WatchesPage() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['watches'],
+    queryKey: ["watches"],
     queryFn: () =>
-      import('@/queries/use-watches').then((mod) => mod.useWatches()),
+      import("@/queries/use-watches").then((mod) => mod.useWatches()),
   });
 
   return (
@@ -33,10 +26,8 @@ export default async function WatchesPage() {
       <CardHeader>
         <div className="flex w-full items-center justify-between">
           <div>
-            <CardTitle>Watches</CardTitle>
-            <CardDescription>Manage watches</CardDescription>
+            <CardTitle>Đồng Hồ</CardTitle>
           </div>
-
           <WatchForm mode="create" />
         </div>
       </CardHeader>

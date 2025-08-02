@@ -41,11 +41,11 @@ export const columns: ColumnDef<BandMaterial>[] = [
   },
   {
     accessorKey: 'name',
-    header: 'Name',
+    header: 'Tên',
   },
   {
     accessorKey: 'actions',
-    header: 'Actions',
+    header: 'Chức Năng',
     cell: ({ row }: { row: any }) => {
       const [isDialogOpen, setIsDialogOpen] = useState(false);
       const mutationDelete = useMutation({
