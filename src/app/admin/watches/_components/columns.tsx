@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { formatMoney } from "@/lib";
 
 const adjustStatus = (status: string) => {
   const { DRAFTED, PUBLISHED, ARCHIVED } = WatchStatus;
@@ -168,6 +169,10 @@ export const columns: ColumnDef<Watch>[] = [
   {
     accessorKey: "price",
     header: "Giá",
+    cell: ({ row }: { row: any }) => {
+      const price = row.original.price;
+      return formatMoney(price);
+    },
   },
   {
     accessorKey: "status",

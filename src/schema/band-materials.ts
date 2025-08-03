@@ -1,5 +1,5 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const bandMaterialSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
+  name: z.string().min(1, "Tên chất liệu dây không được bỏ trống"),
 });

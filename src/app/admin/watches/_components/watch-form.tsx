@@ -16,7 +16,7 @@ import {
   X,
 } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import type { z } from "zod";
@@ -88,8 +88,8 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
   const { data: materials } = useMaterials();
   const { data: bandMaterials } = useBandMaterials();
   const { data: movements } = useMovements();
-  const WIDTH_IMAGE = 500,
-    HEIGHT_IMAGE = 500;
+  const WIDTH_IMAGE = 700,
+    HEIGHT_IMAGE = 700;
 
   const isEditMode = mode === "edit";
   const isViewMode = mode === "view";
@@ -116,23 +116,42 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
   const form = useForm<WatchFormValues>({
     resolver: zodResolver(watchSchema),
     defaultValues: {
-      name: isEditMode && watchData ? watchData.name : "",
+      name: "",
       description: "",
-      gender: isEditMode && watchData ? watchData.gender : Gender.MEN,
-      status:
-        isEditMode && watchData ? watchData.status : WatchStatus.PUBLISHED,
-      diameter: isEditMode && watchData ? watchData.diameter : 0,
-      waterResistance: isEditMode && watchData ? watchData.waterResistance : 0,
-      warranty: isEditMode && watchData ? watchData.warranty : 0,
-      price: isEditMode && watchData ? watchData.price : 0,
-      brandId: isEditMode && watchData ? watchData.brandId : "",
-      materialId: isEditMode && watchData ? watchData.materialId : "",
-      bandMaterialId: isEditMode && watchData ? watchData.bandMaterialId : "",
-      movementId: isEditMode && watchData ? watchData.movementId : "",
-      videoUrl: isEditMode && watchData ? watchData.videoUrl : "",
+      gender: Gender.MEN,
+      status: WatchStatus.PUBLISHED,
+      diameter: 0,
+      waterResistance: 0,
+      warranty: 0,
+      price: 0,
+      brandId: "",
+      materialId: "",
+      bandMaterialId: "",
+      movementId: "",
+      videoUrl: "",
       files: [],
     },
   });
+
+  React.useEffect(() => {
+    if (isOpen && watchData) {
+      form.reset({
+        name: watchData.name || "",
+        description: "",
+        gender: watchData.gender || Gender.MEN,
+        status: watchData.status || WatchStatus.PUBLISHED,
+        diameter: watchData.diameter || 0,
+        waterResistance: watchData.waterResistance || 0,
+        warranty: watchData.warranty || 0,
+        price: watchData.price || 0,
+        brandId: watchData.brandId || "",
+        materialId: watchData.materialId || "",
+        bandMaterialId: watchData.bandMaterialId || "",
+        movementId: watchData.movementId || "",
+        videoUrl: watchData.videoUrl || "",
+      });
+    }
+  }, [isOpen, watchData, form]);
 
   const handleUpload = async (files: File[]) => {
     const formData = new FormData();
@@ -251,7 +270,7 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                         để tải ảnh lên
                       </FileUploadDropzone>
                       <FileUploadList>
-                        {field.value.map((file, index) => (
+                        {field?.value?.map((file, index) => (
                           <FileUploadItem key={index} value={file}>
                             <FileUploadItemPreview />
                             <FileUploadItemMetadata />

@@ -205,7 +205,7 @@ export default function CouponForm({ mode, couponData }: CouponFormProps) {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="PERCENT">Phần Trăm</SelectItem>
-                          <SelectItem value="FIXED">Fixed</SelectItem>
+                          <SelectItem value="FIXED">Theo Giá</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>

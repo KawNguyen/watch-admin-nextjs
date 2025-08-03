@@ -17,6 +17,7 @@ import { couponApi } from "@/services/coupon";
 import type { Coupon } from "@/types/coupon";
 import CouponForm from "./coupon-form";
 import { Switch } from "@/components/ui/switch";
+import { formatMoney } from "@/lib";
 export const columns: ColumnDef<Coupon>[] = [
   {
     id: "select",
@@ -51,6 +52,16 @@ export const columns: ColumnDef<Coupon>[] = [
   {
     accessorKey: "discountValue",
     header: "Giá Trị Giảm",
+    cell: ({ row }: { row: any }) => {
+      const type = row.original.discountType;
+      const value = row.original.discountValue;
+
+      return type === "PERCENT" ? (
+        <span>{`${value}%`}</span>
+      ) : (
+        <span>{formatMoney(value)}</span>
+      );
+    },
   },
 
   {

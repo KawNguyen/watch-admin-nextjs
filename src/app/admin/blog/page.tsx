@@ -47,8 +47,6 @@ export default function BlogManagement() {
 
   const {
     data: blogs = [],
-    isLoading,
-    isError,
   } = useQuery({
     queryKey: QUERY_KEYS.blogs,
     queryFn: async () => {

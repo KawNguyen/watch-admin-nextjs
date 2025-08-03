@@ -47,7 +47,6 @@ export function DatePickerWithRange({
   setDate,
   ...props
 }: DatePickerWithRangeProps) {
-  // Temporary date state for internal selection before applying
   const [tempDate, setTempDate] = useState<DateRange | undefined>(date);
   const [tempRangeType, setTempRangeType] =
     useState<DateRangeType>(defaultType);
@@ -78,28 +77,18 @@ export function DatePickerWithRange({
     ],
     []
   );
-
-  /**
-   * Apply the temporary date selection to the actual date state
-   */
   const handleApply = useCallback(() => {
     setDate(tempDate);
     onDateChange?.(tempDate, tempRangeType);
     setIsOpen(false);
   }, [tempDate, tempRangeType, setDate, onDateChange]);
 
-  /**
-   * Cancel the temporary selection and revert to original date
-   */
   const handleCancel = useCallback(() => {
     setTempDate(date);
     setTempRangeType(defaultType);
     setIsOpen(false);
   }, [date, defaultType]);
 
-  /**
-   * Handles preset date selection (7 days, 28 days) and auto-apply
-   */
   const handlePresetSelect = useCallback(
     (days: number) => {
       const today = new Date();
@@ -117,9 +106,6 @@ export function DatePickerWithRange({
     [onDateChange, setDate]
   );
 
-  /**
-   * Handles date selection based on the current range type (temporary)
-   */
   const handleDateSelect = useCallback(
     (selectedDate: DateRange | undefined) => {
       if (!selectedDate) return;
@@ -160,9 +146,6 @@ export function DatePickerWithRange({
     [tempRangeType]
   );
 
-  /**
-   * Handles month selection for month range type (temporary)
-   */
   const handleMonthSelect = useCallback(
     (monthIndex: number) => {
       setSelectedMonth(monthIndex);
@@ -179,9 +162,6 @@ export function DatePickerWithRange({
     [selectedYear]
   );
 
-  /**
-   * Handles year selection for month range type (temporary)
-   */
   const handleYearSelect = useCallback(
     (year: number) => {
       setSelectedYear(year);
@@ -198,13 +178,9 @@ export function DatePickerWithRange({
     [selectedMonth]
   );
 
-  /**
-   * Handles range type change (temporary)
-   */
   const handleRangeTypeChange = useCallback((newType: DateRangeType) => {
     setTempRangeType(newType);
 
-    // Auto-adjust temp date based on new type
     const today = new Date();
     let newDateRange: DateRange | undefined;
 
@@ -236,9 +212,6 @@ export function DatePickerWithRange({
     setTempDate(newDateRange);
   }, []);
 
-  /**
-   * Initialize temp state when popover opens
-   */
   const handleOpenChange = useCallback(
     (open: boolean) => {
       setIsOpen(open);
@@ -250,9 +223,6 @@ export function DatePickerWithRange({
     [date, defaultType]
   );
 
-  /**
-   * Formats date to Vietnamese format: Th01 01, 2025
-   */
   const formatDateToVietnamese = useCallback((date: Date) => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
@@ -260,9 +230,6 @@ export function DatePickerWithRange({
     return `Th${month} ${day}, ${year}`;
   }, []);
 
-  /**
-   * Formats the display text for the selected date range
-   */
   const getDisplayText = useCallback(() => {
     if (!date?.from) return "Chọn ngày";
 
@@ -280,9 +247,6 @@ export function DatePickerWithRange({
     return formatDateToVietnamese(date.from);
   }, [date, defaultType, formatDateToVietnamese]);
 
-  /**
-   * Check if dates have changed to enable/disable Apply button
-   */
   const hasChanges = useMemo(() => {
     if (!tempDate && !date) return false;
     if (!tempDate || !date) return true;
@@ -293,9 +257,6 @@ export function DatePickerWithRange({
     );
   }, [tempDate, date]);
 
-  /**
-   * Renders the appropriate calendar based on range type
-   */
   const renderCalendarContent = useCallback(() => {
     switch (tempRangeType) {
       case "day":
@@ -421,7 +382,6 @@ export function DatePickerWithRange({
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <div className="flex">
-            {/* Left sidebar with preset options */}
             <div className="bg-muted/10 w-32 space-y-1 border-r p-2">
               <Button
                 variant="ghost"
@@ -441,9 +401,7 @@ export function DatePickerWithRange({
               </Button>
             </div>
 
-            {/* Main content area */}
             <div className="flex-1">
-              {/* Mode selector tabs */}
               <div className="border-b p-2">
                 <div className="bg-muted flex rounded-md p-1">
                   {[
@@ -469,10 +427,8 @@ export function DatePickerWithRange({
                 </div>
               </div>
 
-              {/* Calendar content */}
               <div className="p-2">{renderCalendarContent()}</div>
 
-              {/* Action buttons */}
               <div className="flex justify-end gap-2 border-t p-3">
                 <Button variant="outline" size="sm" onClick={handleCancel}>
                   Hủy
