@@ -3,13 +3,13 @@
 import { DataTable } from "@/components/data-table/data-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { columns } from "./columns";
-import { useInventory } from "@/queries/use-inventory";
+import { useSupport } from "@/queries/use-support";
 
-export default function InventoryDataTable() {
-  const { data: inventories, isFetching } = useInventory();
-  const inventory = inventories || [];
+export default function SupportDataTable() {
+  const { data, isLoading } = useSupport();
+  const supports = data?.data?.items || [];
 
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-10 w-[300px]" />
@@ -40,5 +40,5 @@ export default function InventoryDataTable() {
     );
   }
 
-  return <DataTable columns={columns} data={inventory} searchKey="watchId" />;
+  return <DataTable columns={columns} data={supports} searchKey="code" />;
 }

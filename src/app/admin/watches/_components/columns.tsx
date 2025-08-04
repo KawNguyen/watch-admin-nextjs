@@ -161,7 +161,15 @@ export const columns: ColumnDef<Watch>[] = [
   {
     accessorKey: "gender",
     header: "Giới Tính",
+    cell: ({ row }: { row: any }) => {
+      const gender = row.original.gender;
+      const displayGender =
+        gender === "MEN" ? "Nam" : gender === "WOMEN" ? "Nữ" : "Unisex";
+
+      return <div>{displayGender}</div>;
+    },
   },
+
   {
     accessorKey: "brand.name",
     header: "Thương Hiệu",
@@ -226,14 +234,22 @@ export const columns: ColumnDef<Watch>[] = [
             <SelectTrigger className="w-[150px] border-none focus:ring-0 shadow-none">
               <SelectValue>
                 <Badge variant={adjustStatus(currentStatus)}>
-                  {currentStatus}
+                  {currentStatus === "PUBLISHED"
+                    ? "Công Khai"
+                    : currentStatus === "DRAFTED"
+                    ? "Bản Nháp"
+                    : "Lưu Trữ"}
                 </Badge>
               </SelectValue>
             </SelectTrigger>
             <SelectContent className="w-[150px]">
               {Object.values(WatchStatus).map((status, idx) => (
                 <SelectItem key={idx} value={status}>
-                  {status}
+                  {status === "PUBLISHED"
+                    ? "Công Khai"
+                    : status === "DRAFTED"
+                    ? "Bản Nháp"
+                    : "Lưu Trữ"}
                 </SelectItem>
               ))}
             </SelectContent>

@@ -197,6 +197,7 @@ export default function CouponForm({ mode, couponData }: CouponFormProps) {
                     <FormLabel>Loại Giảm Giá</FormLabel>
                     <FormControl>
                       <Select
+                        defaultValue={field.value}
                         disabled={isViewMode}
                         onValueChange={field.onChange}
                       >

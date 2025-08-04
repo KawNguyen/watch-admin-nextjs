@@ -72,8 +72,8 @@ export default function AdvertisementForm({ mode, adsData }: AdsFormProps) {
   const [isOpen, setIsOpen] = useState(false);
   const isEditMode = mode === "edit";
   const isViewMode = mode === "view";
-  const WIDTH_IMAGE = 400,
-    HEIGHT_IMAGE = 400;
+  const WIDTH_IMAGE = 1440,
+    HEIGHT_IMAGE = 600;
 
   const mutation = useMutation({
     mutationFn: (data: any) =>

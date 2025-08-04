@@ -12,6 +12,7 @@ import {
   Archive,
   WatchIcon,
   LayoutDashboard,
+  Undo2,
 } from "lucide-react";
 
 export const data = {
@@ -169,6 +170,18 @@ export const data = {
         {
           title: "List",
           url: "/admin/review-manage",
+        },
+      ],
+    },
+    {
+      title: "Quản Lý Đổi Trả",
+      url: "#",
+      icon: Undo2,
+      isActive: true,
+      items: [
+        {
+          title: "List",
+          url: "/admin/return",
         },
       ],
     },

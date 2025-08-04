@@ -18,6 +18,7 @@ import type { Coupon } from "@/types/coupon";
 import CouponForm from "./coupon-form";
 import { Switch } from "@/components/ui/switch";
 import { formatMoney } from "@/lib";
+import { any } from "zod";
 export const columns: ColumnDef<Coupon>[] = [
   {
     id: "select",
@@ -48,6 +49,10 @@ export const columns: ColumnDef<Coupon>[] = [
   {
     accessorKey: "discountType",
     header: "Loại Giảm Giá",
+    cell: ({ row }: { row: any }) => {
+      const type = row.original.discountType;
+      return <span>{type === "PERCENT" ? "Phần Trăm" : "Theo Giá"}</span>;
+    },
   },
   {
     accessorKey: "discountValue",
@@ -88,6 +93,15 @@ export const columns: ColumnDef<Coupon>[] = [
           }}
         />
       );
+    },
+  },
+  {
+    header: "Số Lượng Còn",
+    cell: ({ row }: { row: any }) => {
+      const count = row.original.count;
+      const used = row.original.usedCount;
+      const total = count - used;
+      return <div>{total}</div>;
     },
   },
   {

@@ -3,11 +3,11 @@
 import { DataTable } from "@/components/data-table/data-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { columns } from "./columns";
-import { useInventory } from "@/queries/use-inventory";
+import { useReturn } from "@/queries/use-return";
 
-export default function InventoryDataTable() {
-  const { data: inventories, isFetching } = useInventory();
-  const inventory = inventories || [];
+export default function ReturnDataTable() {
+  const { data, isFetching } = useReturn();
+  const returns = data?.data.items;
 
   if (isFetching) {
     return (
@@ -40,5 +40,5 @@ export default function InventoryDataTable() {
     );
   }
 
-  return <DataTable columns={columns} data={inventory} searchKey="watchId" />;
+  return <DataTable columns={columns} data={returns} searchKey="orderId" />;
 }

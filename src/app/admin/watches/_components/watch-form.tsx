@@ -360,7 +360,11 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                           <SelectContent>
                             {Object.values(Gender).map((gender, idx) => (
                               <SelectItem key={idx} value={gender}>
-                                {gender}
+                                {gender === "MEN"
+                                  ? "Nam"
+                                  : gender === "WOMEN"
+                                  ? "Nữ"
+                                  : "Unisex"}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -390,7 +394,11 @@ export default function WatchForm({ mode, watchData }: WatchFormProps) {
                           <SelectContent>
                             {Object.values(WatchStatus).map((status, idx) => (
                               <SelectItem key={idx} value={status}>
-                                {status}
+                                {status === "PUBLISHED"
+                                  ? "Công Khai"
+                                  : status === "DRAFTED"
+                                  ? "Bản Nháp"
+                                  : "Lưu Trữ"}
                               </SelectItem>
                             ))}
                           </SelectContent>

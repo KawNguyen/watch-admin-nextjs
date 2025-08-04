@@ -43,19 +43,23 @@ const ORDER_STATUSES = [
   {
     value: "SHIPPING",
     label: "Đang Giao Hàng",
-    color: "bg-indigo-100 text-indigo-800",
+    color: "bg-purple-100 text-purple-800",
   },
   {
     value: "DELIVERED",
     label: "Đã Giao Hàng",
-    color: "bg-green-100 text-purple-800",
+    color: "bg-orange-400 text-white",
   },
   {
     value: "COMPLETED",
     label: "Đã Hoàn Thành",
-    color: "bg-green-100 text-green-800",
+    color: "bg-green-400 text-white",
   },
-  { value: "CANCELED", label: "Bị Hủy", color: "bg-red-100 text-red-800" },
+  {
+    value: "CANCELED",
+    label: "Bị Hủy",
+    color: "bg-red-100 text-red-800",
+  },
 ];
 
 const OrderStatusUpdateDialog: React.FC<OrderStatusUpdateDialogProps> = ({
@@ -92,12 +96,12 @@ const OrderStatusUpdateDialog: React.FC<OrderStatusUpdateDialogProps> = ({
 
       await orderApi.updateStatus(orderId, updateData);
 
-      toast.success("Order status updated successfully");
+      toast.success("Cập nhật trạng thái đơn hàng thành công");
       onStatusUpdated();
       setOpen(false);
       setNotes("");
     } catch (error) {
-      toast.error("Failed to update order status");
+      toast.error("Cập nhật trạng thái đơn hàng thất bại");
     } finally {
       setLoading(false);
     }
@@ -185,7 +189,7 @@ const OrderStatusUpdateDialog: React.FC<OrderStatusUpdateDialogProps> = ({
                 Cập Nhật...
               </>
             ) : (
-              "Update Status"
+              "Cập Nhật"
             )}
           </Button>
         </DialogFooter>

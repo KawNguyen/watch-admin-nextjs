@@ -3,21 +3,28 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Metadata } from "next";
-import SupportDataTable from "./_components/support-data-table";
+
+import type { Metadata } from "next";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useReturn } from "@/queries/use-return";
+import ReturnDataTable from "./_components/return-data-table";
 
 export const metadata: Metadata = {
-  title: "Admin | Hỗ Trợ ",
+  title: "Admin | Đổi Trả Sản Phẩm",
 };
 
-export default async function SupportPage() {
+export default async function AdsPage() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ["supports"],
-    queryFn: () =>
-      import("@/queries/use-support").then((mod) => mod.useSupport()),
+    queryKey: ["returns"],
+    queryFn: useReturn,
   });
 
   return (
@@ -25,13 +32,13 @@ export default async function SupportPage() {
       <CardHeader>
         <div className="flex w-full items-center justify-between">
           <div>
-            <CardTitle>Hỗ Trợ</CardTitle>
+            <CardTitle>Đổi Trả Sản Phẩm</CardTitle>
           </div>
         </div>
       </CardHeader>
       <CardContent>
         <HydrationBoundary state={dehydrate(queryClient)}>
-          <SupportDataTable />
+          <ReturnDataTable />
         </HydrationBoundary>
       </CardContent>
     </Card>
